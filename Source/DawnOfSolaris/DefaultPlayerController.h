@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PauseGame();
 
+	UFUNCTION(BlueprintCallable)
+	void ContinueGame();
+
 	// Reference UMG Asset in the Editor
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<class UUserWidget> wPauseMenu;

@@ -33,3 +33,16 @@ void ADefaultPlayerController::PauseGame()
 
 	}
 }
+
+void ADefaultPlayerController::ContinueGame()
+{
+	SetPause(false);
+
+	if (PauseMenu)
+	{
+		PauseMenu->RemoveFromParent();
+		bShowMouseCursor = false;
+
+		SetInputMode(FInputModeGameOnly());
+	}
+}
