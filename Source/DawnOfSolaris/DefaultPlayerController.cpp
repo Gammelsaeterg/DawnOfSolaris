@@ -8,6 +8,10 @@
 void ADefaultPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Create the widget and store it.
+	PlayerUI = CreateWidget<UUserWidget>(this, wPlayerUI);
+	PlayerUI->AddToViewport();
 }
 
 void ADefaultPlayerController::PauseGame()
