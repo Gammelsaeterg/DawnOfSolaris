@@ -26,4 +26,22 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	float maxHealthPoints{ 100 };
+	float currentHealthPoints{ 100 };
+
+	float maxStaminaPoints{ 100 };
+	float currentStaminaPoints{ 100 };
+
+	UFUNCTION(BlueprintCallable)
+	float getHealthPoints();
+
+	UFUNCTION(BlueprintCallable)
+	void setHealthPoints(float newHealthPoints);
+
+	UFUNCTION(BlueprintCallable)
+	float getStaminaPoints();
+
+	UFUNCTION(BlueprintCallable)
+	void setStaminaPoints(float newHealthPoints);
+
 };

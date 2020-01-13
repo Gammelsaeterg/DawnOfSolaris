@@ -32,3 +32,22 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
+float ABaseCharacter::getHealthPoints()
+{
+	return currentHealthPoints;
+}
+
+void ABaseCharacter::setHealthPoints(float newHealthPoints)
+{
+	currentHealthPoints = newHealthPoints;
+}
+
+float ABaseCharacter::getStaminaPoints()
+{
+	return currentStaminaPoints;
+}
+
+void ABaseCharacter::setStaminaPoints(float newHealthPoints)
+{
+}
+
