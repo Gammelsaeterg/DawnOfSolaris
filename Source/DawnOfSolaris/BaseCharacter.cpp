@@ -26,7 +26,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 	//Debug function, TODO: DELETE
 	{
-		if (bSprintingActive) // TODO: Should be a different condition, i. e. bCanSprint etc.
+		if (bSprintingActive && (currentStaminaPoints > 1.f)) // TODO: Should be a different condition, i. e. bCanSprint etc.
 		{
 			GetCharacterMovement()->MaxWalkSpeed = maxSprintSpeed; // Should lerp
 			currentStaminaPoints -= sprintStaminaCost * DeltaTime;
