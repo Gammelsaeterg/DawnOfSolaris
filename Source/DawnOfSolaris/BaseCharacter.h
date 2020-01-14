@@ -39,13 +39,14 @@ public:
 	float maxWalkSpeed{ 600 };
 	float maxSprintSpeed{ 1100 };
 
-	bool bAttackActionActive{ false };
-	bool bSelfHitstunActive{ false };
-	bool bDodgingActive{ false };
-	bool bSprintingActive{ false };
-	bool bStandbyActive{ true };
+	// TODO: Make this into an enum state(?)
+	bool bAttackActionActive{ false }; // Active in attack frames
+	bool bSelfHitstunActive{ false }; // Active in hitstun frames
+	bool bDodgingActive{ false }; // Active in dodge frames
+	bool bSprintingActive{ false }; // Active when sprint button is held
+	bool bStandbyActive{ true }; // Active when none of the above is active
 
-	float baseStaminaRegen{ 15.f };
+	float baseStaminaRegen{ 25.f };
 	float sprintStaminaCost{ 45.f };
 
 
@@ -67,4 +68,9 @@ public:
 
 	void sprintActivate();
 	void sprintDeactivate();
+
+	bool canSprint();
+	bool canRegenerateStamina();
+
+	void standbyCheck();
 };

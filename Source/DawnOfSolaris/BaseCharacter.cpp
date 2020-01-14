@@ -26,7 +26,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 
 	//Debug function, TODO: DELETE
 	{
-		if (bSprintingActive) // TODO: Should be a different condition, i. e. bCanSprint etc.
+		if (canSprint() && (currentStaminaPoints > 1.f))
 		{
 			GetCharacterMovement()->MaxWalkSpeed = maxSprintSpeed; // Should lerp
 			currentStaminaPoints -= sprintStaminaCost * DeltaTime;
@@ -40,12 +40,18 @@ void ABaseCharacter::Tick(float DeltaTime)
 	// Stamina regen tick
 	if ((currentStaminaPoints) < maxStaminaPoints) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
 	{
-		currentStaminaPoints += baseStaminaRegen * DeltaTime;
+		if (canRegenerateStamina())
+		{
+			currentStaminaPoints += baseStaminaRegen * DeltaTime;
+		}
 	}
 	else if (currentStaminaPoints > maxStaminaPoints)
 	{
 		//currentStaminaPoints = 100.f;
 	}
+
+	// Check if standby
+	standbyCheck();
 }
 
 // Called to bind functionality to input
@@ -87,5 +93,41 @@ void ABaseCharacter::sprintActivate()
 void ABaseCharacter::sprintDeactivate()
 {
 	bSprintingActive = false;
+}
+
+bool ABaseCharacter::canSprint()
+{
+	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && bSprintingActive)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool ABaseCharacter::canRegenerateStamina()
+{
+	if (bStandbyActive)
+	{
+		return true; // TODO: Add delay before stamina starts to regenerate
+	}
+	else
+	{
+		return false;
+	}	
+}
+
+void ABaseCharacter::standbyCheck()
+{
+	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
+	{
+		bStandbyActive = true;
+	}
+	else
+	{
+		bStandbyActive = false;
+	}
 }
 
