@@ -3,4 +3,39 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Animation/AnimMontage.h"
 
+#include "DawnOfSolaris.generated.h"
+
+UENUM(BlueprintType)
+enum EAttackHitboxType
+{
+	LeftHand     UMETA(DisplayName = "Left Hand"),
+	LeftElbow    UMETA(DisplayName = "Left Elbow"),
+	LeftKnee	 UMETA(DisplayName = "Left Knee"),
+	LeftFoot     UMETA(DisplayName = "Left Hand"),
+
+	RightHand     UMETA(DisplayName = "Right Hand"),
+	RightElbow    UMETA(DisplayName = "Right Elbow"),
+	RightKnee     UMETA(DisplayName = "Right Knee"),
+	RightFoot     UMETA(DisplayName = "Right Hand")
+};
+
+USTRUCT(BlueprintType)
+struct FChargeAttackData
+{
+	//GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* AttackAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float minDamageValue{ 30 };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float maxDamageValue{ 60 };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float minHitstunValue{ 0.3f };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float maxHitstunValue{ 0.6f };
+};
