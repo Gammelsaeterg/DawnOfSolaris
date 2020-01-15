@@ -138,7 +138,6 @@ void ABaseCharacter::sprintDeactivate()
 
 void ABaseCharacter::attackOnePressed()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
 	if (canAttack()) // TODO warning: May need refinenement
 	{
 		// Inititate attack
@@ -150,8 +149,7 @@ void ABaseCharacter::attackOnePressed()
 
 void ABaseCharacter::attackOneReleased()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Attack one released"))
-	if (bChargeAttackStarted)
+	if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackOneCombo))
 	{
 		releaseAttack_Implementation();
 	}	
@@ -159,12 +157,22 @@ void ABaseCharacter::attackOneReleased()
 
 void ABaseCharacter::attackTwoPressed()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Attack two pressed"))
+	//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
+	if (canAttack()) // TODO warning: May need refinenement
+	{
+		// Inititate attack
+		bChargeAttackStarted = true;
+		currentAttackType = EAttackType::AttackTwoCombo;
+		windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
+	}
 }
 
 void ABaseCharacter::attackTwoReleased()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Attack two released"))
+	if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackTwoCombo))
+	{
+		releaseAttack_Implementation();
+	}
 }
 
 bool ABaseCharacter::canSprint()
