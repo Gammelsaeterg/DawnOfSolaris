@@ -3,6 +3,10 @@
 
 #include "BaseCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/AnimMontage.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimInstance.h"
+
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -17,6 +21,8 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	attackOneComboMaxIndex = attackOneAttacks.Num();
+	//UE_LOG(LogTemp, Warning, TEXT("Current attackOneComboMaxIndex is %d"), attackOneComboMaxIndex)
 }
 
 // Called every frame
@@ -104,11 +110,17 @@ void ABaseCharacter::sprintDeactivate()
 void ABaseCharacter::attackOnePressed()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
+	if (canAttack())
+	{
+		// Inititate attack
+		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
+	}
 }
 
 void ABaseCharacter::attackOneReleased()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Attack one released"))
+	releaseAttack_Implementation();
 }
 
 void ABaseCharacter::attackTwoPressed()
@@ -143,6 +155,41 @@ bool ABaseCharacter::canRegenerateStamina()
 	{
 		return false;
 	}	
+}
+
+bool ABaseCharacter::canAttack()
+{
+	if (!bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
+}
+
+void ABaseCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
+{
+	// TODO: Complete this and rest of function
+	currentMontage = inAttack.AttackAnimMontage;
+	GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true); 
+	
+	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
+	//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
+	
+			
+}
+
+void ABaseCharacter::releaseAttack_Implementation()
+{
+	GetMesh()->GetAnimInstance()->Montage_Pause();
+
+	UE_LOG(LogTemp, Warning, TEXT("Attack released"))
+	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));	
+
+	GetMesh()->GetAnimInstance()->Montage_Resume(currentMontage);
 }
 
 void ABaseCharacter::standbyCheck()

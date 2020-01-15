@@ -6,8 +6,12 @@
 #include "GameFramework/Character.h"
 #include "CharacterInterface.h"
 #include "Components/InputComponent.h"
+#include "Containers/Array.h"
+#include "DawnOfSolaris.h"
 
 #include "BaseCharacter.generated.h"
+
+class UAnimMontage;
 
 UCLASS()
 class DAWNOFSOLARIS_API ABaseCharacter : public ACharacter, public ICharacterInterface
@@ -46,8 +50,21 @@ public:
 	bool bSprintingActive{ false }; // Active when sprint button is held
 	bool bStandbyActive{ true }; // Active when none of the above is active
 
+	UPROPERTY(BlueprintReadOnly)
 	bool attackOneStarted{ false };
+	UPROPERTY(BlueprintReadOnly)
 	bool attackTwoStarted{ false };
+
+	UPROPERTY(BlueprintReadOnly)
+	int attackOneComboMaxIndex{ 1 };
+	UPROPERTY(BlueprintReadOnly)
+	int attackTwoComboMaxIndex{ 1 };
+
+	UPROPERTY(BlueprintReadOnly)
+	int attackOneComboCurrentIndex{ 0 };
+	UPROPERTY(BlueprintReadOnly)
+	int attackTwoComboCurrentIndex{ 0 };
+
 
 	float baseStaminaRegen{ 25.f };
 	float sprintStaminaCost{ 45.f };
@@ -78,8 +95,24 @@ public:
 	void attackTwoPressed();
 	void attackTwoReleased();
 
+	void cancelAttackActions(); // TODO: Complete this function
+
 	bool canSprint();
 	bool canRegenerateStamina();
+	bool canAttack();
+
+	void windUpChargeAttack(FChargeAttackData& inAttack);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void releaseAttack();
+	virtual void releaseAttack_Implementation() override;
 
 	void standbyCheck();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> attackOneAttacks;
+
+	UAnimMontage* currentMontage;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: Complete this
+	//TArray<FChargeAttackData> attackTwoAttacks;
 };
