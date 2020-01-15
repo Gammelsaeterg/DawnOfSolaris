@@ -46,6 +46,9 @@ public:
 	bool bSprintingActive{ false }; // Active when sprint button is held
 	bool bStandbyActive{ true }; // Active when none of the above is active
 
+	bool attackOneStarted{ false };
+	bool attackTwoStarted{ false };
+
 	float baseStaminaRegen{ 25.f };
 	float sprintStaminaCost{ 45.f };
 
@@ -68,6 +71,12 @@ public:
 
 	void sprintActivate();
 	void sprintDeactivate();
+
+	void attackOnePressed();
+	void attackOneReleased();
+
+	void attackTwoPressed();
+	void attackTwoReleased();
 
 	bool canSprint();
 	bool canRegenerateStamina();

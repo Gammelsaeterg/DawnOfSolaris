@@ -61,6 +61,12 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
 	PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
 
+	PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::attackOnePressed);
+	PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &ABaseCharacter::attackOneReleased);
+
+	PlayerInputComponent->BindAction("AttackTwo", IE_Pressed, this, &ABaseCharacter::attackTwoPressed);
+	PlayerInputComponent->BindAction("AttackTwo", IE_Released, this, &ABaseCharacter::attackTwoReleased);
+
 	// Sprint attempt
 }
 
@@ -93,6 +99,26 @@ void ABaseCharacter::sprintActivate()
 void ABaseCharacter::sprintDeactivate()
 {
 	bSprintingActive = false;
+}
+
+void ABaseCharacter::attackOnePressed()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
+}
+
+void ABaseCharacter::attackOneReleased()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Attack one released"))
+}
+
+void ABaseCharacter::attackTwoPressed()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Attack two pressed"))
+}
+
+void ABaseCharacter::attackTwoReleased()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Attack two released"))
 }
 
 bool ABaseCharacter::canSprint()

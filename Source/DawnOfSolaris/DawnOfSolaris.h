@@ -7,6 +7,8 @@
 
 #include "DawnOfSolaris.generated.h"
 
+//UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
+
 UENUM(BlueprintType)
 enum EAttackHitboxType
 {
