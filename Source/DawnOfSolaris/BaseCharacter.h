@@ -50,10 +50,8 @@ public:
 	bool bSprintingActive{ false }; // Active when sprint button is held
 	bool bStandbyActive{ true }; // Active when none of the above is active
 
-	UPROPERTY(BlueprintReadOnly)
-	bool attackOneStarted{ false };
-	UPROPERTY(BlueprintReadOnly)
-	bool attackTwoStarted{ false };
+	bool bChargeAttackStarted{ false };
+
 
 	UPROPERTY(BlueprintReadOnly)
 	int attackOneComboMaxIndex{ 1 };
@@ -64,6 +62,8 @@ public:
 	int attackOneComboCurrentIndex{ 0 };
 	UPROPERTY(BlueprintReadOnly)
 	int attackTwoComboCurrentIndex{ 0 };
+
+	void incrementAttackCombo();
 
 
 	float baseStaminaRegen{ 25.f };
@@ -111,7 +111,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> attackOneAttacks;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> attackTwoAttacks;
+
 	UAnimMontage* currentMontage;
+
+	EAttackType currentAttackType;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: Complete this
 	//TArray<FChargeAttackData> attackTwoAttacks;

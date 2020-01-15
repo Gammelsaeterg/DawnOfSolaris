@@ -41,3 +41,12 @@ struct FChargeAttackData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float maxHitstunValue{ 0.6f };
 };
+
+UENUM()
+enum EAttackType
+{
+	DefaultAttack     UMETA(DisplayName = "Default Attack"),
+	AttackOneCombo     UMETA(DisplayName = "Attack One Combo"),
+	AttackTwoCombo    UMETA(DisplayName = "Attack Two Combo"),
+	GrabAttack    UMETA(DisplayName = "Grab Attack"),
+};

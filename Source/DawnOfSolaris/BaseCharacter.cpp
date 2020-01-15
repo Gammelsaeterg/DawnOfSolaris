@@ -22,6 +22,7 @@ void ABaseCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	attackOneComboMaxIndex = attackOneAttacks.Num();
+	attackTwoComboMaxIndex = attackTwoAttacks.Num();
 	//UE_LOG(LogTemp, Warning, TEXT("Current attackOneComboMaxIndex is %d"), attackOneComboMaxIndex)
 }
 
@@ -30,7 +31,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Debug function, TODO: DELETE
+	// TODO: Refine this
 	{
 		if (canSprint() && (currentStaminaPoints > 1.f))
 		{
@@ -76,6 +77,34 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	// Sprint attempt
 }
 
+void ABaseCharacter::incrementAttackCombo()
+{
+	// TODO: This should be switch statements
+
+	if (currentAttackType == EAttackType::AttackOneCombo)
+	{
+		if ((attackOneComboCurrentIndex + 1) >= attackOneComboMaxIndex)
+		{
+			attackOneComboCurrentIndex = 0;
+		}
+		else
+		{
+			++attackOneComboCurrentIndex;
+		}
+	}
+	else if (currentAttackType == EAttackType::AttackTwoCombo)
+	{
+		if ((attackTwoComboCurrentIndex + 1) >= attackTwoComboMaxIndex)
+		{
+			attackTwoComboCurrentIndex = 0;
+		}
+		else
+		{
+			++attackTwoComboCurrentIndex;
+		}
+	}
+}
+
 float ABaseCharacter::getHealthPoints_Implementation()
 {
 	return currentHealthPoints;
@@ -110,9 +139,11 @@ void ABaseCharacter::sprintDeactivate()
 void ABaseCharacter::attackOnePressed()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
-	if (canAttack())
+	if (canAttack()) // TODO warning: May need refinenement
 	{
 		// Inititate attack
+		bChargeAttackStarted = true;
+		currentAttackType = EAttackType::AttackOneCombo;
 		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
 	}
 }
@@ -120,7 +151,10 @@ void ABaseCharacter::attackOnePressed()
 void ABaseCharacter::attackOneReleased()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Attack one released"))
-	releaseAttack_Implementation();
+	if (bChargeAttackStarted)
+	{
+		releaseAttack_Implementation();
+	}	
 }
 
 void ABaseCharacter::attackTwoPressed()
@@ -179,17 +213,17 @@ void ABaseCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
 	//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 	
-			
+		
 }
 
 void ABaseCharacter::releaseAttack_Implementation()
 {
-	GetMesh()->GetAnimInstance()->Montage_Pause();
-
-	UE_LOG(LogTemp, Warning, TEXT("Attack released"))
-	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));	
-
-	GetMesh()->GetAnimInstance()->Montage_Resume(currentMontage);
+	if (bChargeAttackStarted == true)
+	{
+		bChargeAttackStarted = false;
+		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
+		incrementAttackCombo();
+	}
 }
 
 void ABaseCharacter::standbyCheck()
