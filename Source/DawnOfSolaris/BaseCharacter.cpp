@@ -195,7 +195,15 @@ bool ABaseCharacter::canAttack()
 {
 	if (!bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
 	{
-		return true;
+		if (!bChargeAttackStarted)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
 	}
 	else
 	{
