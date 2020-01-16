@@ -49,5 +49,6 @@ void ADefaultPlayerController::ContinueGame()
 		bShowMouseCursor = false;
 
 		SetInputMode(FInputModeGameOnly());
+
 	}
 }
