@@ -61,11 +61,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-protected:
+public:	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -76,22 +75,15 @@ public:
 	float maxHealthPoints{ 100 };
 	float currentHealthPoints{ 100 };
 
-
-
-	float maxWalkSpeed{ 600 };
-	float maxSprintSpeed{ 1100 };
+	float maxWalkSpeed{ 600 }; // Also max regular movement speed
+	
 
 	// TODO: Make this into an enum state(?)
 	bool bAttackActionActive{ false }; // Active in attack frames
 	bool bSelfHitstunActive{ false }; // Active in hitstun frames
-	bool bDodgingActive{ false }; // Active in dodge frames
-	bool bSprintingActive{ false }; // Active when sprint button is held
 	bool bStandbyActive{ true }; // Active when none of the above is active
-
-	bool bChargeAttackStarted{ false };
 	bool bDefaultAttackStarted{ false };
-
-
+	
 	UPROPERTY(BlueprintReadOnly)
 	int attackOneComboMaxIndex{ 1 };
 	UPROPERTY(BlueprintReadOnly)
@@ -117,82 +109,12 @@ public:
 	void setHealthPoints(float newHealthPoints);
 	virtual void setHealthPoints_Implementation(float newHealthPoints) override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
-	float getStaminaPoints();
-	virtual float getStaminaPoints_Implementation() override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
-	void setStaminaPoints(float newStaminaPoints);
-	virtual void setStaminaPoints_Implementation(float newStaminaPoints) override;
-
-	void sprintActivate()
-	{
-		bSprintingActive = true;
-	}
-	void sprintDeactivate()
-	{
-		bSprintingActive = false;
-	}
 
 	void defaultAttackStart(int attackIndex = 0);
 	void defaultAttackEnd();
 
-
-	void attackOnePressed()
-	{
-		//if (canAttack()) // TODO warning: May need refinenement
-		//{
-		//	// Inititate attack
-		//	bChargeAttackStarted = true;
-		//	currentAttackType = EAttackType::AttackOneCombo;
-		//	windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
-		//}
-
-		//if (canAttack()) // TODO warning: May need refinenement
-		defaultAttackStart();
-		UE_LOG(LogTemp, Warning, TEXT("Base function"))
-	}
-	void attackOneReleased()
-	{
-		if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackOneCombo))
-		{
-			releaseAttack_Implementation();
-		}
-	}
-
-	void attackTwoPressed()
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
-		if (canAttack()) // TODO warning: May need refinenement
-		{
-			if (attackTwoAttacks.IsValidIndex(attackTwoComboCurrentIndex)) // To check if attacks exist
-			{
-				// Inititate attack
-				bChargeAttackStarted = true;
-				currentAttackType = EAttackType::AttackTwoCombo;
-				windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
-			}
-		}
-	}
-	void attackTwoReleased()
-	{
-		if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackTwoCombo))
-		{
-			releaseAttack_Implementation();
-		}
-	}
-
 	void cancelAttackActions(); // TODO: Complete this function
-
-	bool canSprint();
-	bool canRegenerateStamina();
-	bool canAttack();
-
-	void windUpChargeAttack(FChargeAttackData& inAttack);
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-	void releaseAttack();
-	virtual void releaseAttack_Implementation() override;
-
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -210,24 +132,4 @@ public:
 
 	//Move code below to player character
 
-	float maxStaminaPoints{ 100 };
-	float currentStaminaPoints{ 100 };
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FChargeAttackData> attackOneAttacks;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FChargeAttackData> attackTwoAttacks;
-
-	void standbyCheck()
-	{
-		if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
-		{
-			bStandbyActive = true;
-		}
-		else
-		{
-			bStandbyActive = false;
-		}
-	}
 };
