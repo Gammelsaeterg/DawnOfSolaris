@@ -18,41 +18,6 @@ APlayerCharacter::APlayerCharacter()
 
 }
 
-
-//void APlayerCharacter::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//	// TODO: Refine this
-//	{
-//		if (canSprint() && (currentStaminaPoints > 1.f))
-//		{
-//			GetCharacterMovement()->MaxWalkSpeed = maxSprintSpeed; // Should lerp
-//			currentStaminaPoints -= sprintStaminaCost * DeltaTime;
-//		}
-//		else
-//		{
-//			GetCharacterMovement()->MaxWalkSpeed = maxWalkSpeed; // Should lerp
-//		}
-//	}
-//
-//	// Stamina regen tick
-//	if ((currentStaminaPoints) < maxStaminaPoints) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
-//	{
-//		if (canRegenerateStamina())
-//		{
-//			currentStaminaPoints += baseStaminaRegen * DeltaTime;
-//		}
-//	}
-//	else if (currentStaminaPoints > maxStaminaPoints)
-//	{
-//		//currentStaminaPoints = 100.f;
-//	}
-//
-//	// Check if standby
-//	standbyCheck();
-//}
-
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -111,19 +76,55 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
 
-	//PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
-	//PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
+	PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &APlayerCharacter::sprintActivate);
+	PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &APlayerCharacter::sprintDeactivate);
 
 	PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &APlayerCharacter::attackOnePressed);
-	//PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &ABaseCharacter::attackOneReleased);
+	PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &APlayerCharacter::attackOneReleased);
 
-	//PlayerInputComponent->BindAction("AttackTwo", IE_Pressed, this, &ABaseCharacter::attackTwoPressed);
-	//PlayerInputComponent->BindAction("AttackTwo", IE_Released, this, &ABaseCharacter::attackTwoReleased);
+	PlayerInputComponent->BindAction("AttackTwo", IE_Pressed, this, &APlayerCharacter::attackTwoPressed);
+	PlayerInputComponent->BindAction("AttackTwo", IE_Released, this, &APlayerCharacter::attackTwoReleased);
 
 	// Sprint attempt
 }
 
 void APlayerCharacter::attackOnePressed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Derived function"))
+	if (canAttack()) // TODO warning: May need refinenement
+	{
+		// Inititate attack
+		bChargeAttackStarted = true;
+		currentAttackType = EAttackType::AttackOneCombo;
+		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
+	}
+}
+
+void APlayerCharacter::attackOneReleased()
+{
+	if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackOneCombo))
+	{
+		releaseAttack_Implementation();
+	}
+}
+
+void APlayerCharacter::attackTwoPressed()
+{
+	if (canAttack()) // TODO warning: May need refinenement
+	{
+		if (attackTwoAttacks.IsValidIndex(attackTwoComboCurrentIndex)) // To check if attacks exist
+		{
+			// Inititate attack
+			bChargeAttackStarted = true;
+			currentAttackType = EAttackType::AttackTwoCombo;
+			windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
+		}
+	}
+}
+
+void APlayerCharacter::attackTwoReleased()
+{
+	if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackTwoCombo))
+	{
+		releaseAttack_Implementation();
+	}
 }

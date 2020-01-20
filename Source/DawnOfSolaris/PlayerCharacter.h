@@ -29,16 +29,20 @@ public:
 	//Current input component
 
 	void attackOnePressed();
+	void attackOneReleased();
+
+	void attackTwoPressed();
+	void attackTwoReleased();
 
 
 	float maxStaminaPoints{ 100 };
 	float currentStaminaPoints{ 100 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FChargeAttackData> attackOneAttacks;
+	TArray<FChargeAttackData> attackOneAttacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FChargeAttackData> attackTwoAttacks;
+	TArray<FChargeAttackData> attackTwoAttacks;
 
 	void standbyCheck()
 	{
@@ -107,7 +111,7 @@ public:
 
 	}
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-		void releaseAttack();
+	void releaseAttack();
 	virtual void releaseAttack_Implementation() override
 	{
 		if (bChargeAttackStarted == true)
@@ -119,7 +123,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
-		float getStaminaPoints();
+	float getStaminaPoints();
 	virtual float getStaminaPoints_Implementation() override
 	{
 		return currentStaminaPoints;
