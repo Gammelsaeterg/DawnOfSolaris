@@ -30,23 +30,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
 
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	/** Camera boom positioning the camera behind the character */
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
-
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -65,6 +48,22 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	/** Camera boom positioning the camera behind the character */
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
+
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
@@ -77,8 +76,7 @@ public:
 	float maxHealthPoints{ 100 };
 	float currentHealthPoints{ 100 };
 
-	float maxStaminaPoints{ 100 };
-	float currentStaminaPoints{ 100 };
+
 
 	float maxWalkSpeed{ 600 };
 	float maxSprintSpeed{ 1100 };
@@ -127,18 +125,62 @@ public:
 	void setStaminaPoints(float newStaminaPoints);
 	virtual void setStaminaPoints_Implementation(float newStaminaPoints) override;
 
-	void sprintActivate();
-	void sprintDeactivate();
+	void sprintActivate()
+	{
+		bSprintingActive = true;
+	}
+	void sprintDeactivate()
+	{
+		bSprintingActive = false;
+	}
 
 	void defaultAttackStart(int attackIndex = 0);
 	void defaultAttackEnd();
 
 
-	void attackOnePressed();
-	void attackOneReleased();
+	void attackOnePressed()
+	{
+		//if (canAttack()) // TODO warning: May need refinenement
+		//{
+		//	// Inititate attack
+		//	bChargeAttackStarted = true;
+		//	currentAttackType = EAttackType::AttackOneCombo;
+		//	windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
+		//}
 
-	void attackTwoPressed();
-	void attackTwoReleased();
+		//if (canAttack()) // TODO warning: May need refinenement
+		defaultAttackStart();
+		UE_LOG(LogTemp, Warning, TEXT("Base function"))
+	}
+	void attackOneReleased()
+	{
+		if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackOneCombo))
+		{
+			releaseAttack_Implementation();
+		}
+	}
+
+	void attackTwoPressed()
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
+		if (canAttack()) // TODO warning: May need refinenement
+		{
+			if (attackTwoAttacks.IsValidIndex(attackTwoComboCurrentIndex)) // To check if attacks exist
+			{
+				// Inititate attack
+				bChargeAttackStarted = true;
+				currentAttackType = EAttackType::AttackTwoCombo;
+				windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
+			}
+		}
+	}
+	void attackTwoReleased()
+	{
+		if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackTwoCombo))
+		{
+			releaseAttack_Implementation();
+		}
+	}
 
 	void cancelAttackActions(); // TODO: Complete this function
 
@@ -151,16 +193,13 @@ public:
 	void releaseAttack();
 	virtual void releaseAttack_Implementation() override;
 
-	void standbyCheck();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FChargeAttackData> attackOneAttacks;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FChargeAttackData> attackTwoAttacks;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FDefaultAttackData> defaultAttacks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int currentPlayerID{ -1 };
 
 	UAnimMontage* currentMontage;
 
@@ -168,4 +207,27 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: Complete this
 	//TArray<FChargeAttackData> attackTwoAttacks;
+
+	//Move code below to player character
+
+	float maxStaminaPoints{ 100 };
+	float currentStaminaPoints{ 100 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> attackOneAttacks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> attackTwoAttacks;
+
+	void standbyCheck()
+	{
+		if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
+		{
+			bStandbyActive = true;
+		}
+		else
+		{
+			bStandbyActive = false;
+		}
+	}
 };

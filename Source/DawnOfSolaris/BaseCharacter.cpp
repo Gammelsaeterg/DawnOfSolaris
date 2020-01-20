@@ -144,28 +144,27 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABaseCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABaseCharacter::MoveRight);
 
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABaseCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
 
-	PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
-	PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
+	//PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
+	//PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
 
-	PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::attackOnePressed);
-	PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &ABaseCharacter::attackOneReleased);
+	//PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::defaultAttackStart); default attack
 
-	PlayerInputComponent->BindAction("AttackTwo", IE_Pressed, this, &ABaseCharacter::attackTwoPressed);
-	PlayerInputComponent->BindAction("AttackTwo", IE_Released, this, &ABaseCharacter::attackTwoReleased);
+	//PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::attackOnePressed);
+	//PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &ABaseCharacter::attackOneReleased);
+
+	//PlayerInputComponent->BindAction("AttackTwo", IE_Pressed, this, &ABaseCharacter::attackTwoPressed);
+	//PlayerInputComponent->BindAction("AttackTwo", IE_Released, this, &ABaseCharacter::attackTwoReleased);
 
 	// Sprint attempt
 }
@@ -219,16 +218,6 @@ void ABaseCharacter::setStaminaPoints_Implementation(float newStaminaPoints)
 	currentStaminaPoints = newStaminaPoints;
 }
 
-void ABaseCharacter::sprintActivate()
-{
-	bSprintingActive = true;
-}
-
-void ABaseCharacter::sprintDeactivate()
-{
-	bSprintingActive = false;
-}
-
 void ABaseCharacter::defaultAttackStart(int attackIndex)
 {
 	bDefaultAttackStarted = true;
@@ -246,51 +235,6 @@ void ABaseCharacter::defaultAttackEnd()
 	bDefaultAttackStarted = false;
 }
 
-
-void ABaseCharacter::attackOnePressed()
-{
-	//if (canAttack()) // TODO warning: May need refinenement
-	//{
-	//	// Inititate attack
-	//	bChargeAttackStarted = true;
-	//	currentAttackType = EAttackType::AttackOneCombo;
-	//	windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
-	//}
-
-	//if (canAttack()) // TODO warning: May need refinenement
-	defaultAttackStart();
-}
-
-void ABaseCharacter::attackOneReleased()
-{
-	if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackOneCombo))
-	{
-		releaseAttack_Implementation();
-	}	
-}
-
-void ABaseCharacter::attackTwoPressed()
-{
-	//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
-	if (canAttack()) // TODO warning: May need refinenement
-	{
-		if (attackTwoAttacks.IsValidIndex(attackTwoComboCurrentIndex)) // To check if attacks exist
-		{
-			// Inititate attack
-			bChargeAttackStarted = true;
-			currentAttackType = EAttackType::AttackTwoCombo;
-			windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
-		}
-	}
-}
-
-void ABaseCharacter::attackTwoReleased()
-{
-	if (bChargeAttackStarted && (currentAttackType == EAttackType::AttackTwoCombo))
-	{
-		releaseAttack_Implementation();
-	}
-}
 
 bool ABaseCharacter::canSprint()
 {
@@ -356,18 +300,6 @@ void ABaseCharacter::releaseAttack_Implementation()
 		bChargeAttackStarted = false;
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 		incrementAttackCombo();
-	}
-}
-
-void ABaseCharacter::standbyCheck()
-{
-	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
-	{
-		bStandbyActive = true;
-	}
-	else
-	{
-		bStandbyActive = false;
 	}
 }
 
