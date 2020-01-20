@@ -42,6 +42,23 @@ struct FChargeAttackData
 	float maxHitstunValue{ 0.6f };
 };
 
+USTRUCT(BlueprintType)
+struct FDefaultAttackData
+{
+	//GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* AttackAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float damageValue{ 20 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float hitstunValue{ 0.1f };
+
+};
+
 UENUM()
 enum EAttackType
 {

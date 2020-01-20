@@ -30,6 +30,19 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
 
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	/** Camera boom positioning the camera behind the character */
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
+
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -78,6 +91,7 @@ public:
 	bool bStandbyActive{ true }; // Active when none of the above is active
 
 	bool bChargeAttackStarted{ false };
+	bool bDefaultAttackStarted{ false };
 
 
 	UPROPERTY(BlueprintReadOnly)
@@ -116,6 +130,10 @@ public:
 	void sprintActivate();
 	void sprintDeactivate();
 
+	void defaultAttackStart(int attackIndex = 0);
+	void defaultAttackEnd();
+
+
 	void attackOnePressed();
 	void attackOneReleased();
 
@@ -140,6 +158,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> attackTwoAttacks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FDefaultAttackData> defaultAttacks;
 
 	UAnimMontage* currentMontage;
 

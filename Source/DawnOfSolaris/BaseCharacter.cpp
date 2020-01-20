@@ -7,6 +7,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/Controller.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 
@@ -36,6 +39,17 @@ ABaseCharacter::ABaseCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	// Create a camera boom (pulls in towards the player if there is a collision)
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->TargetArmLength = 600.0f; // The camera follows at this distance behind the character	
+	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+
+	// Create a follow camera
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 }
 
 // Called when the game starts or when spawned
@@ -215,15 +229,36 @@ void ABaseCharacter::sprintDeactivate()
 	bSprintingActive = false;
 }
 
+void ABaseCharacter::defaultAttackStart(int attackIndex)
+{
+	bDefaultAttackStarted = true;
+
+	if (defaultAttacks.IsValidIndex(attackIndex))  // To check if attacks exist
+	{
+		currentMontage = defaultAttacks[attackIndex].AttackAnimMontage;
+		GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+	}
+
+}
+
+void ABaseCharacter::defaultAttackEnd()
+{
+	bDefaultAttackStarted = false;
+}
+
+
 void ABaseCharacter::attackOnePressed()
 {
-	if (canAttack()) // TODO warning: May need refinenement
-	{
-		// Inititate attack
-		bChargeAttackStarted = true;
-		currentAttackType = EAttackType::AttackOneCombo;
-		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
-	}
+	//if (canAttack()) // TODO warning: May need refinenement
+	//{
+	//	// Inititate attack
+	//	bChargeAttackStarted = true;
+	//	currentAttackType = EAttackType::AttackOneCombo;
+	//	windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
+	//}
+
+	//if (canAttack()) // TODO warning: May need refinenement
+	defaultAttackStart();
 }
 
 void ABaseCharacter::attackOneReleased()
@@ -239,10 +274,13 @@ void ABaseCharacter::attackTwoPressed()
 	//UE_LOG(LogTemp, Warning, TEXT("Attack one pressed"))
 	if (canAttack()) // TODO warning: May need refinenement
 	{
-		// Inititate attack
-		bChargeAttackStarted = true;
-		currentAttackType = EAttackType::AttackTwoCombo;
-		windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
+		if (attackTwoAttacks.IsValidIndex(attackTwoComboCurrentIndex)) // To check if attacks exist
+		{
+			// Inititate attack
+			bChargeAttackStarted = true;
+			currentAttackType = EAttackType::AttackTwoCombo;
+			windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
+		}
 	}
 }
 
