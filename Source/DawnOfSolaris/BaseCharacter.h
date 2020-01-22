@@ -75,6 +75,7 @@ public:
 	float maxHealthPoints{ 100 };
 	float currentHealthPoints{ 100 };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxWalkSpeed{ 600 }; // Also max regular movement speed
 	
 

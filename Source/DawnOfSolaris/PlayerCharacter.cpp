@@ -76,8 +76,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
 
-	PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &APlayerCharacter::sprintActivate);
-	PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &APlayerCharacter::sprintDeactivate);
+	PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &APlayerCharacter::sprintPressed);
+	PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &APlayerCharacter::sprintReleased);
 
 	PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &APlayerCharacter::attackOnePressed);
 	PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &APlayerCharacter::attackOneReleased);
@@ -127,4 +127,105 @@ void APlayerCharacter::attackTwoReleased()
 	{
 		releaseAttack_Implementation();
 	}
+}
+
+inline void APlayerCharacter::sprintPressed()
+{
+	bSprintingActive = true;
+}
+
+inline void APlayerCharacter::sprintReleased()
+{
+	bSprintingActive = false;
+}
+
+inline void APlayerCharacter::standbyCheck() // Tick function to check if player is in standby
+{
+	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
+	{
+		bStandbyActive = true;
+	}
+	else
+	{
+		bStandbyActive = false;
+	}
+}
+
+// Tick function to check if player is in standby
+
+inline bool APlayerCharacter::canSprint()
+{
+	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && bSprintingActive)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+inline bool APlayerCharacter::canRegenerateStamina()
+{
+	if (bStandbyActive)
+	{
+		return true; // TODO: Add delay before stamina starts to regenerate
+	}
+	else
+	{
+		return false;
+	}
+}
+
+inline bool APlayerCharacter::canAttack()
+{
+	if (!bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
+	{
+		if (!bChargeAttackStarted)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+	else
+	{
+		return false;
+	}
+
+}
+
+inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
+{
+	// TODO: Complete this and rest of function
+	currentMontage = inAttack.AttackAnimMontage;
+	GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+
+	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
+	//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
+
+
+}
+
+inline void APlayerCharacter::releaseAttack_Implementation()
+{
+	if (bChargeAttackStarted == true)
+	{
+		bChargeAttackStarted = false;
+		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
+		incrementAttackCombo();
+	}
+}
+
+inline float APlayerCharacter::getStaminaPoints_Implementation()
+{
+	return currentStaminaPoints;
+}
+
+inline void APlayerCharacter::setStaminaPoints_Implementation(float newStaminaPoints)
+{
+	currentStaminaPoints = newStaminaPoints;
 }

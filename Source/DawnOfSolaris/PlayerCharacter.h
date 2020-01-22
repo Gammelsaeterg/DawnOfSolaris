@@ -28,15 +28,29 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//Current input component
 
+	//Inputs
 	void attackOnePressed();
 	void attackOneReleased();
 
 	void attackTwoPressed();
 	void attackTwoReleased();
 
+	void grabAttackPressed(); //TODO: Complete function
+	void grabAttackReleased(); //TODO: Complete function
 
+	void sprintPressed();
+	void sprintReleased();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxStaminaPoints{ 100 };
 	float currentStaminaPoints{ 100 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float maxSprintSpeed{ 1100 };
+
+	bool bDodgingActive{ false }; // Active in dodge frames
+	bool bSprintingActive{ false }; // Active when sprint button is held	
+	bool bChargeAttackStarted{ false };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> attackOneAttacks;
@@ -44,110 +58,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> attackTwoAttacks;
 
-	void standbyCheck()
-	{
-		if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
-		{
-			bStandbyActive = true;
-		}
-		else
-		{
-			bStandbyActive = false;
-		}
-	}
 
-	bool canSprint()
-	{
-		if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && bSprintingActive)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	bool canRegenerateStamina()
-	{
-		if (bStandbyActive)
-		{
-			return true; // TODO: Add delay before stamina starts to regenerate
-		}
-		else
-		{
-			return false;
-		}
-	}
-	bool canAttack()
-	{
-		if (!bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
-		{
-			if (!bChargeAttackStarted)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+	void standbyCheck(); // Tick function to check if player is in standby
+	bool canSprint();
+	bool canRegenerateStamina();
+	bool canAttack();
 
-		}
-		else
-		{
-			return false;
-		}
+	void windUpChargeAttack(FChargeAttackData& inAttack);
 
-	}
-
-	void windUpChargeAttack(FChargeAttackData& inAttack)
-	{
-		// TODO: Complete this and rest of function
-		currentMontage = inAttack.AttackAnimMontage;
-		GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
-
-		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
-		//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
-
-
-	}
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void releaseAttack();
-	virtual void releaseAttack_Implementation() override
-	{
-		if (bChargeAttackStarted == true)
-		{
-			bChargeAttackStarted = false;
-			GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
-			incrementAttackCombo();
-		}
-	}
+	virtual void releaseAttack_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getStaminaPoints();
-	virtual float getStaminaPoints_Implementation() override
-	{
-		return currentStaminaPoints;
-	}
+	virtual float getStaminaPoints_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
-		void setStaminaPoints(float newStaminaPoints);
-	virtual void setStaminaPoints_Implementation(float newStaminaPoints) override
-	{
-		currentStaminaPoints = newStaminaPoints;
-	}
+	void setStaminaPoints(float newStaminaPoints);
+	virtual void setStaminaPoints_Implementation(float newStaminaPoints) override;
 
-	float maxSprintSpeed{ 1100 };
 
-	bool bDodgingActive{ false }; // Active in dodge frames
-	bool bSprintingActive{ false }; // Active when sprint button is held	
-	bool bChargeAttackStarted{ false };
 
-	void sprintActivate()
-	{
-		bSprintingActive = true;
-	}
-	void sprintDeactivate()
-	{
-		bSprintingActive = false;
-	}
+
 };
