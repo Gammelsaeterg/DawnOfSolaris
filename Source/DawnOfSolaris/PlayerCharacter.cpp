@@ -84,6 +84,7 @@ void APlayerCharacter::attackOnePressed()
 		bChargeAttackStarted = true;
 		currentAttackType = EAttackType::AttackOneCombo;
 		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
+		currentAttackHitboxType = attackOneAttacks[attackOneComboCurrentIndex].AttackHitbox;
 	}
 }
 
@@ -105,6 +106,7 @@ void APlayerCharacter::attackTwoPressed()
 			bChargeAttackStarted = true;
 			currentAttackType = EAttackType::AttackTwoCombo;
 			windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
+			currentAttackHitboxType = attackTwoAttacks[attackOneComboCurrentIndex].AttackHitbox;
 		}
 	}
 }
@@ -248,4 +250,16 @@ inline float APlayerCharacter::getStaminaPoints_Implementation()
 inline void APlayerCharacter::setStaminaPoints_Implementation(float newStaminaPoints)
 {
 	currentStaminaPoints = newStaminaPoints;
+}
+
+void APlayerCharacter::activateAttackHitbox_Implementation()
+{
+	// Pseudo code activate.currentAttackHitbox	
+	bAttackHitboxActive = true;
+}
+
+void APlayerCharacter::deactivateAttackHitbox_Implementation()
+{
+	// Pseudo code deactivate.currentAttackHitbox	
+	bAttackHitboxActive = false;
 }

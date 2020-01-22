@@ -53,6 +53,7 @@ public:
 	bool bSprintingActive{ false }; // Active when sprint button is held	
 	bool bChargeAttackStarted{ false };
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bAttackHitboxActive{ false };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -73,6 +74,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* RightFootHitbox;
+
+	UPROPERTY(BlueprintReadOnly)
+	EAttackHitboxType currentAttackHitboxType;
 
 	//Tick functions
 	void standbyCheckTick(); // Tick function to check if player is in standby
@@ -99,7 +103,13 @@ public:
 	void setStaminaPoints(float newStaminaPoints);
 	virtual void setStaminaPoints_Implementation(float newStaminaPoints) override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void activateAttackHitbox();
+	virtual void activateAttackHitbox_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void deactivateAttackHitbox();
+	virtual void deactivateAttackHitbox_Implementation() override;
 
 
 };

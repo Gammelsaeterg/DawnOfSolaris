@@ -19,12 +19,12 @@ enum class EAttackHitboxType : uint8
 	LeftHand      UMETA(DisplayName = "Left Hand"),
 	LeftElbow     UMETA(DisplayName = "Left Elbow"),
 	LeftKnee	  UMETA(DisplayName = "Left Knee"),
-	LeftFoot      UMETA(DisplayName = "Left Hand"),
+	LeftFoot      UMETA(DisplayName = "Left Foot"),
 
 	RightHand     UMETA(DisplayName = "Right Hand"),
 	RightElbow    UMETA(DisplayName = "Right Elbow"),
 	RightKnee     UMETA(DisplayName = "Right Knee"),
-	RightFoot     UMETA(DisplayName = "Right Hand"),
+	RightFoot     UMETA(DisplayName = "Right Foot"),
 };
 
 USTRUCT(BlueprintType)
@@ -64,6 +64,8 @@ struct FDefaultAttackData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float hitstunValue{ 0.1f };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAttackHitboxType AttackHitbox;
 };
 
 UENUM()
