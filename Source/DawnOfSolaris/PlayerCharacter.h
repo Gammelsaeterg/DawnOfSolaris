@@ -26,7 +26,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	//Current input component
+
 
 	//Inputs
 	void attackOnePressed();
@@ -41,6 +41,7 @@ public:
 	void sprintPressed();
 	void sprintReleased();
 
+	//Variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxStaminaPoints{ 100 };
 	float currentStaminaPoints{ 100 };
@@ -58,7 +59,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> attackTwoAttacks;
 
+	//Hitbox collisions
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* LeftHandHitbox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* RightHandHitbox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* LeftFootHitbox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* RightFootHitbox;
+
+	//Tick functions
 	void standbyCheckTick(); // Tick function to check if player is in standby
 	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
 	void regenStaminaTick(float DeltaTime);
@@ -67,12 +81,14 @@ public:
 	bool canRegenerateStamina();
 	bool canAttack();
 
+	//Attack functions
 	void windUpChargeAttack(FChargeAttackData& inAttack);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void releaseAttack();
 	virtual void releaseAttack_Implementation() override;
 
+	//Other functions
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getStaminaPoints();
 	virtual float getStaminaPoints_Implementation() override;

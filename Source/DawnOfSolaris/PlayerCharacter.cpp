@@ -15,7 +15,21 @@
 
 APlayerCharacter::APlayerCharacter()
 {
+	LeftHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHandHitbox"));
+	LeftHandHitbox->SetupAttachment(GetMesh(), FName("hand_l"));
+	LeftHandHitbox->SetCapsuleSize(20.f, 20.f, true);
 
+	RightHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHandHitbox"));
+	RightHandHitbox->SetupAttachment(GetMesh(), FName("hand_r"));
+	RightHandHitbox->SetCapsuleSize(20.f, 20.f, true);
+
+	LeftFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftFootHitbox"));
+	LeftFootHitbox->SetupAttachment(GetMesh(), FName("foot_l"));
+	LeftFootHitbox->SetCapsuleSize(20.f, 20.f, true);
+
+	RightFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightFootHitbox"));
+	RightFootHitbox->SetupAttachment(GetMesh(), FName("foot_r"));
+	RightFootHitbox->SetCapsuleSize(20.f, 20.f, true);
 }
 
 void APlayerCharacter::BeginPlay()
