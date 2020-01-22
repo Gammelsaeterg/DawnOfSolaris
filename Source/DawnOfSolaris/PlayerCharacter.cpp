@@ -32,34 +32,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// TODO: Make most of the tick into seperate functions
-	// TODO: Refine this
-	{
-		if (canSprint() && (currentStaminaPoints > 1.f))
-		{
-			GetCharacterMovement()->MaxWalkSpeed = maxSprintSpeed; // Should lerp
-			currentStaminaPoints -= sprintStaminaCost * DeltaTime;
-		}
-		else
-		{
-			GetCharacterMovement()->MaxWalkSpeed = maxWalkSpeed; // Should lerp
-		}
-	}
-
-	// Stamina regen tick
-	if ((currentStaminaPoints) < maxStaminaPoints) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
-	{
-		if (canRegenerateStamina())
-		{
-			currentStaminaPoints += baseStaminaRegen * DeltaTime;
-		}
-	}
-	else if (currentStaminaPoints > maxStaminaPoints)
-	{
-		//currentStaminaPoints = 100.f;
-	}
+	sprintTick(DeltaTime);
 
 	// Check if standby
-	standbyCheck();
+	standbyCheckTick();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
@@ -139,7 +115,7 @@ inline void APlayerCharacter::sprintReleased()
 	bSprintingActive = false;
 }
 
-inline void APlayerCharacter::standbyCheck() // Tick function to check if player is in standby
+inline void APlayerCharacter::standbyCheckTick() // Tick function to check if player is in standby
 {
 	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
 	{
@@ -148,6 +124,38 @@ inline void APlayerCharacter::standbyCheck() // Tick function to check if player
 	else
 	{
 		bStandbyActive = false;
+	}
+}
+
+void APlayerCharacter::sprintTick(float DeltaTime)
+{
+	// TODO: Refine this
+	{
+		if (canSprint() && (currentStaminaPoints > 1.f))
+		{
+			GetCharacterMovement()->MaxWalkSpeed = maxSprintSpeed; // Should lerp
+			currentStaminaPoints -= sprintStaminaCost * DeltaTime;
+		}
+		else
+		{
+			GetCharacterMovement()->MaxWalkSpeed = maxWalkSpeed; // Should lerp
+		}
+	}
+}
+
+void APlayerCharacter::regenStaminaTick(float DeltaTime)
+{
+	// Stamina regen tick
+	if ((currentStaminaPoints) < maxStaminaPoints) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
+	{
+		if (canRegenerateStamina())
+		{
+			currentStaminaPoints += baseStaminaRegen * DeltaTime;
+		}
+	}
+	else if (currentStaminaPoints > maxStaminaPoints)
+	{
+		//currentStaminaPoints = 100.f;
 	}
 }
 

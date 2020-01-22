@@ -59,7 +59,10 @@ public:
 	TArray<FChargeAttackData> attackTwoAttacks;
 
 
-	void standbyCheck(); // Tick function to check if player is in standby
+	void standbyCheckTick(); // Tick function to check if player is in standby
+	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
+	void regenStaminaTick(float DeltaTime);
+
 	bool canSprint();
 	bool canRegenerateStamina();
 	bool canAttack();

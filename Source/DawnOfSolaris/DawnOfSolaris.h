@@ -12,15 +12,19 @@
 UENUM(BlueprintType)
 enum EAttackHitboxType
 {
-	LeftHand     UMETA(DisplayName = "Left Hand"),
-	LeftElbow    UMETA(DisplayName = "Left Elbow"),
-	LeftKnee	 UMETA(DisplayName = "Left Knee"),
-	LeftFoot     UMETA(DisplayName = "Left Hand"),
+	LeftHand      UMETA(DisplayName = "Left Hand"),
+	LeftElbow     UMETA(DisplayName = "Left Elbow"),
+	LeftKnee	  UMETA(DisplayName = "Left Knee"),
+	LeftFoot      UMETA(DisplayName = "Left Hand"),
 
 	RightHand     UMETA(DisplayName = "Right Hand"),
 	RightElbow    UMETA(DisplayName = "Right Elbow"),
 	RightKnee     UMETA(DisplayName = "Right Knee"),
-	RightFoot     UMETA(DisplayName = "Right Hand")
+	RightFoot     UMETA(DisplayName = "Right Hand"),
+
+	HeldObject    UMETA(DisplayName = "Held object"),
+	Projectile    UMETA(DisplayName = "Projectile"),
+	Custom		  UMETA(DisplayName = "Custom"),
 };
 
 USTRUCT(BlueprintType)
