@@ -31,10 +31,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// TODO: Make most of the tick into seperate functions
 	sprintTick(DeltaTime);
-
-	// Check if standby
+	regenStaminaTick(DeltaTime);
 	standbyCheckTick();
 }
 
