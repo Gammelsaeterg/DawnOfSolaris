@@ -229,7 +229,7 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
 	//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 
-
+	bAttackHitboxActive = false; // Disable for new attack
 }
 
 inline void APlayerCharacter::releaseAttack_Implementation()
@@ -238,7 +238,7 @@ inline void APlayerCharacter::releaseAttack_Implementation()
 	{
 		bChargeAttackStarted = false;
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
-		incrementAttackCombo();
+		incrementAttackCombo();		
 	}
 }
 
