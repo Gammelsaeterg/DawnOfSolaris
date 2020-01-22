@@ -53,6 +53,8 @@ public:
 	bool bSprintingActive{ false }; // Active when sprint button is held	
 	bool bChargeAttackStarted{ false };
 
+	bool bAttackHitboxActive{ false };
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> attackOneAttacks;
 

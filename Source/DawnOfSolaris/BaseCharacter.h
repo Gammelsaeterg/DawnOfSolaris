@@ -77,6 +77,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxWalkSpeed{ 600 }; // Also max regular movement speed
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float baseStaminaRegen{ 25.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float sprintStaminaCost{ 45.f };
 	
 
 	// TODO: Make this into an enum state(?)
@@ -96,11 +102,6 @@ public:
 	int attackTwoComboCurrentIndex{ 0 };
 
 	void incrementAttackCombo();
-
-
-	float baseStaminaRegen{ 25.f };
-	float sprintStaminaCost{ 45.f };
-
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getHealthPoints();

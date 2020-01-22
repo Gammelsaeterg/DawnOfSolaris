@@ -10,8 +10,12 @@
 //UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
 
 UENUM(BlueprintType)
-enum EAttackHitboxType
+enum class EAttackHitboxType : uint8
 {
+	Default		  UMETA(DisplayName = "Default"),
+	HeldObject    UMETA(DisplayName = "Held object"),
+	Projectile    UMETA(DisplayName = "Projectile"),
+
 	LeftHand      UMETA(DisplayName = "Left Hand"),
 	LeftElbow     UMETA(DisplayName = "Left Elbow"),
 	LeftKnee	  UMETA(DisplayName = "Left Knee"),
@@ -21,10 +25,6 @@ enum EAttackHitboxType
 	RightElbow    UMETA(DisplayName = "Right Elbow"),
 	RightKnee     UMETA(DisplayName = "Right Knee"),
 	RightFoot     UMETA(DisplayName = "Right Hand"),
-
-	HeldObject    UMETA(DisplayName = "Held object"),
-	Projectile    UMETA(DisplayName = "Projectile"),
-	Custom		  UMETA(DisplayName = "Custom"),
 };
 
 USTRUCT(BlueprintType)
@@ -44,6 +44,9 @@ struct FChargeAttackData
 	float minHitstunValue{ 0.3f };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float maxHitstunValue{ 0.6f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAttackHitboxType AttackHitbox;
 };
 
 USTRUCT(BlueprintType)
@@ -67,7 +70,13 @@ UENUM()
 enum EAttackType
 {
 	DefaultAttack     UMETA(DisplayName = "Default Attack"),
-	AttackOneCombo     UMETA(DisplayName = "Attack One Combo"),
+	AttackOneCombo    UMETA(DisplayName = "Attack One Combo"),
 	AttackTwoCombo    UMETA(DisplayName = "Attack Two Combo"),
-	GrabAttack    UMETA(DisplayName = "Grab Attack"),
+	GrabAttack		  UMETA(DisplayName = "Grab Attack"),
+};
+
+UENUM(BlueprintType)
+enum class ECombatAlignment : uint8
+{
+	Neutral     UMETA(DisplayName = "Neutral"),
 };
