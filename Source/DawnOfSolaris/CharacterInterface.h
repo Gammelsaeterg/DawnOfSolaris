@@ -43,4 +43,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void deactivateAttackHitbox();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void takeDamage(float damageAmount, FVector hitDirection, FVector hitLocation, FVector hitFrom, float hitstunStrength);
 };

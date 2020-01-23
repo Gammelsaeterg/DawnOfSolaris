@@ -240,7 +240,6 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
-	//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 
 	bAttackHitboxActive = false; // Disable old hitbox for new attack
 	clearHitActors();
