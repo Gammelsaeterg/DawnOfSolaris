@@ -72,18 +72,13 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//Current input component
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxHealthPoints{ 100 };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float currentHealthPoints{ 100 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxWalkSpeed{ 600 }; // Also max regular movement speed
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	float baseStaminaRegen{ 25.f };
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	float sprintStaminaCost{ 45.f };
-	
 
 	// TODO: Make this into an enum state(?)
 	bool bAttackActionActive{ false }; // Active in attack frames
@@ -100,6 +95,9 @@ public:
 	int attackOneComboCurrentIndex{ 0 };
 	UPROPERTY(BlueprintReadOnly)
 	int attackTwoComboCurrentIndex{ 0 };
+
+	UPROPERTY(BlueprintReadOnly)
+	FAttackData currentAttackDataToSend;
 
 	void incrementAttackCombo();
 

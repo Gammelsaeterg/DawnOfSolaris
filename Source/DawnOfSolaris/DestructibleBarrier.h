@@ -28,4 +28,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* baseMesh;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float maxHealthPoints{ 100 };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float currentHealthPoints{ 100 };
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void takeDamage(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength);
+	virtual void takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void breakBarrier();
 };

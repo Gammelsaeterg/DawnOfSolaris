@@ -68,6 +68,28 @@ struct FDefaultAttackData
 	EAttackHitboxType AttackHitbox;
 };
 
+USTRUCT(BlueprintType)
+struct FAttackData // Used for storing and sending attack info
+{
+	//GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float damageAmount{ 0 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector hitDirection{0.f, 0.f, 0.f};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector hitLocation{0.f, 0.f, 0.f};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector hitFrom{ 0.f, 0.f, 0.f };
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float hitstunStrength{ 0 };
+};
+
 UENUM()
 enum EAttackType
 {

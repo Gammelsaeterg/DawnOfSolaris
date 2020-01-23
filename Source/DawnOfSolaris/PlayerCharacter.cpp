@@ -98,6 +98,8 @@ void APlayerCharacter::attackOnePressed()
 		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
 		currentAttackHitboxType = attackOneAttacks[attackOneComboCurrentIndex].AttackHitbox;
 
+		currentAttackDataToSend.damageAmount = attackOneAttacks[attackOneComboCurrentIndex].minDamageValue; // TODO: Get charge value
+		currentAttackDataToSend.hitstunStrength = attackOneAttacks[attackOneComboCurrentIndex].minHitstunValue; // TODO: Get charge value
 	}
 }
 
@@ -120,6 +122,9 @@ void APlayerCharacter::attackTwoPressed()
 			currentAttackType = EAttackType::AttackTwoCombo;
 			windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
 			currentAttackHitboxType = attackTwoAttacks[attackOneComboCurrentIndex].AttackHitbox;
+
+			currentAttackDataToSend.damageAmount = attackTwoAttacks[attackTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
+			currentAttackDataToSend.hitstunStrength = attackTwoAttacks[attackTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
 		}
 	}
 }
@@ -294,6 +299,15 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 			UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
 			UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 			hitActors.Add(OtherActor);
+
+			// TODO: On other actor take damage, set charge value multiplier to damage and hitstun strength sent
+			ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
+			if (characterInterface)
+			{
+				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend.damageAmount, 
+													   FVector(0.f, 0.f, 0.f), FVector(0.f, 0.f, 0.f), 
+					                                   this, currentAttackDataToSend.hitstunStrength);
+			}			
 		}
 	}
 }

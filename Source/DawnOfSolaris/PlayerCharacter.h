@@ -48,6 +48,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxSprintSpeed{ 1100 };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float baseStaminaRegen{ 25.f };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float sprintStaminaCost{ 45.f };
 
 	bool bDodgingActive{ false }; // Active in dodge frames
 	bool bSprintingActive{ false }; // Active when sprint button is held	

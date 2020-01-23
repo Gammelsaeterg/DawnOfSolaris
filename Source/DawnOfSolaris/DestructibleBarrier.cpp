@@ -27,3 +27,17 @@ void ADestructibleBarrier::Tick(float DeltaTime)
 
 }
 
+void ADestructibleBarrier::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength)
+{
+	if (currentHealthPoints > damageAmount)
+	{
+		currentHealthPoints -= damageAmount;
+		UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
+	}
+	else
+	{
+		currentHealthPoints = 0;
+		breakBarrier();
+	}
+}
+
