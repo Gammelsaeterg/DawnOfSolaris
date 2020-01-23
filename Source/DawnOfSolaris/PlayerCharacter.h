@@ -129,5 +129,7 @@ public:
 	void deactivateAttackHitbox();
 	virtual void deactivateAttackHitbox_Implementation() override;
 
-
+	//Hitbox handling
+	void enableHitbox(EAttackHitboxType inHitbox, bool enabled);
+	void disableAllHitboxes();
 };

@@ -15,25 +15,31 @@
 
 APlayerCharacter::APlayerCharacter()
 {
+
+	// TODO: Needs refactoring
 	LeftHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHandHitbox"));
 	LeftHandHitbox->SetupAttachment(GetMesh(), FName("hand_l"));
 	LeftHandHitbox->SetCapsuleSize(20.f, 20.f, true);
 	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginLeftHandHitbox);
+	LeftHandHitbox->SetGenerateOverlapEvents(false);
 
 	RightHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHandHitbox"));
 	RightHandHitbox->SetupAttachment(GetMesh(), FName("hand_r"));
 	RightHandHitbox->SetCapsuleSize(20.f, 20.f, true);
 	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightHandHitbox);
+	RightHandHitbox->SetGenerateOverlapEvents(false);
 
 	LeftFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftFootHitbox"));
 	LeftFootHitbox->SetupAttachment(GetMesh(), FName("foot_l"));
 	LeftFootHitbox->SetCapsuleSize(20.f, 20.f, true);
 	LeftFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginLeftFootHitbox);
+	LeftFootHitbox->SetGenerateOverlapEvents(false);
 
 	RightFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightFootHitbox"));
 	RightFootHitbox->SetupAttachment(GetMesh(), FName("foot_r"));
 	RightFootHitbox->SetCapsuleSize(20.f, 20.f, true);
 	RightFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightFootHitbox);
+	RightFootHitbox->SetGenerateOverlapEvents(false);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -233,7 +239,7 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
 	//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 
-	bAttackHitboxActive = false; // Disable for new attack
+	bAttackHitboxActive = false; // Disable old hitbox for new attack
 }
 
 inline void APlayerCharacter::releaseAttack_Implementation()
@@ -253,6 +259,7 @@ void APlayerCharacter::OnOverlapBeginLeftHandHitbox(UPrimitiveComponent * Overla
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 	}	
 }
 
@@ -263,6 +270,7 @@ void APlayerCharacter::OnOverlapBeginRightHandHitbox(UPrimitiveComponent * Overl
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 	}	
 }
 
@@ -273,6 +281,7 @@ void APlayerCharacter::OnOverlapBeginLeftFootHitbox(UPrimitiveComponent * Overla
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 	}	
 }
 
@@ -283,6 +292,7 @@ void APlayerCharacter::OnOverlapBeginRightFootHitbox(UPrimitiveComponent * Overl
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 	}	
 }
 
@@ -298,12 +308,40 @@ inline void APlayerCharacter::setStaminaPoints_Implementation(float newStaminaPo
 
 void APlayerCharacter::activateAttackHitbox_Implementation()
 {
-	// Pseudo code activate.currentAttackHitbox	
+	enableHitbox(currentAttackHitboxType, true);
 	bAttackHitboxActive = true;
 }
 
 void APlayerCharacter::deactivateAttackHitbox_Implementation()
 {
-	// Pseudo code deactivate.currentAttackHitbox	
+	disableAllHitboxes();
 	bAttackHitboxActive = false;
+}
+
+void APlayerCharacter::enableHitbox(EAttackHitboxType inHitbox, bool enabled)
+{
+	switch (inHitbox)
+	{
+	case EAttackHitboxType::LeftHand:
+		LeftHandHitbox->SetGenerateOverlapEvents(enabled);
+		break;
+	case EAttackHitboxType::RightHand:
+		RightHandHitbox->SetGenerateOverlapEvents(enabled);
+		break;
+	case EAttackHitboxType::LeftFoot:
+		LeftFootHitbox->SetGenerateOverlapEvents(enabled);
+		break;
+	case EAttackHitboxType::RightFoot:
+		RightFootHitbox->SetGenerateOverlapEvents(enabled);
+		break;
+	}
+}
+
+void APlayerCharacter::disableAllHitboxes()
+{
+	// TODO: Make this into an array and refactor
+	LeftHandHitbox->SetGenerateOverlapEvents(false);
+	RightHandHitbox->SetGenerateOverlapEvents(false);
+	LeftFootHitbox->SetGenerateOverlapEvents(false);
+	RightFootHitbox->SetGenerateOverlapEvents(false);
 }
