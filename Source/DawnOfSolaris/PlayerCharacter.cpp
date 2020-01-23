@@ -40,6 +40,8 @@ APlayerCharacter::APlayerCharacter()
 	RightFootHitbox->SetCapsuleSize(20.f, 20.f, true);
 	RightFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightFootHitbox);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
+
+	//TODO: Research if these overlap events can be bound to one function
 }
 
 void APlayerCharacter::BeginPlay()
@@ -256,44 +258,39 @@ void APlayerCharacter::OnOverlapBeginLeftHandHitbox(UPrimitiveComponent * Overla
 												    UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 													bool bFromSweep, const FHitResult & SweepResult)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
-	}	
+	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
 void APlayerCharacter::OnOverlapBeginRightHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
 												     UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 													 bool bFromSweep, const FHitResult & SweepResult)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
-	}	
+	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
 void APlayerCharacter::OnOverlapBeginLeftFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
 												    UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 													bool bFromSweep, const FHitResult & SweepResult)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
-	}	
+	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
 void APlayerCharacter::OnOverlapBeginRightFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
 												     UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 													 bool bFromSweep, const FHitResult & SweepResult)
 {
+	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+}
+
+void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
+											   UPrimitiveComponent * OtherComp, int32 OtherBodyIndex,
+											   bool bFromSweep, const FHitResult & SweepResult)
+{
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
-	}	
+	}
 }
 
 inline float APlayerCharacter::getStaminaPoints_Implementation()
@@ -344,4 +341,26 @@ void APlayerCharacter::disableAllHitboxes()
 	RightHandHitbox->SetGenerateOverlapEvents(false);
 	LeftFootHitbox->SetGenerateOverlapEvents(false);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
+}
+
+bool APlayerCharacter::isActorAlreadyHit(AActor * inActor)
+{
+	// TODO: Simplify this
+	bool bIsActorAlreadyHit{ false };
+	for (AActor * hitActor : hitActors)
+	{
+		if (inActor == hitActor)
+		{
+			bIsActorAlreadyHit = true;
+		}
+	}
+
+	if (bIsActorAlreadyHit)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

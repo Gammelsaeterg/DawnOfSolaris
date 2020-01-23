@@ -112,6 +112,11 @@ public:
 								       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 								       bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void OnOverlapBeginAttackHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+								 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+								 bool bFromSweep, const FHitResult& SweepResult);
+
 	//Other functions
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getStaminaPoints();
@@ -132,4 +137,8 @@ public:
 	//Hitbox handling
 	void enableHitbox(EAttackHitboxType inHitbox, bool enabled);
 	void disableAllHitboxes();
+
+	//Storing current hit actors to avoid multiple hits in one attack
+	TArray<AActor*> hitActors;
+	bool isActorAlreadyHit(AActor* inActor);
 };
