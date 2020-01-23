@@ -97,6 +97,7 @@ void APlayerCharacter::attackOnePressed()
 		currentAttackType = EAttackType::AttackOneCombo;
 		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
 		currentAttackHitboxType = attackOneAttacks[attackOneComboCurrentIndex].AttackHitbox;
+
 	}
 }
 
@@ -242,6 +243,7 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	//GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 
 	bAttackHitboxActive = false; // Disable old hitbox for new attack
+	clearHitActors();
 }
 
 inline void APlayerCharacter::releaseAttack_Implementation()
@@ -288,8 +290,12 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
+		if (!(isActorAlreadyHit(OtherActor)))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
+			hitActors.Add(OtherActor);
+		}
 	}
 }
 
@@ -313,6 +319,8 @@ void APlayerCharacter::deactivateAttackHitbox_Implementation()
 {
 	disableAllHitboxes();
 	bAttackHitboxActive = false;
+
+	clearHitActors();
 }
 
 void APlayerCharacter::enableHitbox(EAttackHitboxType inHitbox, bool enabled)
@@ -363,4 +371,9 @@ bool APlayerCharacter::isActorAlreadyHit(AActor * inActor)
 	{
 		return false;
 	}
+}
+
+void APlayerCharacter::clearHitActors()
+{
+	hitActors.Empty();
 }

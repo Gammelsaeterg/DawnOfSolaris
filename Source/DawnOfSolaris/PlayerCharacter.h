@@ -141,4 +141,5 @@ public:
 	//Storing current hit actors to avoid multiple hits in one attack
 	TArray<AActor*> hitActors;
 	bool isActorAlreadyHit(AActor* inActor);
+	void clearHitActors();
 };
