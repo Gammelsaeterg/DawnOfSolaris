@@ -18,18 +18,22 @@ APlayerCharacter::APlayerCharacter()
 	LeftHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHandHitbox"));
 	LeftHandHitbox->SetupAttachment(GetMesh(), FName("hand_l"));
 	LeftHandHitbox->SetCapsuleSize(20.f, 20.f, true);
+	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginLeftHandHitbox);
 
 	RightHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHandHitbox"));
 	RightHandHitbox->SetupAttachment(GetMesh(), FName("hand_r"));
 	RightHandHitbox->SetCapsuleSize(20.f, 20.f, true);
+	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightHandHitbox);
 
 	LeftFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftFootHitbox"));
 	LeftFootHitbox->SetupAttachment(GetMesh(), FName("foot_l"));
 	LeftFootHitbox->SetCapsuleSize(20.f, 20.f, true);
+	LeftFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginLeftFootHitbox);
 
 	RightFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightFootHitbox"));
 	RightFootHitbox->SetupAttachment(GetMesh(), FName("foot_r"));
 	RightFootHitbox->SetCapsuleSize(20.f, 20.f, true);
+	RightFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightFootHitbox);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -240,6 +244,46 @@ inline void APlayerCharacter::releaseAttack_Implementation()
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 		incrementAttackCombo();		
 	}
+}
+
+void APlayerCharacter::OnOverlapBeginLeftHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, 
+												    UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
+													bool bFromSweep, const FHitResult & SweepResult)
+{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+	}	
+}
+
+void APlayerCharacter::OnOverlapBeginRightHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
+												     UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
+													 bool bFromSweep, const FHitResult & SweepResult)
+{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+	}	
+}
+
+void APlayerCharacter::OnOverlapBeginLeftFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
+												    UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
+													bool bFromSweep, const FHitResult & SweepResult)
+{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+	}	
+}
+
+void APlayerCharacter::OnOverlapBeginRightFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
+												     UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
+													 bool bFromSweep, const FHitResult & SweepResult)
+{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+	}	
 }
 
 inline float APlayerCharacter::getStaminaPoints_Implementation()

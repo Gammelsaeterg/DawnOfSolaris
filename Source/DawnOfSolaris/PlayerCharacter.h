@@ -94,6 +94,24 @@ public:
 	void releaseAttack();
 	virtual void releaseAttack_Implementation() override;
 
+	//Hitbox overlap events
+	UFUNCTION()
+	void OnOverlapBeginLeftHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
+									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
+									  bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnOverlapBeginRightHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+									   bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnOverlapBeginLeftFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+									  bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnOverlapBeginRightFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+								       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+								       bool bFromSweep, const FHitResult& SweepResult);
+
 	//Other functions
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getStaminaPoints();
