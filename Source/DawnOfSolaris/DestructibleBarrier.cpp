@@ -10,7 +10,9 @@ ADestructibleBarrier::ADestructibleBarrier()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	rootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	baseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
+	baseMesh->SetupAttachment(rootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -29,15 +31,19 @@ void ADestructibleBarrier::Tick(float DeltaTime)
 
 void ADestructibleBarrier::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength)
 {
-	if (currentHealthPoints > damageAmount)
+	if (!bIsDestroyed) // TODO: Change if statement to disable overlap events instead
 	{
-		currentHealthPoints -= damageAmount;
-		UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
-	}
-	else
-	{
-		currentHealthPoints = 0;
-		breakBarrier();
+		if (currentHealthPoints > damageAmount)
+		{
+			currentHealthPoints -= damageAmount;
+			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
+		}
+		else
+		{
+			bIsDestroyed = true;
+			currentHealthPoints = 0;
+			breakBarrier();			
+		}
 	}
 }
 

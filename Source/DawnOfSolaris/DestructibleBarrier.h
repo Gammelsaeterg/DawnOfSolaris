@@ -24,6 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Root scene component
+	class USceneComponent* rootComponent;
+
 	// Base mesh
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* baseMesh;
@@ -33,6 +36,8 @@ public:
 	float maxHealthPoints{ 100 };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float currentHealthPoints{ 100 };
+
+	bool bIsDestroyed{ false };
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void takeDamage(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength);
