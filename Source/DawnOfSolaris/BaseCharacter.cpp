@@ -25,6 +25,10 @@ ABaseCharacter::ABaseCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
+	OuterCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("OuterCapsuleComponent"));
+	OuterCapsuleComponent->InitCapsuleSize(45.f, 100.0f);
+	OuterCapsuleComponent->SetupAttachment(RootComponent);
+
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;

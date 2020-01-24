@@ -37,6 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float currentHealthPoints{ 100 };
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bIsDestroyed{ false };
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
@@ -44,5 +45,8 @@ public:
 	virtual void takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void breakBarrier();
+	void breakBarrierBlueprintEvent();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void takeDamageBlueprintEvent(FVector hitDirection);
 };

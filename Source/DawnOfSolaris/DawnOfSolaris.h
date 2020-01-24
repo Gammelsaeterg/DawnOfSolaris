@@ -96,13 +96,16 @@ enum EAttackType
 	DefaultAttack     UMETA(DisplayName = "Default Attack"),
 	AttackOneCombo    UMETA(DisplayName = "Attack One Combo"),
 	AttackTwoCombo    UMETA(DisplayName = "Attack Two Combo"),
-	GrabAttack		  UMETA(DisplayName = "Grab Attack"),
+	GrabAttack		  UMETA(DisplayName = "Grab Attack")
 };
 
 UENUM(BlueprintType)
 enum class ECombatAlignment : uint8
 {
-	Neutral     UMETA(DisplayName = "Neutral"),
+	Neutral    UMETA(DisplayName = "Neutral"), // Neutrals can damage interact with anyone
+	Human      UMETA(DisplayName = "Human"), // Humans can damage interact with Aliens and Players
+	Alien      UMETA(DisplayName = "Alien"), // Aliens can damage interact with Humans
+	Player     UMETA(DisplayName = "Player") // Players can damage interact with Humans and other Players
 };
 
 template<typename TEnum>

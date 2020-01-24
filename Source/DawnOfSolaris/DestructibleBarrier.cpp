@@ -37,12 +37,13 @@ void ADestructibleBarrier::takeDamage_Implementation(float damageAmount, FVector
 		{
 			currentHealthPoints -= damageAmount;
 			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
+			takeDamageBlueprintEvent(hitDirection);
 		}
 		else
 		{
 			bIsDestroyed = true;
 			currentHealthPoints = 0;
-			breakBarrier();			
+			breakBarrierBlueprintEvent();
 		}
 	}
 }

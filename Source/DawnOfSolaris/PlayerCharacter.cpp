@@ -12,6 +12,7 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -297,6 +298,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 		if (!(isActorAlreadyHit(OtherActor)))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Overlapped self comp: %s"), *OverlappedComp->GetName());
 			UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 			hitActors.Add(OtherActor);
 
@@ -304,8 +306,16 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 			ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
 			if (characterInterface)
 			{
+				FVector hitDirection;
+				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f); 
+
+				if (hitDirection.Size() < 1) // If getting physics velocity fails
+				{
+					hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
+				}
+
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend.damageAmount, 
-													   FVector(0.f, 0.f, 0.f), FVector(0.f, 0.f, 0.f), 
+													   hitDirection, FVector(0.f, 0.f, 0.f), 
 					                                   this, currentAttackDataToSend.hitstunStrength);
 			}			
 		}
@@ -338,20 +348,30 @@ void APlayerCharacter::deactivateAttackHitbox_Implementation()
 
 void APlayerCharacter::enableHitbox(EAttackHitboxType inHitbox, bool enabled)
 {
+	UPrimitiveComponent* overlapCollisionToEnable;
+
 	switch (inHitbox)
 	{
 	case EAttackHitboxType::LeftHand:
-		LeftHandHitbox->SetGenerateOverlapEvents(enabled);
+		overlapCollisionToEnable = LeftHandHitbox;
 		break;
 	case EAttackHitboxType::RightHand:
-		RightHandHitbox->SetGenerateOverlapEvents(enabled);
+		overlapCollisionToEnable = RightHandHitbox;
 		break;
 	case EAttackHitboxType::LeftFoot:
-		LeftFootHitbox->SetGenerateOverlapEvents(enabled);
+		overlapCollisionToEnable = LeftFootHitbox;
 		break;
 	case EAttackHitboxType::RightFoot:
-		RightFootHitbox->SetGenerateOverlapEvents(enabled);
+		overlapCollisionToEnable = RightFootHitbox;
 		break;
+	default:
+		overlapCollisionToEnable = LeftHandHitbox; // TODO: Default if all fails, change this!
+	}
+
+	if (overlapCollisionToEnable)
+	{
+		overlapCollisionToEnable->SetGenerateOverlapEvents(enabled);
+		overlapCollisionToEnable->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 }
 
@@ -362,6 +382,11 @@ void APlayerCharacter::disableAllHitboxes()
 	RightHandHitbox->SetGenerateOverlapEvents(false);
 	LeftFootHitbox->SetGenerateOverlapEvents(false);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
+
+	LeftHandHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightHandHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LeftFootHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightFootHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 bool APlayerCharacter::isActorAlreadyHit(AActor * inActor)
