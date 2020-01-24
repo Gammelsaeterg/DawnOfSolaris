@@ -25,6 +25,6 @@ bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAli
 		else { return false; }
 		break;
 	default:
-		return false; // TODO: Default if all fails, change this!
+		return false; // Should not be possible to reach this line of code
 	}
 }

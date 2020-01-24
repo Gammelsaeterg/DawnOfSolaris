@@ -54,13 +54,15 @@ ABaseCharacter::ABaseCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
 }
 
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	//
+
+	// TODO(?)
 	//attackOneComboMaxIndex = attackOneAttacks.Num();
 	//attackTwoComboMaxIndex = attackTwoAttacks.Num();
 	//UE_LOG(LogTemp, Warning, TEXT("Current attackOneComboMaxIndex is %d"), attackOneComboMaxIndex)
@@ -111,7 +113,19 @@ void ABaseCharacter::LookUpAtRate(float Rate)
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
 
+void ABaseCharacter::updateMovement()
+{
+	// TODO: Lerp this
+	if (bAttackActionActive)
+	{
+		setMovementData(combatMovementData);
+	}
+	else
+	{
+		setMovementData(defaultMovementData);		
+	}
 }
 
 // Called to bind functionality to input
@@ -131,10 +145,10 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
 
+	PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInput); //default attack
+
 	//PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
 	//PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
-
-	//PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::defaultAttackStart); default attack
 
 	//PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::attackOnePressed);
 	//PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &ABaseCharacter::attackOneReleased);
@@ -143,6 +157,13 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	//PlayerInputComponent->BindAction("AttackTwo", IE_Released, this, &ABaseCharacter::attackTwoReleased);
 
 	// Sprint attempt
+}
+
+void ABaseCharacter::setMovementData(FMovementData inMovementData)
+{
+	GetCharacterMovement()->MaxWalkSpeed = inMovementData.maxWalkSpeed;
+	GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
+	//GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, inMovementData.maxRotationRate);
 }
 
 void ABaseCharacter::incrementAttackCombo()
@@ -189,9 +210,28 @@ void ABaseCharacter::takeDamage_Implementation(float damageAmount, FVector hitDi
 
 }
 
+void ABaseCharacter::attackStart_Implementation()
+{
+	bAttackActionActive = true;
+
+	updateMovement();
+}
+
+void ABaseCharacter::attackEnd_Implementation()
+{
+	bAttackActionActive = false;
+
+	updateMovement();
+}
+
 ECombatAlignment ABaseCharacter::getAlignment_Implementation()
 {
 	return CombatAlignment;
+}
+
+void ABaseCharacter::defaultAttackStartFromInput()
+{
+	defaultAttackStart();
 }
 
 void ABaseCharacter::defaultAttackStart(int attackIndex)

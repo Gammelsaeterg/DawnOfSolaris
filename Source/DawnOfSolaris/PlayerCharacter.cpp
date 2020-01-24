@@ -162,16 +162,19 @@ inline void APlayerCharacter::standbyCheckTick() // Tick function to check if pl
 
 void APlayerCharacter::sprintTick(float DeltaTime)
 {
-	// TODO: Refine this
+	// TODO: Refine this, also should lerp
 	{
 		if (canSprint() && (currentStaminaPoints > 1.f))
 		{
-			GetCharacterMovement()->MaxWalkSpeed = maxSprintSpeed; // Should lerp
-			currentStaminaPoints -= sprintStaminaCost * DeltaTime;
+			defaultMovementData.maxWalkSpeed = maxSprintSpeed; // Should lerp
+			if (GetVelocity().Size() > maxWalkSpeed)
+			{
+				currentStaminaPoints -= sprintStaminaCost * DeltaTime;
+			}			
 		}
 		else
 		{
-			GetCharacterMovement()->MaxWalkSpeed = maxWalkSpeed; // Should lerp
+			defaultMovementData.maxWalkSpeed = maxWalkSpeed; // Should lerp
 		}
 	}
 }

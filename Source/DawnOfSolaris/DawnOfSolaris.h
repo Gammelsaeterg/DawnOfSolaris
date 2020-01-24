@@ -122,6 +122,21 @@ enum class ECombatAlignment : uint8
 
 bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAlignment);
 
+USTRUCT(BlueprintType) //// TODO(?): Utilize later
+struct FMovementData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadOnly)
+	float maxWalkSpeed{ 600.f };
+
+	UPROPERTY(BlueprintReadOnly)
+	float maxRotationRate{ 540.f };
+
+	FMovementData(float inMaxWalkSpeed, float inMaxRotationRate) : maxWalkSpeed(inMaxWalkSpeed), maxRotationRate(inMaxRotationRate) {}
+	FMovementData() : maxWalkSpeed(600.f), maxRotationRate(540.f) {}
+};
+
 template<typename TEnum>
 static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value)
 {

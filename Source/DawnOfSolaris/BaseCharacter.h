@@ -72,6 +72,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void updateMovement();
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//Current input component
@@ -85,7 +87,16 @@ public:
 	float currentHealthPoints{ 100 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	float maxWalkSpeed{ 600 }; // Also max regular movement speed
+	float maxWalkSpeed{ 600.f }; // Also max regular movement speed
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	float maxRotationRate{ 540.f }; //
+
+	//FMovementData defaultMovementData{ FMovementData(600.f, 540.f) };
+	FMovementData defaultMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
+	FMovementData combatMovementData{ FMovementData(0.f, 50) };
+
+	void setMovementData(FMovementData inMovementData);
 
 	// TODO: Make this into an enum state(?)
 	bool bAttackActionActive{ false }; // Active in attack frames
@@ -120,10 +131,19 @@ public:
 	void takeDamage(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength);
 	virtual void takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength) override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void attackStart();
+	void attackStart_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void attackEnd();
+	void attackEnd_Implementation() override;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();
 	virtual ECombatAlignment getAlignment_Implementation() override;
 
+	void defaultAttackStartFromInput();
 	void defaultAttackStart(int attackIndex = 0);
 	void defaultAttackEnd();
 
