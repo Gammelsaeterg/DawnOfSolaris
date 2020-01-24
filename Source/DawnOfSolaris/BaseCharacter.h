@@ -128,6 +128,9 @@ public:
 	TArray<FDefaultAttackData> defaultAttacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FHitstunData> hitstunAnimations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int currentPlayerID{ -1 };
 
 	UAnimMontage* currentMontage;

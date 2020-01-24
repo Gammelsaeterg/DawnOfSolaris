@@ -69,6 +69,18 @@ struct FDefaultAttackData
 };
 
 USTRUCT(BlueprintType)
+struct FHitstunData
+{
+	//GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* HitstunAnimMontage;
+
+	// TODO(?): Add more variables
+};
+
+USTRUCT(BlueprintType)
 struct FAttackData // Used for storing and sending attack info
 {
 	//GENERATED_USTRUCT_BODY()

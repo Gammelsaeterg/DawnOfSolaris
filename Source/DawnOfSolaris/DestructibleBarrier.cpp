@@ -41,9 +41,9 @@ void ADestructibleBarrier::takeDamage_Implementation(float damageAmount, FVector
 		}
 		else
 		{
-			bIsDestroyed = true;
-			currentHealthPoints = 0;
 			breakBarrierBlueprintEvent();
+			bIsDestroyed = true;
+			currentHealthPoints = 0;			
 		}
 	}
 }
