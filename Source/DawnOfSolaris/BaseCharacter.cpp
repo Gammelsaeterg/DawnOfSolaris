@@ -215,6 +215,7 @@ void ABaseCharacter::attackStart_Implementation()
 	bAttackActionActive = true;
 
 	updateMovement();
+	UE_LOG(LogTemp, Warning, TEXT("Attack start"))
 }
 
 void ABaseCharacter::attackEnd_Implementation()

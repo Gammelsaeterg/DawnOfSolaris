@@ -170,13 +170,16 @@ void APlayerCharacter::sprintTick(float DeltaTime)
 			if (GetVelocity().Size() > maxWalkSpeed)
 			{
 				currentStaminaPoints -= sprintStaminaCost * DeltaTime;
-			}			
+			}	
+			updateMovement();
 		}
 		else
 		{
 			defaultMovementData.maxWalkSpeed = maxWalkSpeed; // Should lerp
+			updateMovement();
 		}
 	}
+	// more TODO: Only use this for lerp, the speed change itself should be an event
 }
 
 void APlayerCharacter::regenStaminaTick(float DeltaTime)
@@ -252,6 +255,8 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 
 	bAttackHitboxActive = false; // Disable old hitbox for new attack
 	clearHitActors();
+
+	ABaseCharacter::attackStart();
 }
 
 inline void APlayerCharacter::releaseAttack_Implementation()
