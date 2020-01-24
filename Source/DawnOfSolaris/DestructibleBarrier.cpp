@@ -48,3 +48,8 @@ void ADestructibleBarrier::takeDamage_Implementation(float damageAmount, FVector
 	}
 }
 
+ECombatAlignment ADestructibleBarrier::getAlignment_Implementation()
+{
+	return CombatAlignment;
+}
+

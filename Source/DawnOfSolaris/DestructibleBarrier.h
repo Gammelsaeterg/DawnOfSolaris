@@ -36,6 +36,8 @@ public:
 	float maxHealthPoints{ 100 };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float currentHealthPoints{ 100 };
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	ECombatAlignment CombatAlignment = ECombatAlignment::Neutral;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsDestroyed{ false };
@@ -43,6 +45,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void takeDamage(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength);
 	virtual void takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	ECombatAlignment getAlignment();
+	virtual ECombatAlignment getAlignment_Implementation() override;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void breakBarrierBlueprintEvent();

@@ -295,29 +295,31 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
-		if (!(isActorAlreadyHit(OtherActor)))
+		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
+		if (characterInterface && !(isActorAlreadyHit(OtherActor))) // Check if actor has interface and has not already been hit
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
-			UE_LOG(LogTemp, Warning, TEXT("Overlapped self comp: %s"), *OverlappedComp->GetName());
-			UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
-			hitActors.Add(OtherActor);
-
-			// TODO: On other actor take damage, set charge value multiplier to damage and hitstun strength sent
-			ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
-			if (characterInterface)
+			if (canDamageInteract(CombatAlignment, characterInterface->Execute_getAlignment(OtherActor))) // Check if can damage interact
 			{
+			//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("Overlapped self comp: %s"), *OverlappedComp->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
+			UE_LOG(LogTemp, Warning, TEXT("Other alignment is: %s"), *(GetEnumValueAsString<ECombatAlignment>("ECombatAlignment", characterInterface->Execute_getAlignment(OtherActor))));
+				hitActors.Add(OtherActor);
+
+				// TODO: On other actor take damage, set charge value multiplier to damage and hitstun strength sent			
+
 				FVector hitDirection;
-				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f); 
+				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
 
 				if (hitDirection.Size() < 1) // If getting physics velocity fails
 				{
 					hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
 				}
 
-				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend.damageAmount, 
-													   hitDirection, FVector(0.f, 0.f, 0.f), 
-					                                   this, currentAttackDataToSend.hitstunStrength);
-			}			
+				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend.damageAmount,
+					hitDirection, FVector(0.f, 0.f, 0.f),
+					this, currentAttackDataToSend.hitstunStrength);
+			}								
 		}
 	}
 }

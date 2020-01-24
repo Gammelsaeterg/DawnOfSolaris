@@ -184,6 +184,16 @@ void ABaseCharacter::setHealthPoints_Implementation(float newHealthPoints)
 
 }
 
+void ABaseCharacter::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor * damageDealingActor, float hitstunStrength)
+{
+
+}
+
+ECombatAlignment ABaseCharacter::getAlignment_Implementation()
+{
+	return CombatAlignment;
+}
+
 void ABaseCharacter::defaultAttackStart(int attackIndex)
 {
 	bDefaultAttackStarted = true;

@@ -114,11 +114,13 @@ enum EAttackType
 UENUM(BlueprintType)
 enum class ECombatAlignment : uint8
 {
-	Neutral    UMETA(DisplayName = "Neutral"), // Neutrals can damage interact with anyone
+	Neutral    UMETA(DisplayName = "Neutral"), // Neutrals can damage interact with anyone, also default for destructible barrier and other props
 	Human      UMETA(DisplayName = "Human"), // Humans can damage interact with Aliens and Players
 	Alien      UMETA(DisplayName = "Alien"), // Aliens can damage interact with Humans
 	Player     UMETA(DisplayName = "Player") // Players can damage interact with Humans and other Players
 };
+
+bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAlignment);
 
 template<typename TEnum>
 static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value)
