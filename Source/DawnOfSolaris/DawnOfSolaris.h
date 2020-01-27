@@ -137,6 +137,7 @@ struct FMovementData
 	FMovementData() : maxWalkSpeed(600.f), maxRotationRate(540.f) {}
 };
 
+
 template<typename TEnum>
 static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value)
 {

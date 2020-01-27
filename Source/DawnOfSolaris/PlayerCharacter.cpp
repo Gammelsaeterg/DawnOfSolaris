@@ -332,6 +332,12 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 	}
 }
 
+void APlayerCharacter::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor * damageDealingActor, float hitstunStrength)
+{
+	Super::takeDamage_Implementation(damageAmount, hitDirection, hitLocation, damageDealingActor, hitstunStrength);
+	//UE_LOG(LogTemp, Warning, TEXT("Take damage player char: %s"), *this->GetName());
+}
+
 inline float APlayerCharacter::getStaminaPoints_Implementation()
 {
 	return currentStaminaPoints;

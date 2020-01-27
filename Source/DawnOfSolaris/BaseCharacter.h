@@ -95,8 +95,12 @@ public:
 	//FMovementData defaultMovementData{ FMovementData(600.f, 540.f) };
 	FMovementData defaultMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData combatMovementData{ FMovementData(0.f, 50) };
+	FMovementData hitstunMovementData{ FMovementData(0.f, 100.f) };
 
 	void setMovementData(FMovementData inMovementData);
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsDeafeated{ false };
 
 	// TODO: Make this into an enum state(?)
 	bool bAttackActionActive{ false }; // Active in attack frames

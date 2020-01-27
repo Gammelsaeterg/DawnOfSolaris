@@ -207,7 +207,22 @@ void ABaseCharacter::setHealthPoints_Implementation(float newHealthPoints)
 
 void ABaseCharacter::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor * damageDealingActor, float hitstunStrength)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("Take damage base char: %s"), *this->GetName());
 
+	if (!bIsDeafeated) // TODO: Change if statement to disable overlap events instead
+	{
+		if (currentHealthPoints > damageAmount)
+		{
+			currentHealthPoints -= damageAmount;
+			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
+		}
+		else
+		{
+			bIsDeafeated = true;
+			currentHealthPoints = 0;
+			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
+		}
+	}
 }
 
 void ABaseCharacter::attackStart_Implementation()
@@ -215,7 +230,7 @@ void ABaseCharacter::attackStart_Implementation()
 	bAttackActionActive = true;
 
 	updateMovement();
-	UE_LOG(LogTemp, Warning, TEXT("Attack start"))
+	//UE_LOG(LogTemp, Warning, TEXT("Attack start"))
 }
 
 void ABaseCharacter::attackEnd_Implementation()
