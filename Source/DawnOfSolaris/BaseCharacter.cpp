@@ -124,7 +124,7 @@ void ABaseCharacter::updateMovement()
 	}
 	else
 	{
-		setMovementData(defaultMovementData);		
+		setMovementData(currentMovementData);		
 	}
 }
 
@@ -215,12 +215,20 @@ void ABaseCharacter::takeDamage_Implementation(float damageAmount, FVector hitDi
 		{
 			currentHealthPoints -= damageAmount;
 			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
+
+			//Hitstun handling
+			if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index
+			{
+				currentMontage = hitstunAnimations[0].HitstunAnimMontage;
+				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			}
 		}
 		else
 		{
 			bIsDeafeated = true;
 			currentHealthPoints = 0;
 			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
+			startIsDefeatedProcedure();
 		}
 	}
 }
@@ -257,7 +265,10 @@ void ABaseCharacter::defaultAttackStart(int attackIndex)
 	if (defaultAttacks.IsValidIndex(attackIndex))  // To check if attacks exist
 	{
 		currentMontage = defaultAttacks[attackIndex].AttackAnimMontage;
-		GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+		if (GetMesh()->GetAnimInstance() != nullptr)
+		{
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+		}
 	}
 
 }
@@ -265,6 +276,30 @@ void ABaseCharacter::defaultAttackStart(int attackIndex)
 void ABaseCharacter::defaultAttackEnd()
 {
 	bDefaultAttackStarted = false;
+}
+
+void ABaseCharacter::startHitstun_Implementation()
+{
+	bSelfHitstunActive = true;
+	currentMovementData = hitstunMovementData;
+}
+
+void ABaseCharacter::endHitstun_Implementation()
+{
+	currentMovementData = defaultMovementData;
+	bSelfHitstunActive = false;
+}
+
+void ABaseCharacter::startIsDefeatedProcedure()
+{
+	// TODO: Add more to this
+	GetCapsuleComponent()->SetEnableGravity(false);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	OuterCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+	GetCharacterMovement()->DisableMovement();
 }
 
 

@@ -166,7 +166,7 @@ void APlayerCharacter::sprintTick(float DeltaTime)
 	{
 		if (canSprint() && (currentStaminaPoints > 1.f))
 		{
-			defaultMovementData.maxWalkSpeed = maxSprintSpeed; // Should lerp
+			currentMovementData.maxWalkSpeed = maxSprintSpeed; // Should lerp
 			if (GetVelocity().Size() > maxWalkSpeed)
 			{
 				currentStaminaPoints -= sprintStaminaCost * DeltaTime;
@@ -175,7 +175,7 @@ void APlayerCharacter::sprintTick(float DeltaTime)
 		}
 		else
 		{
-			defaultMovementData.maxWalkSpeed = maxWalkSpeed; // Should lerp
+			currentMovementData.maxWalkSpeed = maxWalkSpeed; // Should lerp
 			updateMovement();
 		}
 	}

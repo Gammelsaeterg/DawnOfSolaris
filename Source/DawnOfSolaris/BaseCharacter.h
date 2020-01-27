@@ -92,7 +92,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxRotationRate{ 540.f }; //
 
-	//FMovementData defaultMovementData{ FMovementData(600.f, 540.f) };
+	//FMovementData currentMovementData{ FMovementData(600.f, 540.f) };
+	FMovementData currentMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData defaultMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData combatMovementData{ FMovementData(0.f, 50) };
 	FMovementData hitstunMovementData{ FMovementData(0.f, 100.f) };
@@ -151,8 +152,17 @@ public:
 	void defaultAttackStart(int attackIndex = 0);
 	void defaultAttackEnd();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void startHitstun();
+	virtual void startHitstun_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void endHitstun();
+	virtual void endHitstun_Implementation() override;
+
 	void cancelAttackActions(); // TODO: Complete this function
-	
+
+	void startIsDefeatedProcedure();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FDefaultAttackData> defaultAttacks;
