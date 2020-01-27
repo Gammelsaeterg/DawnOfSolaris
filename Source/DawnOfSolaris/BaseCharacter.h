@@ -122,6 +122,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentAttackDataToSend;
 
+	UPROPERTY(BlueprintReadOnly)
+	FAttackData currentReceivedAttackData;
+
 	void incrementAttackCombo();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")

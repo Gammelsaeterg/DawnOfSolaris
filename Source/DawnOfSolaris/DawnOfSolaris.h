@@ -96,10 +96,18 @@ struct FAttackData // Used for storing and sending attack info
 	FVector hitLocation{0.f, 0.f, 0.f};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector hitFrom{ 0.f, 0.f, 0.f };
+	AActor* damageDealingActor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float hitstunStrength{ 0 };
+
+	FAttackData(float inDamageAmount, FVector inHitDirection, FVector inHitLocation, AActor* inDamageDealingActor, float inHitstunStrength)
+	: damageAmount(inDamageAmount), hitDirection(inHitDirection), 
+	  hitLocation(inHitLocation), damageDealingActor(inDamageDealingActor), hitstunStrength(inHitstunStrength) {}
+
+	FAttackData()
+	: damageAmount(0.f), hitDirection(FVector{ 0.f, 0.f, 0.f }),
+	hitLocation(FVector{ 0.f, 0.f, 0.f }), damageDealingActor(nullptr), hitstunStrength(0.f) {}
 };
 
 UENUM()
