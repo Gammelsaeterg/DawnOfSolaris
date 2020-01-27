@@ -136,8 +136,8 @@ public:
 	virtual void setHealthPoints_Implementation(float newHealthPoints) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-	void takeDamage(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength);
-	virtual void takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength) override;
+	void takeDamage(FAttackData inAttackData);
+	virtual void takeDamage_Implementation(FAttackData inAttackData) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void attackStart();

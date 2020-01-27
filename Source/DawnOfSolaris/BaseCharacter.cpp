@@ -205,16 +205,16 @@ void ABaseCharacter::setHealthPoints_Implementation(float newHealthPoints)
 
 }
 
-void ABaseCharacter::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor * damageDealingActor, float hitstunStrength)
+void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage base char: %s"), *this->GetName());
 
 	if (!bIsDeafeated) // TODO: Change if statement to disable overlap events instead
 	{
-		if (currentHealthPoints > damageAmount)
+		if (currentHealthPoints > inAttackData.damageAmount)
 		{
-			currentHealthPoints -= damageAmount;
-			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
+			currentHealthPoints -= inAttackData.damageAmount;
+			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), inAttackData.damageAmount, currentHealthPoints);
 
 			//Hitstun handling
 			if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index

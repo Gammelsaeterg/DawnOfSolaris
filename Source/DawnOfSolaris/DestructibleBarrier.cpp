@@ -29,15 +29,15 @@ void ADestructibleBarrier::Tick(float DeltaTime)
 
 }
 
-void ADestructibleBarrier::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength)
+void ADestructibleBarrier::takeDamage_Implementation(FAttackData inAttackData)
 {
 	if (!bIsDestroyed) // TODO: Change if statement to disable overlap events instead
 	{
-		if (currentHealthPoints > damageAmount)
+		if (currentHealthPoints > inAttackData.damageAmount)
 		{
-			currentHealthPoints -= damageAmount;
-			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), damageAmount, currentHealthPoints);
-			takeDamageBlueprintEvent(hitDirection);
+			currentHealthPoints -= inAttackData.damageAmount;
+			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), inAttackData.damageAmount, currentHealthPoints);
+			takeDamageBlueprintEvent(inAttackData.hitDirection);
 		}
 		else
 		{

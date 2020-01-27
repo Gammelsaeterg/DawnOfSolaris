@@ -121,8 +121,8 @@ public:
 								 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 								 bool bFromSweep, const FHitResult& SweepResult);
 
-	void takeDamage(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength);
-	virtual void takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor* damageDealingActor, float hitstunStrength) override;
+	void takeDamage(FAttackData inAttackData);
+	virtual void takeDamage_Implementation(FAttackData inAttackData) override;
 
 	//Other functions
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")

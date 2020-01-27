@@ -328,17 +328,15 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 				hitDirection, FVector(0.f, 0.f, 0.f),
 				this, currentAttackDataToSend.hitstunStrength);
 
-				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend.damageAmount,
-					hitDirection, FVector(0.f, 0.f, 0.f),
-					this, currentAttackDataToSend.hitstunStrength);
+				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}								
 		}
 	}
 }
 
-void APlayerCharacter::takeDamage_Implementation(float damageAmount, FVector hitDirection, FVector hitLocation, AActor * damageDealingActor, float hitstunStrength)
+void APlayerCharacter::takeDamage_Implementation(FAttackData inAttackData)
 {
-	Super::takeDamage_Implementation(damageAmount, hitDirection, hitLocation, damageDealingActor, hitstunStrength);
+	Super::takeDamage_Implementation(inAttackData);
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage player char: %s"), *this->GetName());
 }
 
