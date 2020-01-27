@@ -210,7 +210,7 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage base char: %s"), *this->GetName());
 
 	if (!bIsDeafeated) // TODO: Change if statement to disable overlap events instead
-	{
+	{		
 		if (currentHealthPoints > inAttackData.damageAmount)
 		{
 			currentHealthPoints -= inAttackData.damageAmount;
@@ -219,6 +219,8 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			//Hitstun handling
 			if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index
 			{
+				currentReceivedAttackData = inAttackData;
+
 				currentMontage = hitstunAnimations[0].HitstunAnimMontage;
 				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 			}
@@ -282,6 +284,10 @@ void ABaseCharacter::startHitstun_Implementation()
 {
 	bSelfHitstunActive = true;
 	currentMovementData = hitstunMovementData;
+
+	// TODO: Lerp this
+	FVector tempDirection = currentReceivedAttackData.hitDirection * -1; // Sets rotation to follow direction
+	SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
 }
 
 void ABaseCharacter::endHitstun_Implementation()
