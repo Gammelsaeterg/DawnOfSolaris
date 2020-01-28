@@ -13,6 +13,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "TimerManager.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -96,7 +97,7 @@ void APlayerCharacter::attackOnePressed()
 		// Inititate attack
 		bChargeAttackStarted = true;
 		currentAttackType = EAttackType::AttackOneCombo;
-		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: May need to secure
+		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: Secure!!
 		currentAttackHitboxType = attackOneAttacks[attackOneComboCurrentIndex].AttackHitbox;
 
 		currentAttackDataToSend.damageAmount = attackOneAttacks[attackOneComboCurrentIndex].minDamageValue; // TODO: Get charge value
@@ -116,7 +117,7 @@ void APlayerCharacter::attackTwoPressed()
 {
 	if (canAttack()) // TODO warning: May need refinenement
 	{
-		if (attackTwoAttacks.IsValidIndex(attackTwoComboCurrentIndex)) // To check if attacks exist
+		if (attackTwoAttacks.IsValidIndex(attackTwoComboCurrentIndex)) // To check if attacks exist //TODO: Unsecure check, may still crash game
 		{
 			// Inititate attack
 			bChargeAttackStarted = true;
@@ -146,6 +147,20 @@ inline void APlayerCharacter::sprintPressed()
 inline void APlayerCharacter::sprintReleased()
 {
 	bSprintingActive = false;
+}
+
+void APlayerCharacter::attackAI(int attackIndex, float chargeAmount)
+{
+	if (attackIndex == 0) //TODO: Complete making attackIndex into enum
+	{
+		attackOnePressed();
+		GetWorldTimerManager().SetTimer(attackTimerAI, this, &APlayerCharacter::attackOneReleased, chargeAmount);
+	}
+	else if (attackIndex == 1) //TODO: Complete making attackIndex into enum
+	{
+		attackTwoPressed();
+		GetWorldTimerManager().SetTimer(attackTimerAI, this, &APlayerCharacter::attackTwoReleased, chargeAmount);
+	}
 }
 
 inline void APlayerCharacter::standbyCheckTick() // Tick function to check if player is in standby

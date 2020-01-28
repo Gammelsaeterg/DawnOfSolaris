@@ -41,6 +41,11 @@ public:
 	void sprintPressed();
 	void sprintReleased();
 
+	// AI input
+	UFUNCTION(BlueprintCallable)
+	void attackAI(int attackIndex, float chargeAmount); //TODO make attack index into enum
+	FTimerHandle attackTimerAI;
+
 	//Variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxStaminaPoints{ 100 };
