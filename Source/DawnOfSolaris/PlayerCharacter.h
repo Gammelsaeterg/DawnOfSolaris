@@ -28,10 +28,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
-	//Inputs
+	//Inputs // Also TODO: Refactor
 	void attackOnePressed();
 	void attackOneReleased();
-
 	void attackTwoPressed();
 	void attackTwoReleased();
 
@@ -62,8 +61,6 @@ public:
 
 	bool bDodgingActive{ false }; // Active in dodge frames
 	bool bSprintingActive{ false }; // Active when sprint button is held	
-
-	UPROPERTY(BlueprintReadOnly)
 	bool bChargeAttackStarted{ false }; // Active when player is charghing attack
 
 	UPROPERTY(BlueprintReadOnly)
@@ -155,8 +152,12 @@ public:
 	virtual void deactivateAttackHitbox_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
-	void setChargeAmount(float newChargeAmount);
+	void setChargeAmount(float newChargeAmount); // TODO: Charge determined based on montage position, should be based on how far in it is compared to the charge/windUp animation
 	virtual void setChargeAmount_Implementation(float newChargeAmount) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsWindingUpChargeAttack();
+	virtual bool getIsWindingUpChargeAttack_Implementation() override;
 
 	//Hitbox handling
 	void enableHitbox(EAttackHitboxType inHitbox, bool enabled);

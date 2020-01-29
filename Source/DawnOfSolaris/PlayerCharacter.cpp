@@ -94,14 +94,17 @@ void APlayerCharacter::attackOnePressed()
 {
 	if (canAttack()) // TODO warning: May need refinenement
 	{
-		// Inititate attack
-		bChargeAttackStarted = true;
-		currentAttackType = EAttackType::AttackOneCombo;
-		windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: Secure!!
-		currentAttackHitboxType = attackOneAttacks[attackOneComboCurrentIndex].AttackHitbox;
+		if (attackOneAttacks.IsValidIndex(attackOneComboCurrentIndex))
+		{
+			// Inititate attack
+			bChargeAttackStarted = true;
+			currentAttackType = EAttackType::AttackOneCombo;
+			windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: Secure!!
+			currentAttackHitboxType = attackOneAttacks[attackOneComboCurrentIndex].AttackHitbox;
 
-		currentAttackDataToSend.damageAmount = attackOneAttacks[attackOneComboCurrentIndex].minDamageValue; // TODO: Get charge value
-		currentAttackDataToSend.hitstunStrength = attackOneAttacks[attackOneComboCurrentIndex].minHitstunValue; // TODO: Get charge value
+			currentAttackDataToSend.damageAmount = attackOneAttacks[attackOneComboCurrentIndex].minDamageValue; // TODO: Get charge value
+			currentAttackDataToSend.hitstunStrength = attackOneAttacks[attackOneComboCurrentIndex].minHitstunValue; // TODO: Get charge value
+		}
 	}
 }
 
@@ -123,7 +126,7 @@ void APlayerCharacter::attackTwoPressed()
 			bChargeAttackStarted = true;
 			currentAttackType = EAttackType::AttackTwoCombo;
 			windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
-			currentAttackHitboxType = attackTwoAttacks[attackOneComboCurrentIndex].AttackHitbox;
+			currentAttackHitboxType = attackTwoAttacks[attackTwoComboCurrentIndex].AttackHitbox;
 
 			currentAttackDataToSend.damageAmount = attackTwoAttacks[attackTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
 			currentAttackDataToSend.hitstunStrength = attackTwoAttacks[attackTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
@@ -387,6 +390,11 @@ void APlayerCharacter::deactivateAttackHitbox_Implementation()
 void APlayerCharacter::setChargeAmount_Implementation(float newChargeAmount)
 {
 	currentChargeAmount = newChargeAmount;
+}
+
+bool APlayerCharacter::getIsWindingUpChargeAttack_Implementation()
+{
+	return bChargeAttackStarted;
 }
 
 void APlayerCharacter::enableHitbox(EAttackHitboxType inHitbox, bool enabled)
