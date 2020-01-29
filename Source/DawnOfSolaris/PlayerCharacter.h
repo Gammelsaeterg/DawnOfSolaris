@@ -34,6 +34,8 @@ public:
 	void attackTwoPressed();
 	void attackTwoReleased();
 
+	void attackPressed();
+
 	void grabAttackPressed(); //TODO: Complete function
 	void grabAttackReleased(); //TODO: Complete function
 

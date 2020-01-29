@@ -366,6 +366,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 					hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
 				}
 
+
 				currentAttackDataToSend = FAttackData(currentAttackDataToSend.damageAmount,
 				hitDirection, FVector(0.f, 0.f, 0.f),
 				this, currentAttackDataToSend.hitstunStrength);

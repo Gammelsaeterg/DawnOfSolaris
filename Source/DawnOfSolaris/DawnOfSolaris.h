@@ -119,6 +119,15 @@ enum EAttackType
 	GrabAttack		  UMETA(DisplayName = "Grab Attack")
 };
 
+UENUM()
+enum EActionInputs
+{
+	Action0      UMETA(DisplayName = "Action0 (Interact)"),
+	Action1      UMETA(DisplayName = "Action1 (Attack 0)"),
+	Action2      UMETA(DisplayName = "Action2 (Attack 1)"),
+	Action3		 UMETA(DisplayName = "Action3 (Attack 2 / Grab attack)")
+};
+
 UENUM(BlueprintType)
 enum class ECombatAlignment : uint8
 {
