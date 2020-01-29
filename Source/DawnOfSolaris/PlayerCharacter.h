@@ -58,9 +58,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float sprintStaminaCost{ 45.f };
 
+	float currentChargeAmount{ 0.f };
+
 	bool bDodgingActive{ false }; // Active in dodge frames
 	bool bSprintingActive{ false }; // Active when sprint button is held	
-	bool bChargeAttackStarted{ false };
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bChargeAttackStarted{ false }; // Active when player is charghing attack
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bAttackHitboxActive{ false };
@@ -149,6 +153,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void deactivateAttackHitbox();
 	virtual void deactivateAttackHitbox_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	void setChargeAmount(float newChargeAmount);
+	virtual void setChargeAmount_Implementation(float newChargeAmount) override;
 
 	//Hitbox handling
 	void enableHitbox(EAttackHitboxType inHitbox, bool enabled);

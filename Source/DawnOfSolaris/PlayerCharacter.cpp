@@ -384,6 +384,11 @@ void APlayerCharacter::deactivateAttackHitbox_Implementation()
 	clearHitActors();
 }
 
+void APlayerCharacter::setChargeAmount_Implementation(float newChargeAmount)
+{
+	currentChargeAmount = newChargeAmount;
+}
+
 void APlayerCharacter::enableHitbox(EAttackHitboxType inHitbox, bool enabled)
 {
 	UPrimitiveComponent* overlapCollisionToEnable;

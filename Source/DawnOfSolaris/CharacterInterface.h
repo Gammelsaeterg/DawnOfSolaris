@@ -42,6 +42,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	void setStaminaPoints(float newStaminaPoints);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	void setChargeAmount(float newChargeAmount);
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void releaseAttack();
 
