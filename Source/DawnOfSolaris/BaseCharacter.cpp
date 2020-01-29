@@ -199,10 +199,15 @@ float ABaseCharacter::getHealthPoints_Implementation()
 	return currentHealthPoints;
 }
 
+float ABaseCharacter::getMaxHealthPoints_Implementation()
+{
+	return maxHealthPoints;
+
+}
+
 void ABaseCharacter::setHealthPoints_Implementation(float newHealthPoints)
 {
 	currentHealthPoints = newHealthPoints;
-
 }
 
 void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)

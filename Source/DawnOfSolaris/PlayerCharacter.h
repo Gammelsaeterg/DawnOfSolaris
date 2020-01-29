@@ -135,6 +135,10 @@ public:
 	virtual float getStaminaPoints_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	float getMaxStaminaPoints();
+	virtual float getMaxStaminaPoints_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	void setStaminaPoints(float newStaminaPoints);
 	virtual void setStaminaPoints_Implementation(float newStaminaPoints) override;
 

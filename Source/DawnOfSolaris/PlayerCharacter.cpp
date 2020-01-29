@@ -360,6 +360,11 @@ inline float APlayerCharacter::getStaminaPoints_Implementation()
 	return currentStaminaPoints;
 }
 
+float APlayerCharacter::getMaxStaminaPoints_Implementation()
+{
+	return maxStaminaPoints;
+}
+
 inline void APlayerCharacter::setStaminaPoints_Implementation(float newStaminaPoints)
 {
 	currentStaminaPoints = newStaminaPoints;

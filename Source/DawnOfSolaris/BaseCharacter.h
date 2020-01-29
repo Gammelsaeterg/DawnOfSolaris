@@ -132,6 +132,10 @@ public:
 	virtual float getHealthPoints_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	float getMaxHealthPoints();
+	virtual float getMaxHealthPoints_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	void setHealthPoints(float newHealthPoints);
 	virtual void setHealthPoints_Implementation(float newHealthPoints) override;
 
