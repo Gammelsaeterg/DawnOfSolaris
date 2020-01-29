@@ -104,6 +104,8 @@ public:
 	void releaseAttack();
 	virtual void releaseAttack_Implementation() override;
 
+	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
+
 	//Hitbox overlap events
 	UFUNCTION()
 	void OnOverlapBeginLeftHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 

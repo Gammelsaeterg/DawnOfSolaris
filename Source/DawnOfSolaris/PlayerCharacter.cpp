@@ -102,8 +102,8 @@ void APlayerCharacter::attackOnePressed()
 			windUpChargeAttack(attackOneAttacks[attackOneComboCurrentIndex]); // TODO: Secure!!
 			currentAttackHitboxType = attackOneAttacks[attackOneComboCurrentIndex].AttackHitbox;
 
-			currentAttackDataToSend.damageAmount = attackOneAttacks[attackOneComboCurrentIndex].minDamageValue; // TODO: Get charge value
-			currentAttackDataToSend.hitstunStrength = attackOneAttacks[attackOneComboCurrentIndex].minHitstunValue; // TODO: Get charge value
+			//currentAttackDataToSend.damageAmount = attackOneAttacks[attackOneComboCurrentIndex].minDamageValue; // TODO: Get charge value
+			//currentAttackDataToSend.hitstunStrength = attackOneAttacks[attackOneComboCurrentIndex].minHitstunValue; // TODO: Get charge value
 		}
 	}
 }
@@ -128,8 +128,8 @@ void APlayerCharacter::attackTwoPressed()
 			windUpChargeAttack(attackTwoAttacks[attackTwoComboCurrentIndex]); // TODO: May need to secure
 			currentAttackHitboxType = attackTwoAttacks[attackTwoComboCurrentIndex].AttackHitbox;
 
-			currentAttackDataToSend.damageAmount = attackTwoAttacks[attackTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
-			currentAttackDataToSend.hitstunStrength = attackTwoAttacks[attackTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
+			//currentAttackDataToSend.damageAmount = attackTwoAttacks[attackTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
+			//currentAttackDataToSend.hitstunStrength = attackTwoAttacks[attackTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
 		}
 	}
 }
@@ -285,6 +285,30 @@ inline void APlayerCharacter::releaseAttack_Implementation()
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 		incrementAttackCombo();		
 	}
+}
+
+FAttackData APlayerCharacter::calculateChargeAttackValues(FChargeAttackData inChargeAttackData)
+{
+	//TODO: Refactor, also needs rounding/deadzones for currentCharge amount (i.e. if close to 0 or 1, round down or up)
+
+	FAttackData tempChargeAttackData{ FAttackData() };
+
+	float minDamage = inChargeAttackData.minDamageValue;
+	float maxDamage = inChargeAttackData.maxDamageValue;
+
+	float minHitstunValue = inChargeAttackData.minHitstunValue;
+	float maxHitstunValue = inChargeAttackData.maxHitstunValue;
+
+	float damageDifference = maxDamage - minDamage;
+	float hitstunValueDifference = maxHitstunValue - minHitstunValue;
+
+	float damageToSend = minDamage + (currentChargeAmount * damageDifference);
+	float hitstunValueToSend = minHitstunValue + (currentChargeAmount * hitstunValueDifference);
+
+
+	tempChargeAttackData.damageAmount = damageToSend;
+	tempChargeAttackData.hitstunStrength = hitstunValueToSend;
+	return tempChargeAttackData;
 }
 
 void APlayerCharacter::OnOverlapBeginLeftHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, 

@@ -166,13 +166,6 @@ void ABaseCharacter::setMovementData(FMovementData inMovementData)
 	//GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, inMovementData.maxRotationRate);
 }
 
-FAttackData ABaseCharacter::calculateChargeAttackValues(FChargeAttackData inChargeAttackData)
-{
-	FAttackData tempChargeAttackData{ FAttackData() };
-
-	return tempChargeAttackData;
-}
-
 void ABaseCharacter::incrementAttackCombo()
 {
 	// TODO: This should be switch statements
