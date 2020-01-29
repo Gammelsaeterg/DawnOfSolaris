@@ -125,6 +125,8 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentReceivedAttackData;
 
+	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
+
 	void incrementAttackCombo();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
