@@ -92,7 +92,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 void APlayerCharacter::defaultComboOnePressed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
 	if (canAttack()) // TODO warning: May need refinenement
 	{
 		if (defaultComboOneAttacks.IsValidIndex(defaultComboOneCurrentIndex))
@@ -169,6 +168,13 @@ void APlayerCharacter::incrementAttackCombo()
 			++defaultComboTwoCurrentIndex;
 		}
 	}
+}
+
+void APlayerCharacter::attackPressed(EActionInput inInput)
+{
+	int tempInt = (uint8)inInput;
+
+	UE_LOG(LogTemp, Warning, TEXT("This number is: %d"), tempInt)
 }
 
 inline void APlayerCharacter::sprintPressed()

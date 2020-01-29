@@ -36,7 +36,7 @@ public:
 
 	void incrementAttackCombo();
 
-	void attackPressed();
+	void attackPressed(EActionInput inInput);
 
 	void grabAttackPressed(); //TODO: Complete function
 	void grabAttackReleased(); //TODO: Complete function

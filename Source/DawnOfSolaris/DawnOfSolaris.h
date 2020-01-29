@@ -120,7 +120,7 @@ enum EAttackType
 };
 
 UENUM()
-enum EActionInputs
+enum class EActionInput : uint8
 {
 	Action0      UMETA(DisplayName = "Action0 (Interact)"),
 	Action1      UMETA(DisplayName = "Action1 (Attack 1)"),
