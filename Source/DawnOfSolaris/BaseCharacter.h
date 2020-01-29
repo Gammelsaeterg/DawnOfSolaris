@@ -110,24 +110,11 @@ public:
 	bool bDefaultAttackStarted{ false };
 	
 	UPROPERTY(BlueprintReadOnly)
-	int attackOneComboMaxIndex{ 1 };
-	UPROPERTY(BlueprintReadOnly)
-	int attackTwoComboMaxIndex{ 1 };
-
-	UPROPERTY(BlueprintReadOnly)
-	int attackOneComboCurrentIndex{ 0 };
-	UPROPERTY(BlueprintReadOnly)
-	int attackTwoComboCurrentIndex{ 0 };
-
-	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentAttackDataToSend;
 
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentReceivedAttackData;
 
-	
-
-	void incrementAttackCombo();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getHealthPoints();
@@ -187,7 +174,7 @@ public:
 	EAttackType currentAttackType;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: Complete this
-	//TArray<FChargeAttackData> attackTwoAttacks;
+	//TArray<FChargeAttackData> defaultComboTwoAttacks;
 
 	//Move code below to player character
 

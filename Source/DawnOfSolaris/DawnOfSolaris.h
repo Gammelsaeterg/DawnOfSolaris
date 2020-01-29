@@ -114,8 +114,8 @@ UENUM()
 enum EAttackType
 {
 	DefaultAttack     UMETA(DisplayName = "Default Attack"),
-	AttackOneCombo    UMETA(DisplayName = "Attack One Combo"),
-	AttackTwoCombo    UMETA(DisplayName = "Attack Two Combo"),
+	defaultComboOne    UMETA(DisplayName = "Attack One Combo"),
+	defaultComboTwo    UMETA(DisplayName = "Attack Two Combo"),
 	GrabAttack		  UMETA(DisplayName = "Grab Attack")
 };
 
@@ -123,9 +123,9 @@ UENUM()
 enum EActionInputs
 {
 	Action0      UMETA(DisplayName = "Action0 (Interact)"),
-	Action1      UMETA(DisplayName = "Action1 (Attack 0)"),
-	Action2      UMETA(DisplayName = "Action2 (Attack 1)"),
-	Action3		 UMETA(DisplayName = "Action3 (Attack 2 / Grab attack)")
+	Action1      UMETA(DisplayName = "Action1 (Attack 1)"),
+	Action2      UMETA(DisplayName = "Action2 (Attack 2)"),
+	Action3		 UMETA(DisplayName = "Action3 (Attack 3 / Grab attack)")
 };
 
 UENUM(BlueprintType)

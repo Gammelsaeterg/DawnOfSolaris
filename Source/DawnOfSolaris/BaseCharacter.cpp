@@ -63,9 +63,9 @@ void ABaseCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// TODO(?)
-	//attackOneComboMaxIndex = attackOneAttacks.Num();
-	//attackTwoComboMaxIndex = attackTwoAttacks.Num();
-	//UE_LOG(LogTemp, Warning, TEXT("Current attackOneComboMaxIndex is %d"), attackOneComboMaxIndex)
+	//defaultComboOneComboMaxIndex = defaultComboOneAttacks.Num();
+	//defaultComboTwoComboMaxIndex = defaultComboTwoAttacks.Num();
+	//UE_LOG(LogTemp, Warning, TEXT("Current defaultComboOneComboMaxIndex is %d"), defaultComboOneComboMaxIndex)
 }
 
 void ABaseCharacter::MoveForward(float Value)
@@ -145,16 +145,16 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
 
-	PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInput); //default attack
+	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInput); //default attack
 
 	//PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
 	//PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
 
-	//PlayerInputComponent->BindAction("AttackOne", IE_Pressed, this, &ABaseCharacter::attackOnePressed);
-	//PlayerInputComponent->BindAction("AttackOne", IE_Released, this, &ABaseCharacter::attackOneReleased);
+	//PlayerInputComponent->BindAction("defaultComboOne", IE_Pressed, this, &ABaseCharacter::defaultComboOnePressed);
+	//PlayerInputComponent->BindAction("defaultComboOne", IE_Released, this, &ABaseCharacter::defaultComboOneReleased);
 
-	//PlayerInputComponent->BindAction("AttackTwo", IE_Pressed, this, &ABaseCharacter::attackTwoPressed);
-	//PlayerInputComponent->BindAction("AttackTwo", IE_Released, this, &ABaseCharacter::attackTwoReleased);
+	//PlayerInputComponent->BindAction("defaultComboTwo", IE_Pressed, this, &ABaseCharacter::defaultComboTwoPressed);
+	//PlayerInputComponent->BindAction("defaultComboTwo", IE_Released, this, &ABaseCharacter::defaultComboTwoReleased);
 
 	// Sprint attempt
 }
@@ -164,34 +164,6 @@ void ABaseCharacter::setMovementData(FMovementData inMovementData)
 	GetCharacterMovement()->MaxWalkSpeed = inMovementData.maxWalkSpeed;
 	GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
 	//GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, inMovementData.maxRotationRate);
-}
-
-void ABaseCharacter::incrementAttackCombo()
-{
-	// TODO: This should be switch statements
-
-	if (currentAttackType == EAttackType::AttackOneCombo)
-	{
-		if ((attackOneComboCurrentIndex + 1) >= attackOneComboMaxIndex)
-		{
-			attackOneComboCurrentIndex = 0;
-		}
-		else
-		{
-			++attackOneComboCurrentIndex;
-		}
-	}
-	else if (currentAttackType == EAttackType::AttackTwoCombo)
-	{
-		if ((attackTwoComboCurrentIndex + 1) >= attackTwoComboMaxIndex)
-		{
-			attackTwoComboCurrentIndex = 0;
-		}
-		else
-		{
-			++attackTwoComboCurrentIndex;
-		}
-	}
 }
 
 float ABaseCharacter::getHealthPoints_Implementation()

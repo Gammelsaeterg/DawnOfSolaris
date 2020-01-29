@@ -29,10 +29,12 @@ public:
 
 
 	//Inputs // Also TODO: Refactor
-	void attackOnePressed();
-	void attackOneReleased();
-	void attackTwoPressed();
-	void attackTwoReleased();
+	void defaultComboOnePressed();
+	void defaultComboOneReleased();
+	void defaultComboTwoPressed();
+	void defaultComboTwoReleased();
+
+	void incrementAttackCombo();
 
 	void attackPressed();
 
@@ -48,6 +50,16 @@ public:
 	FTimerHandle attackTimerAI;
 
 	//Variables
+	UPROPERTY(BlueprintReadOnly)
+	int defaultComboOneMaxIndex{ 1 };
+	UPROPERTY(BlueprintReadOnly)
+	int defaultComboTwoMaxIndex{ 1 };
+
+	UPROPERTY(BlueprintReadOnly)
+	int defaultComboOneCurrentIndex{ 0 };
+	UPROPERTY(BlueprintReadOnly)
+	int defaultComboTwoCurrentIndex{ 0 };
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxStaminaPoints{ 100 };
 	float currentStaminaPoints{ 100 };
@@ -69,10 +81,10 @@ public:
 	bool bAttackHitboxActive{ false };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FChargeAttackData> attackOneAttacks;
+	TArray<FChargeAttackData> defaultComboOneAttacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FChargeAttackData> attackTwoAttacks;
+	TArray<FChargeAttackData> defaultComboTwoAttacks;
 
 	//Hitbox collisions
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
