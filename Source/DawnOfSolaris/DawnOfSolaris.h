@@ -130,6 +130,15 @@ enum class EActionInput : uint8
 	Action3		 UMETA(DisplayName = "Action3 (Attack 3 / Grab attack)")
 };
 
+UENUM()
+enum class EHitstunType : uint8
+{
+	hitstunAnimationOnly			UMETA(DisplayName = "Hitstun (animation only)"),
+	hitstunFlinch					UMETA(DisplayName = "Hitstun (stunned in place)"),
+	hitstunFlinchWithKnockback      UMETA(DisplayName = "Hitstun (stunned and knockback)"),
+	hitstunLaunched					UMETA(DisplayName = "Hitstun (launched in air)")
+};
+
 UENUM(BlueprintType)
 enum class ECombatAlignment : uint8
 {
