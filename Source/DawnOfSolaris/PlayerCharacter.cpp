@@ -93,58 +93,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 	// Sprint attempt
 }
 
-void APlayerCharacter::defaultComboOnePressed()
-{
-	if (canAttack()) // TODO warning: May need refinenement
-	{
-		if (defaultComboOneAttacks.IsValidIndex(defaultComboOneCurrentIndex))
-		{
-			// Inititate attack
-			bChargeAttackStarted = true;
-			currentActionType = EActionType::DefaultComboOne;
-			windUpChargeAttack(defaultComboOneAttacks[defaultComboOneCurrentIndex]); // TODO: Secure!!
-			currentAttackHitboxType = defaultComboOneAttacks[defaultComboOneCurrentIndex].AttackHitbox;
-
-			//currentAttackDataToSend.damageAmount = defaultComboOneAttacks[defaultComboOneCurrentIndex].minDamageValue; // TODO: Get charge value
-			//currentAttackDataToSend.hitstunStrength = defaultComboOneAttacks[defaultComboOneCurrentIndex].minHitstunValue; // TODO: Get charge value
-		}
-	}
-}
-
-void APlayerCharacter::defaultComboOneReleased()
-{
-	if (bChargeAttackStarted && (currentActionType == EActionType::DefaultComboOne))
-	{
-		releaseAttack_Implementation();
-	}
-}
-
-void APlayerCharacter::defaultComboTwoPressed()
-{
-	if (canAttack()) // TODO warning: May need refinenement
-	{
-		if (defaultComboTwoAttacks.IsValidIndex(defaultComboTwoCurrentIndex)) // To check if attacks exist //TODO: Unsecure check, may still crash game
-		{
-			// Inititate attack
-			bChargeAttackStarted = true;
-			currentActionType = EActionType::DefaultComboTwo;
-			windUpChargeAttack(defaultComboTwoAttacks[defaultComboTwoCurrentIndex]); // TODO: May need to secure
-			currentAttackHitboxType = defaultComboTwoAttacks[defaultComboTwoCurrentIndex].AttackHitbox;
-
-			//currentAttackDataToSend.damageAmount = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
-			//currentAttackDataToSend.hitstunStrength = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
-		}
-	}
-}
-
-void APlayerCharacter::defaultComboTwoReleased()
-{
-	if (bChargeAttackStarted && (currentActionType == EActionType::DefaultComboTwo))
-	{
-		releaseAttack_Implementation();
-	}
-}
-
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 {
 	if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
@@ -258,30 +206,11 @@ void APlayerCharacter::actionReleased(EActionType inActionType)
 	}
 }
 
-void APlayerCharacter::incrementAttackCombo()
+void APlayerCharacter::actionReleased()
 {
-	// TODO: This should be switch statements, TODO update: Maybe delete
-	if (currentActionType == EActionType::DefaultComboOne)
+	if (currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo)
 	{
-		if ((defaultComboOneCurrentIndex + 1) >= defaultComboOneMaxIndex)
-		{
-			defaultComboOneCurrentIndex = 0;
-		}
-		else
-		{
-			++defaultComboOneCurrentIndex;
-		}
-	}
-	else if (currentActionType == EActionType::DefaultComboTwo)
-	{
-		if ((defaultComboTwoCurrentIndex + 1) >= defaultComboTwoMaxIndex)
-		{
-			defaultComboTwoCurrentIndex = 0;
-		}
-		else
-		{
-			++defaultComboTwoCurrentIndex;
-		}
+		comboAttackReleased(currentActionType);
 	}
 }
 
@@ -304,6 +233,7 @@ TArray<FChargeAttackData> APlayerCharacter::getCurrentMoveset(EActionType inActi
 {
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
 	{
+
 		switch (inActionType)
 		{
 		case EActionType::DefaultComboOne:
@@ -323,13 +253,6 @@ TArray<FChargeAttackData> APlayerCharacter::getCurrentMoveset(EActionType inActi
 	}
 }
 
-void APlayerCharacter::attackPressed(EActionInput inInput)
-{
-	int tempInt = (uint8)inInput;
-
-	UE_LOG(LogTemp, Warning, TEXT("This number is: %d"), tempInt)
-}
-
 inline void APlayerCharacter::sprintPressed()
 {
 	bSprintingActive = true;
@@ -340,18 +263,15 @@ inline void APlayerCharacter::sprintReleased()
 	bSprintingActive = false;
 }
 
-void APlayerCharacter::attackAI(int attackIndex, float chargeAmount)
+void APlayerCharacter::attackAI(EActionType inAttackCombo, float chargeAmount)
 {
-	if (attackIndex == 0) //TODO: Complete making attackIndex into enum
+	if (inAttackCombo == EActionType::DefaultComboOne || inAttackCombo == EActionType::DefaultComboTwo)
 	{
-		defaultComboOnePressed();
-		GetWorldTimerManager().SetTimer(attackTimerAI, this, &APlayerCharacter::defaultComboOneReleased, chargeAmount);
+		currentActionType = inAttackCombo;
+		actionPressed(currentActionType);
+		GetWorldTimerManager().SetTimer(attackTimerAI, this, &APlayerCharacter::actionReleased, chargeAmount);
 	}
-	else if (attackIndex == 1) //TODO: Complete making attackIndex into enum
-	{
-		defaultComboTwoPressed();
-		GetWorldTimerManager().SetTimer(attackTimerAI, this, &APlayerCharacter::defaultComboTwoReleased, chargeAmount);
-	}
+
 }
 
 inline void APlayerCharacter::standbyCheckTick() // Tick function to check if player is in standby
@@ -471,7 +391,6 @@ inline void APlayerCharacter::releaseAttack_Implementation()
 	{
 		bChargeAttackStarted = false;
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
-		incrementAttackCombo();		
 		incrementAttackCombo(currentActionType);
 	}
 }

@@ -27,13 +27,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
-	//Inputs // Also TODO: Refactor/Restructure
-	void defaultComboOnePressed();
-	void defaultComboOneReleased();
-	void defaultComboTwoPressed();
-	void defaultComboTwoReleased();
-
 	void comboAttackPressed(EActionType inActionType);
 	void comboAttackReleased(EActionType inActionType);
 	void updateComboMaxIndexes();
@@ -56,12 +49,10 @@ public:
 
 	void actionPressed(EActionType inActionType);
 	void actionReleased(EActionType inActionType);
+	void actionReleased();
 
-	void incrementAttackCombo();
 	void incrementAttackCombo(EActionType inActionType);
 	TArray<FChargeAttackData> getCurrentMoveset(EActionType inActionType, int inMovesetIndex = 2);
-
-	void attackPressed(EActionInput inInput);
 
 	void grabAttackPressed(); //TODO: Complete function
 	void grabAttackReleased(); //TODO: Complete function
@@ -71,7 +62,7 @@ public:
 
 	// AI input
 	UFUNCTION(BlueprintCallable)
-	void attackAI(int attackIndex, float chargeAmount); //TODO make attack index into enum
+	void attackAI(EActionType inAttackCombo, float chargeAmount); //TODO make attack index into enum
 	FTimerHandle attackTimerAI;
 
 	//Variables
