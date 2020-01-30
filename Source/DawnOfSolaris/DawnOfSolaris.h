@@ -111,12 +111,14 @@ struct FAttackData // Used for storing and sending attack info
 };
 
 UENUM()
-enum EAttackType
+enum EActionType // TODO: Add more actions
 {
-	DefaultAttack     UMETA(DisplayName = "Default Attack"),
-	defaultComboOne    UMETA(DisplayName = "Attack One Combo"),
-	defaultComboTwo    UMETA(DisplayName = "Attack Two Combo"),
-	GrabAttack		  UMETA(DisplayName = "Grab Attack")
+	DefaultAttack      UMETA(DisplayName = "Default Attack"),
+	DefaultComboOne    UMETA(DisplayName = "Attack One Combo"),
+	DefaultComboTwo    UMETA(DisplayName = "Attack Two Combo"),
+	GrabAttack		   UMETA(DisplayName = "Grab Attack"),
+	Interact		   UMETA(DisplayName = "Interact"),
+	Sprint			   UMETA(DisplayName = "Sprint")
 };
 
 UENUM()

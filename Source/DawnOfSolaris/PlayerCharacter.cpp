@@ -81,11 +81,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 	PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &APlayerCharacter::sprintPressed);
 	PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &APlayerCharacter::sprintReleased);
 
-	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &APlayerCharacter::defaultComboOnePressed);
-	PlayerInputComponent->BindAction("Action1", IE_Released, this, &APlayerCharacter::defaultComboOneReleased);
+	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &APlayerCharacter::Action1Pressed);
+	PlayerInputComponent->BindAction("Action1", IE_Released, this, &APlayerCharacter::Action1Released);
 
-	PlayerInputComponent->BindAction("Action2", IE_Pressed, this, &APlayerCharacter::defaultComboTwoPressed);
-	PlayerInputComponent->BindAction("Action2", IE_Released, this, &APlayerCharacter::defaultComboTwoReleased);
+	PlayerInputComponent->BindAction("Action2", IE_Pressed, this, &APlayerCharacter::Action2Pressed);
+	PlayerInputComponent->BindAction("Action2", IE_Released, this, &APlayerCharacter::Action2Released);
 
 	// Sprint attempt
 }
@@ -98,7 +98,7 @@ void APlayerCharacter::defaultComboOnePressed()
 		{
 			// Inititate attack
 			bChargeAttackStarted = true;
-			currentAttackType = EAttackType::defaultComboOne;
+			currentAttackType = EActionType::DefaultComboOne;
 			windUpChargeAttack(defaultComboOneAttacks[defaultComboOneCurrentIndex]); // TODO: Secure!!
 			currentAttackHitboxType = defaultComboOneAttacks[defaultComboOneCurrentIndex].AttackHitbox;
 
@@ -110,7 +110,7 @@ void APlayerCharacter::defaultComboOnePressed()
 
 void APlayerCharacter::defaultComboOneReleased()
 {
-	if (bChargeAttackStarted && (currentAttackType == EAttackType::defaultComboOne))
+	if (bChargeAttackStarted && (currentAttackType == EActionType::DefaultComboOne))
 	{
 		releaseAttack_Implementation();
 	}
@@ -124,7 +124,7 @@ void APlayerCharacter::defaultComboTwoPressed()
 		{
 			// Inititate attack
 			bChargeAttackStarted = true;
-			currentAttackType = EAttackType::defaultComboTwo;
+			currentAttackType = EActionType::DefaultComboTwo;
 			windUpChargeAttack(defaultComboTwoAttacks[defaultComboTwoCurrentIndex]); // TODO: May need to secure
 			currentAttackHitboxType = defaultComboTwoAttacks[defaultComboTwoCurrentIndex].AttackHitbox;
 
@@ -136,9 +136,79 @@ void APlayerCharacter::defaultComboTwoPressed()
 
 void APlayerCharacter::defaultComboTwoReleased()
 {
-	if (bChargeAttackStarted && (currentAttackType == EAttackType::defaultComboTwo))
+	if (bChargeAttackStarted && (currentAttackType == EActionType::DefaultComboTwo))
 	{
 		releaseAttack_Implementation();
+	}
+}
+
+void APlayerCharacter::Action0Pressed()
+{
+	actionPressed(Action0Input);
+}
+
+void APlayerCharacter::Action1Pressed()
+{
+	actionPressed(Action1Input);
+}
+
+void APlayerCharacter::Action2Pressed()
+{
+	actionPressed(Action2Input);
+}
+
+void APlayerCharacter::Action3Pressed()
+{
+	actionPressed(Action3Input);
+}
+
+void APlayerCharacter::Action0Released()
+{
+	actionReleased(Action0Input);
+}
+
+void APlayerCharacter::Action1Released()
+{
+	actionReleased(Action1Input);
+}
+
+void APlayerCharacter::Action2Released()
+{
+	actionReleased(Action2Input);
+}
+
+void APlayerCharacter::Action3Released()
+{
+	actionReleased(Action3Input);
+}
+
+void APlayerCharacter::actionPressed(EActionType inActionType)
+{
+	switch (inActionType)
+	{
+	case EActionType::DefaultComboOne:
+		defaultComboOnePressed();
+		break;
+	case EActionType::DefaultComboTwo:
+		defaultComboTwoPressed();
+		break;
+	default:
+		break;
+	}
+}
+
+void APlayerCharacter::actionReleased(EActionType inActionType)
+{
+	switch (inActionType)
+	{
+	case EActionType::DefaultComboOne:
+		defaultComboOneReleased();
+		break;
+	case EActionType::DefaultComboTwo:
+		defaultComboTwoReleased();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -146,7 +216,7 @@ void APlayerCharacter::incrementAttackCombo()
 {
 	// TODO: This should be switch statements
 
-	if (currentAttackType == EAttackType::defaultComboOne)
+	if (currentAttackType == EActionType::DefaultComboOne)
 	{
 		if ((defaultComboOneCurrentIndex + 1) >= defaultComboOneMaxIndex)
 		{
@@ -157,7 +227,7 @@ void APlayerCharacter::incrementAttackCombo()
 			++defaultComboOneCurrentIndex;
 		}
 	}
-	else if (currentAttackType == EAttackType::defaultComboTwo)
+	else if (currentAttackType == EActionType::DefaultComboTwo)
 	{
 		if ((defaultComboTwoCurrentIndex + 1) >= defaultComboTwoMaxIndex)
 		{

@@ -28,11 +28,30 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
-	//Inputs // Also TODO: Refactor
+	//Inputs // Also TODO: Refactor/Restructure
 	void defaultComboOnePressed();
 	void defaultComboOneReleased();
 	void defaultComboTwoPressed();
 	void defaultComboTwoReleased();
+
+	void Action0Pressed();
+	void Action1Pressed();
+	void Action2Pressed();
+	void Action3Pressed();
+
+	void Action0Released();
+	void Action1Released();
+	void Action2Released();
+	void Action3Released();
+
+	EActionType Action0Input{ EActionType::Interact };
+	EActionType Action1Input{ EActionType::DefaultComboOne };
+	EActionType Action2Input{ EActionType::DefaultComboTwo };
+	EActionType Action3Input{ EActionType::GrabAttack };
+
+	void actionPressed(EActionType inActionType);
+	void actionReleased(EActionType inActionType);
+
 
 	void incrementAttackCombo();
 
