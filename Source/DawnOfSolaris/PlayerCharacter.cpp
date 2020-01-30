@@ -175,14 +175,17 @@ void APlayerCharacter::updateComboMaxIndexes()
 {
 	maxComboIndexes.Empty();
 	maxComboIndexes.Reserve(2); // TODO(?) Update number to max movesets
-	maxComboIndexes[(uint8)EActionType::DefaultComboOne] = defaultComboOneAttacks.Num();
-	maxComboIndexes[(uint8)EActionType::DefaultComboOne] = defaultComboTwoAttacks.Num();
+	maxComboIndexes.Push(getCurrentMoveset(EActionType::DefaultComboOne).Num());
+	maxComboIndexes.Push(getCurrentMoveset(EActionType::DefaultComboTwo).Num());
 }
 
 void APlayerCharacter::updateCurrentIndexes()
 {
 	currentComboIndexes.Empty();
-	currentComboIndexes.Init(0, 0); // TODO(?) Update elements to number of max movesets
+	for (int NumOfMovesets = 2; NumOfMovesets > 0; --NumOfMovesets) // TODO(?) Update elements to number of max movesets, 2 is default for now
+	{
+		currentComboIndexes.Push(0); 
+	}	
 }
 
 void APlayerCharacter::Action0Pressed()
@@ -230,10 +233,10 @@ void APlayerCharacter::actionPressed(EActionType inActionType)
 	switch (inActionType)
 	{
 	case EActionType::DefaultComboOne:
-		defaultComboOnePressed();
+		comboAttackPressed(inActionType);
 		break;
 	case EActionType::DefaultComboTwo:
-		defaultComboTwoPressed();
+		comboAttackPressed(inActionType);
 		break;
 	default:
 		break;
@@ -245,10 +248,10 @@ void APlayerCharacter::actionReleased(EActionType inActionType)
 	switch (inActionType)
 	{
 	case EActionType::DefaultComboOne:
-		defaultComboOneReleased();
+		comboAttackReleased(inActionType);;
 		break;
 	case EActionType::DefaultComboTwo:
-		defaultComboTwoReleased();
+		comboAttackReleased(inActionType);;
 		break;
 	default:
 		break;
