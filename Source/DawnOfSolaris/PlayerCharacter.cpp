@@ -458,7 +458,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 		{
 			if (canDamageInteract(CombatAlignment, characterInterface->Execute_getAlignment(OtherActor))) // Check if can damage interact
 			{
-				//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
 				//UE_LOG(LogTemp, Warning, TEXT("Overlapped self comp: %s"), *OverlappedComp->GetName());
 				//UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 				//UE_LOG(LogTemp, Warning, TEXT("Other alignment is: %s"), *(GetEnumValueAsString<ECombatAlignment>("ECombatAlignment", characterInterface->Execute_getAlignment(OtherActor))));
@@ -474,10 +474,21 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 					hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
 				}
 
+				if ((currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo))
+				{
+					FAttackData tempAttackData; // TODO: Refactor
+					tempAttackData = calculateChargeAttackValues(getCurrentMoveset(currentActionType)[currentComboIndexes[(uint8)currentActionType]]);
 
-				currentAttackDataToSend = FAttackData(currentAttackDataToSend.damageAmount,
-				hitDirection, FVector(0.f, 0.f, 0.f),
-				this, currentAttackDataToSend.hitstunStrength);
+					currentAttackDataToSend = FAttackData(tempAttackData.damageAmount,
+					hitDirection, SweepResult.Location,
+					this, tempAttackData.hitstunStrength);
+				}
+				else
+				{
+					currentAttackDataToSend = FAttackData(currentAttackDataToSend.damageAmount,
+					hitDirection, SweepResult.Location,
+					this, currentAttackDataToSend.hitstunStrength);
+				}
 
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}								
