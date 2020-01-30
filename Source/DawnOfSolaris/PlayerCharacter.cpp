@@ -52,6 +52,9 @@ void APlayerCharacter::BeginPlay()
 	
 	defaultComboOneMaxIndex = defaultComboOneAttacks.Num();
 	defaultComboTwoMaxIndex = defaultComboTwoAttacks.Num();
+
+	updateComboMaxIndexes();
+	updateCurrentIndexes();
 	//UE_LOG(LogTemp, Warning, TEXT("Current defaultComboOneComboMaxIndex is %d"), defaultComboOneComboMaxIndex)
 }
 
@@ -98,7 +101,7 @@ void APlayerCharacter::defaultComboOnePressed()
 		{
 			// Inititate attack
 			bChargeAttackStarted = true;
-			currentAttackType = EActionType::DefaultComboOne;
+			currentActionType = EActionType::DefaultComboOne;
 			windUpChargeAttack(defaultComboOneAttacks[defaultComboOneCurrentIndex]); // TODO: Secure!!
 			currentAttackHitboxType = defaultComboOneAttacks[defaultComboOneCurrentIndex].AttackHitbox;
 
@@ -110,7 +113,7 @@ void APlayerCharacter::defaultComboOnePressed()
 
 void APlayerCharacter::defaultComboOneReleased()
 {
-	if (bChargeAttackStarted && (currentAttackType == EActionType::DefaultComboOne))
+	if (bChargeAttackStarted && (currentActionType == EActionType::DefaultComboOne))
 	{
 		releaseAttack_Implementation();
 	}
@@ -124,7 +127,7 @@ void APlayerCharacter::defaultComboTwoPressed()
 		{
 			// Inititate attack
 			bChargeAttackStarted = true;
-			currentAttackType = EActionType::DefaultComboTwo;
+			currentActionType = EActionType::DefaultComboTwo;
 			windUpChargeAttack(defaultComboTwoAttacks[defaultComboTwoCurrentIndex]); // TODO: May need to secure
 			currentAttackHitboxType = defaultComboTwoAttacks[defaultComboTwoCurrentIndex].AttackHitbox;
 
@@ -136,10 +139,50 @@ void APlayerCharacter::defaultComboTwoPressed()
 
 void APlayerCharacter::defaultComboTwoReleased()
 {
-	if (bChargeAttackStarted && (currentAttackType == EActionType::DefaultComboTwo))
+	if (bChargeAttackStarted && (currentActionType == EActionType::DefaultComboTwo))
 	{
 		releaseAttack_Implementation();
 	}
+}
+
+void APlayerCharacter::comboAttackPressed(EActionType inActionType)
+{
+	if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
+	{
+		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
+		{
+			// Inititate attack
+			bChargeAttackStarted = true;
+			currentActionType = inActionType;
+			windUpChargeAttack(getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]]);
+			currentAttackHitboxType = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
+
+			//currentAttackDataToSend.damageAmount = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
+			//currentAttackDataToSend.hitstunStrength = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
+		}
+	}
+}
+
+void APlayerCharacter::comboAttackReleased(EActionType inActionType)
+{
+	if (bChargeAttackStarted && (currentActionType == inActionType))
+	{
+		releaseAttack_Implementation();
+	}
+}
+
+void APlayerCharacter::updateComboMaxIndexes()
+{
+	maxComboIndexes.Empty();
+	maxComboIndexes.Reserve(2); // TODO(?) Update number to max movesets
+	maxComboIndexes[(uint8)EActionType::DefaultComboOne] = defaultComboOneAttacks.Num();
+	maxComboIndexes[(uint8)EActionType::DefaultComboOne] = defaultComboTwoAttacks.Num();
+}
+
+void APlayerCharacter::updateCurrentIndexes()
+{
+	currentComboIndexes.Empty();
+	currentComboIndexes.Init(0, 0); // TODO(?) Update elements to number of max movesets
 }
 
 void APlayerCharacter::Action0Pressed()
@@ -214,9 +257,8 @@ void APlayerCharacter::actionReleased(EActionType inActionType)
 
 void APlayerCharacter::incrementAttackCombo()
 {
-	// TODO: This should be switch statements
-
-	if (currentAttackType == EActionType::DefaultComboOne)
+	// TODO: This should be switch statements, TODO update: Maybe delete
+	if (currentActionType == EActionType::DefaultComboOne)
 	{
 		if ((defaultComboOneCurrentIndex + 1) >= defaultComboOneMaxIndex)
 		{
@@ -227,7 +269,7 @@ void APlayerCharacter::incrementAttackCombo()
 			++defaultComboOneCurrentIndex;
 		}
 	}
-	else if (currentAttackType == EActionType::DefaultComboTwo)
+	else if (currentActionType == EActionType::DefaultComboTwo)
 	{
 		if ((defaultComboTwoCurrentIndex + 1) >= defaultComboTwoMaxIndex)
 		{
@@ -237,6 +279,44 @@ void APlayerCharacter::incrementAttackCombo()
 		{
 			++defaultComboTwoCurrentIndex;
 		}
+	}
+}
+
+void APlayerCharacter::incrementAttackCombo(EActionType inActionType)
+{
+	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
+	{
+		if ((currentComboIndexes[(uint8)inActionType] + 1) >= maxComboIndexes[(uint8)inActionType])
+		{
+			currentComboIndexes[(uint8)inActionType] = 0;
+		}
+		else
+		{
+			++currentComboIndexes[(uint8)inActionType];
+		}
+	}
+}
+
+TArray<FChargeAttackData> APlayerCharacter::getCurrentMoveset(EActionType inActionType, int inMovesetIndex)
+{
+	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
+	{
+		switch (inActionType)
+		{
+		case EActionType::DefaultComboOne:
+			return defaultComboOneAttacks;
+			break;
+		case EActionType::DefaultComboTwo:
+			return defaultComboTwoAttacks;
+			break;
+		default:
+			return TArray<FChargeAttackData>(); // Should not happen
+			break;
+		}
+	}
+	else // TODO(?): Return inMovesetIndex
+	{
+		return TArray<FChargeAttackData>(); // Should not happen
 	}
 }
 
@@ -389,6 +469,7 @@ inline void APlayerCharacter::releaseAttack_Implementation()
 		bChargeAttackStarted = false;
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 		incrementAttackCombo();		
+		incrementAttackCombo(currentActionType);
 	}
 }
 

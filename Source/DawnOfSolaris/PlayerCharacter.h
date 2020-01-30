@@ -34,6 +34,11 @@ public:
 	void defaultComboTwoPressed();
 	void defaultComboTwoReleased();
 
+	void comboAttackPressed(EActionType inActionType);
+	void comboAttackReleased(EActionType inActionType);
+	void updateComboMaxIndexes();
+	void updateCurrentIndexes();
+
 	void Action0Pressed();
 	void Action1Pressed();
 	void Action2Pressed();
@@ -52,8 +57,9 @@ public:
 	void actionPressed(EActionType inActionType);
 	void actionReleased(EActionType inActionType);
 
-
 	void incrementAttackCombo();
+	void incrementAttackCombo(EActionType inActionType);
+	TArray<FChargeAttackData> getCurrentMoveset(EActionType inActionType, int inMovesetIndex = 2);
 
 	void attackPressed(EActionInput inInput);
 
@@ -69,6 +75,12 @@ public:
 	FTimerHandle attackTimerAI;
 
 	//Variables
+	UPROPERTY(BlueprintReadOnly)
+	TArray<int> maxComboIndexes;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<int> currentComboIndexes;
+
+
 	UPROPERTY(BlueprintReadOnly)
 	int defaultComboOneMaxIndex{ 1 };
 	UPROPERTY(BlueprintReadOnly)

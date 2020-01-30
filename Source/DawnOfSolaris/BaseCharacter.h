@@ -171,7 +171,7 @@ public:
 
 	UAnimMontage* currentMontage;
 
-	EActionType currentAttackType;
+	EActionType currentActionType;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: Complete this
 	//TArray<FChargeAttackData> defaultComboTwoAttacks;
