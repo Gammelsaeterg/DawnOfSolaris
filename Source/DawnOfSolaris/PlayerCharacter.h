@@ -168,6 +168,12 @@ public:
 	void takeDamage(FAttackData inAttackData);
 	virtual void takeDamage_Implementation(FAttackData inAttackData) override;
 
+	void startHitstun();
+	virtual void startHitstun_Implementation() override;
+
+	void endHitstun();
+	virtual void endHitstun_Implementation() override;
+
 	//Other functions
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getStaminaPoints();

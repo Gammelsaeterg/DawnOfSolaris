@@ -96,7 +96,7 @@ public:
 	FMovementData currentMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData defaultMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData combatMovementData{ FMovementData(0.f, 50) };
-	FMovementData hitstunMovementData{ FMovementData(0.f, 100.f) };
+	FMovementData hitstunMovementData{ FMovementData(0.f, 0.f) };
 
 	void setMovementData(FMovementData inMovementData);
 

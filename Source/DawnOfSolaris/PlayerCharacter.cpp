@@ -60,7 +60,7 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	//Super::Tick(DeltaTime);
 
 	sprintTick(DeltaTime);
 	regenStaminaTick(DeltaTime);
@@ -290,19 +290,22 @@ void APlayerCharacter::sprintTick(float DeltaTime)
 {
 	// TODO: Refine this, also should lerp
 	{
-		if (canSprint() && (currentStaminaPoints > 1.f))
+		if (!bSelfHitstunActive)
 		{
-			currentMovementData.maxWalkSpeed = maxSprintSpeed; // Should lerp
-			if (GetVelocity().Size() > maxWalkSpeed)
+			if (canSprint() && (currentStaminaPoints > 1.f))
 			{
-				currentStaminaPoints -= sprintStaminaCost * DeltaTime;
-			}	
-			updateMovement();
-		}
-		else
-		{
-			currentMovementData.maxWalkSpeed = maxWalkSpeed; // Should lerp
-			updateMovement();
+				currentMovementData.maxWalkSpeed = maxSprintSpeed; // Should lerp
+				if (GetVelocity().Size() > maxWalkSpeed)
+				{
+					currentStaminaPoints -= sprintStaminaCost * DeltaTime;
+				}
+				updateMovement();
+			}
+			else
+			{
+				currentMovementData.maxWalkSpeed = maxWalkSpeed; // Should lerp
+				updateMovement();
+			}
 		}
 	}
 	// more TODO: Only use this for lerp, the speed change itself should be an event
@@ -500,6 +503,16 @@ void APlayerCharacter::takeDamage_Implementation(FAttackData inAttackData)
 {
 	Super::takeDamage_Implementation(inAttackData);
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage player char: %s"), *this->GetName());
+}
+
+void APlayerCharacter::startHitstun_Implementation()
+{
+	Super::startHitstun_Implementation();
+}
+
+void APlayerCharacter::endHitstun_Implementation()
+{
+	Super::endHitstun_Implementation();
 }
 
 inline float APlayerCharacter::getStaminaPoints_Implementation()
