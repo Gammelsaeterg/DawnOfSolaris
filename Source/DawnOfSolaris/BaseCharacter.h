@@ -173,9 +173,8 @@ public:
 
 	EActionType currentActionType;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: Complete this
-	//TArray<FChargeAttackData> defaultComboTwoAttacks;
 
-	//Move code below to player character
 
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugFunctionForBlueprint();
 };

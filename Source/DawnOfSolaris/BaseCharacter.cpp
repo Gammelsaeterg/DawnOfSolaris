@@ -267,6 +267,8 @@ void ABaseCharacter::startHitstun_Implementation()
 	SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
 
 	updateMovement();
+
+	//debugFunctionForBlueprint(); //// TODO: Delete
 }
 
 void ABaseCharacter::endHitstun_Implementation()
