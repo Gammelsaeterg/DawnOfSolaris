@@ -268,7 +268,7 @@ void ABaseCharacter::startHitstun_Implementation()
 
 	updateMovement();
 
-	//debugFunctionForBlueprint(); //// TODO: Delete
+	debugFunctionForBlueprint(); //// TODO: Delete
 }
 
 void ABaseCharacter::endHitstun_Implementation()
