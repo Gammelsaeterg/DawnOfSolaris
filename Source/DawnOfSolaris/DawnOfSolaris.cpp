@@ -2,8 +2,35 @@
 
 #include "DawnOfSolaris.h"
 #include "Modules/ModuleManager.h"
+#include "GameFramework/Character.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, DawnOfSolaris, "DawnOfSolaris" );
+
+// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
+void runHitstunAnimations(ACharacter & inCharacter, float inHitstunStrengthReceived, FVector hitDirection)
+{
+	if (inHitstunStrengthReceived < 0.1f)
+	{
+
+	}
+	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived < 0.3f)
+	{
+
+	}
+	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived < 0.7f)
+	{
+
+	}
+	else if (inHitstunStrengthReceived > 0.7f)
+	{
+
+	}
+	else
+	{
+		// If function reaches this place then something is wrong
+		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
+	}
+}
 
 bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAlignment)
 {

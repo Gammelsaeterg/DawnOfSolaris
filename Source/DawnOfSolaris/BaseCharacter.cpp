@@ -193,17 +193,15 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			currentHealthPoints -= inAttackData.damageAmount;
 			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), inAttackData.damageAmount, currentHealthPoints);
 
-			//Hitstun handling
-			if (hitstunAnimations.Num() > 0) 
-			{
-				//if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index  
-				//{
-				//	currentReceivedAttackData = inAttackData;
+			//Hitstun launch
+			//FVector adjustedDirection = (FVector(inAttackData.hitDirection.X, inAttackData.hitDirection.Y, 0.f).GetSafeNormal()) * 1000;
+			//LaunchCharacter(adjustedDirection, false, false);
 
-				//	currentMontage = hitstunAnimations[0].HitstunAnimMontage;
-				//	GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
-				//}
-			}
+			//Hitstun animation
+			//if ()
+			//{
+
+			//}
 		}
 		else
 		{

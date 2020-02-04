@@ -69,24 +69,6 @@ struct FDefaultAttackData
 };
 
 USTRUCT(BlueprintType)
-struct FHitstunData
-{
-	//GENERATED_USTRUCT_BODY()
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* hitstunGrade1AnimMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* hitstunGrade2AnimMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* hitstunGrade3AnimMontage;
-
-	// TODO(?): Add more variables
-};
-
-USTRUCT(BlueprintType)
 struct FAttackData // Used for storing and sending attack info
 {
 	//GENERATED_USTRUCT_BODY()
@@ -144,6 +126,37 @@ enum class EHitstunType : uint8
 	hitstunFlinchWithKnockback      UMETA(DisplayName = "Hitstun (stunned and knockback)"),
 	hitstunLaunched					UMETA(DisplayName = "Hitstun (launched in air)")
 };
+
+USTRUCT(BlueprintType)
+struct FHitstunData
+{
+	//GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* hitstunGrade1AnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* hitstunGrade2AnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* hitstunGrade3AnimMontage;
+
+	// TODO(?): Add more variables
+};
+
+//UENUM() // TODO(?): Complete or delete
+//enum class EHitstunGrade : uint8
+//{
+//	hitstunGrade1			UMETA(DisplayName = "hitstunGrade1"),
+//	hitstunGrade2			UMETA(DisplayName = "hitstunGrade2"),
+//	hitstunGrade3			UMETA(DisplayName = "hitstunGrade3"),
+//	hitstunGrade4			UMETA(DisplayName = "hitstunGrade4")
+//};
+
+// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
+void runHitstunAnimations(class ACharacter &inCharacter, float inHitstunStrengthReceived, FVector hitDirection);
+
 
 UENUM(BlueprintType)
 enum class ECombatAlignment : uint8
