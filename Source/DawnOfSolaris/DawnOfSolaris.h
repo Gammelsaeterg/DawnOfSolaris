@@ -154,8 +154,7 @@ struct FHitstunData
 //	hitstunGrade4			UMETA(DisplayName = "hitstunGrade4")
 //};
 
-// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
-void runHitstunAnimations(class ACharacter &inCharacter, float inHitstunStrengthReceived, FVector hitDirection);
+
 
 
 UENUM(BlueprintType)

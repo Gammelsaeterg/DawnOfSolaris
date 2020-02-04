@@ -194,8 +194,8 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), inAttackData.damageAmount, currentHealthPoints);
 
 			//Hitstun launch
-			//FVector adjustedDirection = (FVector(inAttackData.hitDirection.X, inAttackData.hitDirection.Y, 0.f).GetSafeNormal()) * 1000;
-			//LaunchCharacter(adjustedDirection, false, false);
+			FVector adjustedDirection = (FVector(inAttackData.hitDirection.X, inAttackData.hitDirection.Y, 0.f).GetSafeNormal()) * 1000;
+			LaunchCharacter(adjustedDirection, false, false);
 
 			//Hitstun animation
 			//if ()
@@ -278,6 +278,34 @@ void ABaseCharacter::endHitstun_Implementation()
 	bSelfHitstunActive = false;
 
 	updateMovement();
+}
+
+// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
+void ABaseCharacter::runHitstunAnimations(float inHitstunStrengthReceived, FVector hitDirection)
+{
+	if (inHitstunStrengthReceived < 0.1f)
+	{
+		if (IsValid(inAnimations.hitstunGrade1AnimMontage))
+		{
+		}
+	}
+	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived < 0.3f)
+	{
+
+	}
+	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived < 0.7f)
+	{
+
+	}
+	else if (inHitstunStrengthReceived > 0.7f)
+	{
+
+	}
+	else
+	{
+		// If function reaches this place then something is wrong
+		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
+	}
 }
 
 void ABaseCharacter::startIsDefeatedProcedure()
