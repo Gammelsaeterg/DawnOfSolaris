@@ -285,7 +285,7 @@ void ABaseCharacter::runHitstunAnimations(float inHitstunStrengthReceived, FVect
 {
 	if (inHitstunStrengthReceived < 0.1f)
 	{
-		if (IsValid(inAnimations.hitstunGrade1AnimMontage))
+		if (IsValid(hitstunAnimations.hitstunGrade1AnimMontage))
 		{
 		}
 	}
