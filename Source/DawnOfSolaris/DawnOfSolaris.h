@@ -75,7 +75,13 @@ struct FHitstunData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* HitstunAnimMontage;
+	UAnimMontage* hitstunGrade1AnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* hitstunGrade2AnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* hitstunGrade3AnimMontage;
 
 	// TODO(?): Add more variables
 };

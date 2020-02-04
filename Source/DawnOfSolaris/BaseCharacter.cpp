@@ -194,12 +194,15 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), inAttackData.damageAmount, currentHealthPoints);
 
 			//Hitstun handling
-			if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index
+			if (hitstunAnimations.Num() > 0) 
 			{
-				currentReceivedAttackData = inAttackData;
+				//if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index  
+				//{
+				//	currentReceivedAttackData = inAttackData;
 
-				currentMontage = hitstunAnimations[0].HitstunAnimMontage;
-				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+				//	currentMontage = hitstunAnimations[0].HitstunAnimMontage;
+				//	GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+				//}
 			}
 		}
 		else
@@ -268,7 +271,7 @@ void ABaseCharacter::startHitstun_Implementation()
 
 	updateMovement();
 
-	//debugFunctionForBlueprint(); //// TODO: Delete
+	debugFunctionForBlueprint(); //// TODO: Delete
 }
 
 void ABaseCharacter::endHitstun_Implementation()
