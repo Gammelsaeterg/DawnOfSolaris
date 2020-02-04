@@ -196,14 +196,13 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			//Hitstun handling
 			if (hitstunAnimations.Num() > 0) 
 			{
-				if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index  
-				{
-					currentReceivedAttackData = inAttackData;
+				//if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index  
+				//{
+				//	currentReceivedAttackData = inAttackData;
 
-					currentMontage = hitstunAnimations[0].HitstunAnimMontage;
-					GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
-				}
-
+				//	currentMontage = hitstunAnimations[0].HitstunAnimMontage;
+				//	GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+				//}
 			}
 		}
 		else
