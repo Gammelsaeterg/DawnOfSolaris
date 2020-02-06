@@ -392,7 +392,12 @@ inline void APlayerCharacter::releaseAttack_Implementation()
 {
 	if (bChargeAttackStarted == true)
 	{
+		// Sets current montage pos as charge amount // TODO(?): May be a better way to get position
+		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
+		//UE_LOG(LogTemp, Warning, TEXT("Took hitstunValue: %f"), GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
+
 		bChargeAttackStarted = false;
+
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 		incrementAttackCombo(currentActionType);
 	}
@@ -415,7 +420,6 @@ FAttackData APlayerCharacter::calculateChargeAttackValues(FChargeAttackData inCh
 
 	float damageToSend = minDamage + (currentChargeAmount * damageDifference);
 	float hitstunValueToSend = minHitstunValue + (currentChargeAmount * hitstunValueDifference);
-
 
 	tempChargeAttackData.damageAmount = damageToSend;
 	tempChargeAttackData.hitstunStrength = hitstunValueToSend;
@@ -471,7 +475,6 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 
 				FVector hitDirection;
 				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
-
 				if (hitDirection.Size() < 1) // If getting physics velocity fails
 				{
 					hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);

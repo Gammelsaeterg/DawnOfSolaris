@@ -9,6 +9,11 @@
 
 //UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
 
+// Global hitstun variables
+const static float flinchOnlyMinLimit{ 0.1f };
+const static float flinchAndKnockbackMinLimit{ 0.3f };
+const static float launchMinLimit{ 0.7f };
+
 UENUM(BlueprintType)
 enum class EAttackHitboxType : uint8
 {
@@ -142,6 +147,9 @@ struct FHitstunData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* hitstunGrade3AnimMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* hitstunGrade4AnimMontage;
+
 	// TODO(?): Add more variables
 };
 
@@ -183,6 +191,7 @@ struct FMovementData
 	FMovementData() : maxWalkSpeed(600.f), maxRotationRate(540.f) {}
 };
 
+float calculateKnockbackLength(float inMultiplier);
 
 template<typename TEnum>
 static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value)

@@ -6,12 +6,6 @@
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, DawnOfSolaris, "DawnOfSolaris" );
 
-// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
-void runHitstunAnimations(ACharacter & inCharacter, float inHitstunStrengthReceived, FVector hitDirection, FHitstunData inAnimations)
-{
-	
-}
-
 bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAlignment)
 {
 	switch (selfAlignment)
@@ -34,4 +28,24 @@ bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAli
 	default:
 		return false; // Should not be possible to reach this line of code
 	}
+}
+
+float calculateKnockbackLength(float inMultiplier)
+{
+	if (inMultiplier > flinchAndKnockbackMinLimit && inMultiplier < launchMinLimit)
+	{
+		// Turn inMulitplier to value between 0.f to 1.f based on flinchAndKnockbackMinLimit and launchMinLimit
+		float inMultiplierInPercent = (inMultiplier - flinchAndKnockbackMinLimit) / (launchMinLimit - flinchAndKnockbackMinLimit);
+		
+		float minKnockbackValue = 100.f;
+		float maxKnockbackValue = 4000.f;
+		float knockbackDifferene = maxKnockbackValue - minKnockbackValue;
+
+		return minKnockbackValue + (inMultiplierInPercent * knockbackDifferene);
+	}
+	else
+	{
+		return 0.f;
+	}
+
 }

@@ -191,17 +191,10 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 		if (currentHealthPoints > inAttackData.damageAmount)
 		{
 			currentHealthPoints -= inAttackData.damageAmount;
-			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), inAttackData.damageAmount, currentHealthPoints);
+			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, took hitstunValue: %f, health left: %f"), inAttackData.damageAmount, inAttackData.hitstunStrength, currentHealthPoints);
 
-			//Hitstun launch
-			FVector adjustedDirection = (FVector(inAttackData.hitDirection.X, inAttackData.hitDirection.Y, 0.f).GetSafeNormal()) * 1000;
-			LaunchCharacter(adjustedDirection, false, false);
-
-			//Hitstun animation
-			//if ()
-			//{
-
-			//}
+			currentReceivedAttackData = inAttackData; // Saves data so hitstun event can get correct values
+			runHitstunProcedure(inAttackData.hitstunStrength, inAttackData.hitDirection);
 		}
 		else
 		{
@@ -281,29 +274,45 @@ void ABaseCharacter::endHitstun_Implementation()
 }
 
 // Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
-void ABaseCharacter::runHitstunAnimations(float inHitstunStrengthReceived, FVector hitDirection)
+void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
 {
 	if (inHitstunStrengthReceived < 0.1f)
 	{
 		if (IsValid(hitstunAnimations.hitstunGrade1AnimMontage))
 		{
+			currentMontage = hitstunAnimations.hitstunGrade1AnimMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 		}
 	}
 	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived < 0.3f)
 	{
-
+		if (IsValid(hitstunAnimations.hitstunGrade2AnimMontage))
+		{
+			currentMontage = hitstunAnimations.hitstunGrade2AnimMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+		}
+		// TODO: Make stun timer
 	}
 	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived < 0.7f)
 	{
+		if (IsValid(hitstunAnimations.hitstunGrade3AnimMontage))
+		{
+			currentMontage = hitstunAnimations.hitstunGrade3AnimMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+		}
+		// TODO: Make stun timer
 
+		//Knockback handling
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0.f).GetSafeNormal()) * calculateKnockbackLength(inHitstunStrengthReceived);
+		LaunchCharacter(adjustedDirection, false, false);
 	}
 	else if (inHitstunStrengthReceived > 0.7f)
 	{
-
+		// TODO: Make stun timer and launch character in air
 	}
 	else
 	{
-		// If function reaches this place then something is wrong
+		// Debug else, function should normally not reach this line
 		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
 	}
 }
