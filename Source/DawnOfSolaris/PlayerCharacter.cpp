@@ -17,6 +17,7 @@
 
 APlayerCharacter::APlayerCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true; // Needed to make blueprint tick work // TODO: Remove when blueprint tick no longer is needed
 
 	// TODO: Needs refactoring
 	LeftHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHandHitbox"));
@@ -60,7 +61,7 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
-	//Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);
 
 	sprintTick(DeltaTime);
 	regenStaminaTick(DeltaTime);
@@ -458,7 +459,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 											   UPrimitiveComponent * OtherComp, int32 OtherBodyIndex,
 											   bool bFromSweep, const FHitResult & SweepResult)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr)) // Default nullptr and self check
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr)) // Default nullptr and self check // (OtherComp->IsA(USkeletalMesh::StaticClass()))
 	{
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
 		if (characterInterface && !(isActorAlreadyHit(OtherActor))) // Check if actor has interface and has not already been hit
@@ -466,7 +467,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 			if (canDamageInteract(CombatAlignment, characterInterface->Execute_getAlignment(OtherActor))) // Check if can damage interact
 			{
 				//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
-				//UE_LOG(LogTemp, Warning, TEXT("Overlapped self comp: %s"), *OverlappedComp->GetName());
+				UE_LOG(LogTemp, Warning, TEXT("Overlapped other comp: %s"), *OtherComp->GetName());
 				//UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 				//UE_LOG(LogTemp, Warning, TEXT("Other alignment is: %s"), *(GetEnumValueAsString<ECombatAlignment>("ECombatAlignment", characterInterface->Execute_getAlignment(OtherActor))));
 				hitActors.Add(OtherActor);

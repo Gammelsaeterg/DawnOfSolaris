@@ -193,8 +193,9 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			currentHealthPoints -= inAttackData.damageAmount;
 			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, took hitstunValue: %f, health left: %f"), inAttackData.damageAmount, inAttackData.hitstunStrength, currentHealthPoints);
 
-			currentReceivedAttackData = inAttackData; // Saves data so hitstun event can get correct values
-			runHitstunProcedure(inAttackData.hitstunStrength, inAttackData.hitDirection);
+			currentReceivedAttackData = inAttackData; // Saves data so hitstun event can get correct values	
+			// Hitstun procedures
+			runHitstunProcedure(currentReceivedAttackData.hitstunStrength, currentReceivedAttackData.hitDirection);
 		}
 		else
 		{
@@ -259,6 +260,7 @@ void ABaseCharacter::startHitstun_Implementation()
 	// TODO: Lerp this
 	FVector tempDirection = currentReceivedAttackData.hitDirection * -1; // Sets rotation to follow direction
 	SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
+
 
 	updateMovement();
 
@@ -325,6 +327,7 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	OuterCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	GetMesh()->SetSimulatePhysics(true);
 	GetCharacterMovement()->DisableMovement();
 }
