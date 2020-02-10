@@ -96,7 +96,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 {
-	if (bChargeAttackStarted) // This function is for queueing inputs while doing charge attack combos
+	if (bChargeAttackStarted) // This if statement is for queueing inputs while doing charge attack combos
 	{
 		if (inActionType == currentActionType)
 		{
@@ -115,6 +115,10 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 
 			bChargeAttackInputHeld = true;
 		}
+	}
+	else if (inActionType == currentActionType) // This if statement is also for queueing inputs while doing charge attack combos
+	{
+		bChargeAttackInputHeld = true;
 	}
 }
 

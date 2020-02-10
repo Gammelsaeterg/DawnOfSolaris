@@ -179,6 +179,7 @@ public:
 
 	UAnimMontage* currentMontage;
 
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
 	EActionType currentActionType;
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
