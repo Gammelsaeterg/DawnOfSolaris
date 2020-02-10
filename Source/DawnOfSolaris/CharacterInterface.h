@@ -45,11 +45,17 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	void setChargeAmount(float newChargeAmount);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void minimumChargeAmountReached();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsWindingUpChargeAttack();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-	void releaseAttack();
+	void releaseStart();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void releaseEnd();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void activateAttackHitbox();

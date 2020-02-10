@@ -47,6 +47,8 @@ public:
 	EActionType Action2Input{ EActionType::DefaultComboTwo };
 	EActionType Action3Input{ EActionType::GrabAttack };
 
+	bool bChargeAttackInputHeld{ false };
+
 	void actionPressed(EActionType inActionType);
 	void actionReleased(EActionType inActionType);
 	void actionReleased();
@@ -98,6 +100,7 @@ public:
 	bool bDodgingActive{ false }; // Active in dodge frames
 	bool bSprintingActive{ false }; // Active when sprint button is held	
 	bool bChargeAttackStarted{ false }; // Active when player is charghing attack
+	bool bMinimumChargeReached{ false }; // Active after minimum charge notify is reached
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bAttackHitboxActive{ false };
@@ -137,8 +140,12 @@ public:
 	void windUpChargeAttack(FChargeAttackData& inAttack);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-	void releaseAttack();
-	virtual void releaseAttack_Implementation() override;
+	void releaseStart();
+	virtual void releaseStart_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void releaseEnd();
+	virtual void releaseEnd_Implementation() override;
 
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
 
@@ -202,6 +209,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsWindingUpChargeAttack();
 	virtual bool getIsWindingUpChargeAttack_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void minimumChargeAmountReached();
+	virtual void minimumChargeAmountReached_Implementation();
 
 	//Hitbox handling
 	void enableHitbox(EAttackHitboxType inHitbox, bool enabled);

@@ -96,7 +96,14 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 {
-	if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
+	if (bChargeAttackStarted) // This function is for queueing inputs while doing charge attack combos
+	{
+		if (inActionType == currentActionType)
+		{
+			bChargeAttackInputHeld = true;
+		}
+	}
+	else if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
 	{
 		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
@@ -106,6 +113,8 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 			windUpChargeAttack(getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]]);
 			currentAttackHitboxType = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
 
+			bChargeAttackInputHeld = true;
+
 			//currentAttackDataToSend.damageAmount = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
 			//currentAttackDataToSend.hitstunStrength = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
 		}
@@ -114,9 +123,16 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 
 void APlayerCharacter::comboAttackReleased(EActionType inActionType)
 {
-	if (bChargeAttackStarted && (currentActionType == inActionType))
+	if (bChargeAttackStarted && (currentActionType == inActionType) && bMinimumChargeReached)
+	{		
+		releaseStart_Implementation();
+	}
+	else
 	{
-		releaseAttack_Implementation();
+		if (inActionType == currentActionType)
+		{
+			bChargeAttackInputHeld = false;
+		}	
 	}
 }
 
@@ -389,7 +405,7 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	ABaseCharacter::attackStart();
 }
 
-inline void APlayerCharacter::releaseAttack_Implementation()
+inline void APlayerCharacter::releaseStart_Implementation()
 {
 	if (bChargeAttackStarted == true)
 	{
@@ -398,9 +414,21 @@ inline void APlayerCharacter::releaseAttack_Implementation()
 		//UE_LOG(LogTemp, Warning, TEXT("Took hitstunValue: %f"), GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 
 		bChargeAttackStarted = false;
+		bMinimumChargeReached = false;
 
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 		incrementAttackCombo(currentActionType);
+	}
+}
+
+void APlayerCharacter::releaseEnd_Implementation()
+{
+	if (bChargeAttackInputHeld)
+	{
+		if (currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo) // TODO(?): May not be needed
+		{
+			windUpChargeAttack(getCurrentMoveset(currentActionType)[currentComboIndexes[(uint8)currentActionType]]);
+		}		
 	}
 }
 
@@ -556,6 +584,18 @@ void APlayerCharacter::setChargeAmount_Implementation(float newChargeAmount)
 bool APlayerCharacter::getIsWindingUpChargeAttack_Implementation()
 {
 	return bChargeAttackStarted;
+}
+
+void APlayerCharacter::minimumChargeAmountReached_Implementation()
+{
+	if (!bChargeAttackInputHeld)
+	{
+		releaseStart_Implementation();
+	}
+	else
+	{
+		bMinimumChargeReached = true;
+	}
 }
 
 void APlayerCharacter::enableHitbox(EAttackHitboxType inHitbox, bool enabled)
