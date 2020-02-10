@@ -108,6 +108,7 @@ public:
 	bool bSelfHitstunActive{ false }; // Active in hitstun frames
 	bool bStandbyActive{ true }; // Active when none of the above is active
 	bool bDefaultAttackStarted{ false };
+	bool bCanCancelAction{ false }; // Active after can cancel action notify is reached
 	
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentAttackDataToSend;
@@ -139,6 +140,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void attackEnd();
 	void attackEnd_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void canCancelAction();
+	virtual void canCancelAction_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();

@@ -47,7 +47,7 @@ public:
 	EActionType Action2Input{ EActionType::DefaultComboTwo };
 	EActionType Action3Input{ EActionType::GrabAttack };
 
-	UPROPERTY(BlueprintReadOnly) // UPROPERTY is for debugging purposes
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY is for debugging purposes // TODO: Delete later, remember to delete blueprints using this variable
 	bool bChargeAttackInputHeld{ false };
 
 	void actionPressed(EActionType inActionType);

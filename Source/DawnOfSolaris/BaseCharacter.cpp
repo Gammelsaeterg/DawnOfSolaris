@@ -210,6 +210,7 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 void ABaseCharacter::attackStart_Implementation()
 {
 	bAttackActionActive = true;
+	bCanCancelAction = false;
 
 	updateMovement();
 	//UE_LOG(LogTemp, Warning, TEXT("Attack start"))
@@ -220,6 +221,11 @@ void ABaseCharacter::attackEnd_Implementation()
 	bAttackActionActive = false;
 
 	updateMovement();
+}
+
+void ABaseCharacter::canCancelAction_Implementation()
+{
+	bCanCancelAction = true;
 }
 
 ECombatAlignment ABaseCharacter::getAlignment_Implementation()

@@ -370,7 +370,11 @@ inline bool APlayerCharacter::canRegenerateStamina()
 
 inline bool APlayerCharacter::canAttack()
 {
-	if (!bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
+	if (bCanCancelAction)
+	{
+		return true;
+	}
+	else if (!bSelfHitstunActive && !bDodgingActive && !bSprintingActive && !bAttackActionActive)
 	{
 		if (!bChargeAttackStarted)
 		{
@@ -425,7 +429,7 @@ void APlayerCharacter::releaseEnd_Implementation()
 	{
 		if (currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo) // TODO(?): May not be needed
 		{
-			comboAttackPressed(currentActionType);
+			comboAttackPressed(currentActionType); // Will do button pressed procedure since the button is still held at this point
 		}		
 	}
 }
