@@ -96,15 +96,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 {
-	//if (bChargeAttackStarted) // This if statement is for queueing charge inputs while doing charge attack combos
+	//if ((inActionType == currentActionType) && !canAttack())  // This if statement is for queueing charge inputs while doing charge attack combos
 	//{
-	//	if (inActionType == currentActionType)
+	//	if (bQueueAttacks)
 	//	{
-	//		bChargeAttackInputHeld = true;
+	//		bNextAttackIsQueued = true;
 	//	}
 	//}
-	//else 
-		if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
+	
+	if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
 	{
 		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
@@ -449,10 +449,12 @@ void APlayerCharacter::releaseEnd_Implementation()
 {
 	if (bChargeAttackInputHeld)
 	{
-		//if (currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo) // TODO(?): May not be needed
-		//{
-			comboAttackPressed(currentActionType); // Will do button pressed procedure since the button is still held at this point
-		//}		
+		comboAttackPressed(currentActionType); // Will do button pressed procedure since the button is still held at this point
+	}
+	else if (bQueueAttacks && bNextAttackIsQueued)
+	{
+		bNextAttackIsQueued = false;
+		comboAttackPressed(currentActionType); // Will do button pressed procedure as bQueueAttacks is active
 	}
 	else
 	{
