@@ -55,6 +55,8 @@ ABaseCharacter::ABaseCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Reserve space for button queue for opimalization
+	queuedActionTypes.Reserve(20); // TODO(?): 20 inputs at the same time may be overkill, reduce later
 }
 
 // Called when the game starts or when spawned

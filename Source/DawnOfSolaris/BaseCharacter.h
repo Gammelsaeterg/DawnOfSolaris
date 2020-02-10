@@ -182,6 +182,9 @@ public:
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
 	EActionType currentActionType;
 
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
+	TArray<EActionType> queuedActionTypes;
+
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugFunctionForBlueprint();
 };

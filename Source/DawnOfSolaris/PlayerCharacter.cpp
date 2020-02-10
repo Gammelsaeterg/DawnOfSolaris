@@ -96,14 +96,15 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 {
-	if (bChargeAttackStarted) // This if statement is for queueing inputs while doing charge attack combos
-	{
-		if (inActionType == currentActionType)
-		{
-			bChargeAttackInputHeld = true;
-		}
-	}
-	else if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
+	//if (bChargeAttackStarted) // This if statement is for queueing charge inputs while doing charge attack combos
+	//{
+	//	if (inActionType == currentActionType)
+	//	{
+	//		bChargeAttackInputHeld = true;
+	//	}
+	//}
+	//else 
+		if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
 	{
 		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
@@ -120,6 +121,10 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 	{
 		bChargeAttackInputHeld = true;
 	}
+	else
+	{
+		queuedActionTypes.Push(inActionType); // For queuing up other actions // TODO: Collapse to addActionToQueue function
+	}
 }
 
 void APlayerCharacter::comboAttackReleased(EActionType inActionType)
@@ -134,7 +139,20 @@ void APlayerCharacter::comboAttackReleased(EActionType inActionType)
 		if (inActionType == currentActionType)
 		{
 			bChargeAttackInputHeld = false;
-		}	
+		}
+		else // TODO: Collapse to removeQueuedActionFromQueue function
+		{
+			if (queuedActionTypes.Num() > 0) // These if statements and for loops is for removing a queue action if button is released
+			{
+				for (int i = 0; i < queuedActionTypes.Num(); ++i)
+				{
+					if (inActionType == queuedActionTypes[i])
+					{
+						queuedActionTypes.RemoveAt(i);
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -431,10 +449,18 @@ void APlayerCharacter::releaseEnd_Implementation()
 {
 	if (bChargeAttackInputHeld)
 	{
-		if (currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo) // TODO(?): May not be needed
-		{
+		//if (currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo) // TODO(?): May not be needed
+		//{
 			comboAttackPressed(currentActionType); // Will do button pressed procedure since the button is still held at this point
-		}		
+		//}		
+	}
+	else
+	{
+		if (queuedActionTypes.Num() > 0) // Check if there are actions in queue
+		{
+			actionPressed(queuedActionTypes.Top());
+			queuedActionTypes.Empty();
+		}
 	}
 }
 
