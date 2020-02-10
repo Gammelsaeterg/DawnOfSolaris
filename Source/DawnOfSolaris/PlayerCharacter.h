@@ -47,6 +47,7 @@ public:
 	EActionType Action2Input{ EActionType::DefaultComboTwo };
 	EActionType Action3Input{ EActionType::GrabAttack };
 
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY is for debugging purposes
 	bool bChargeAttackInputHeld{ false };
 
 	void actionPressed(EActionType inActionType);

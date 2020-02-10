@@ -114,9 +114,6 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 			currentAttackHitboxType = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
 
 			bChargeAttackInputHeld = true;
-
-			//currentAttackDataToSend.damageAmount = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minDamageValue; // TODO: Get charge value
-			//currentAttackDataToSend.hitstunStrength = defaultComboTwoAttacks[defaultComboTwoComboCurrentIndex].minHitstunValue; // TODO: Get charge value
 		}
 	}
 }
@@ -126,6 +123,7 @@ void APlayerCharacter::comboAttackReleased(EActionType inActionType)
 	if (bChargeAttackStarted && (currentActionType == inActionType) && bMinimumChargeReached)
 	{		
 		releaseStart_Implementation();
+		bChargeAttackInputHeld = false;
 	}
 	else
 	{
@@ -427,7 +425,7 @@ void APlayerCharacter::releaseEnd_Implementation()
 	{
 		if (currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo) // TODO(?): May not be needed
 		{
-			windUpChargeAttack(getCurrentMoveset(currentActionType)[currentComboIndexes[(uint8)currentActionType]]);
+			comboAttackPressed(currentActionType);
 		}		
 	}
 }
