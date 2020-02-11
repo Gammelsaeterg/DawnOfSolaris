@@ -128,6 +128,8 @@ void ABaseCharacter::updateMovement()
 	{
 		setMovementData(currentMovementData);		
 	}
+
+	//Experimental functions below // TODO(?): Delete if necessary
 }
 
 // Called to bind functionality to input
@@ -223,6 +225,7 @@ void ABaseCharacter::attackEnd_Implementation()
 	bAttackActionActive = false;
 
 	updateMovement();
+	//UE_LOG(LogTemp, Warning, TEXT("Attack end"))
 }
 
 void ABaseCharacter::canCancelAction_Implementation()

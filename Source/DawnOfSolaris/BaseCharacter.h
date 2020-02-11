@@ -104,6 +104,7 @@ public:
 	bool bIsDeafeated{ false };
 
 	// TODO: Make this into an enum state(?)
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
 	bool bAttackActionActive{ false }; // Active in attack frames
 	bool bSelfHitstunActive{ false }; // Active in hitstun frames
 	bool bStandbyActive{ true }; // Active when none of the above is active

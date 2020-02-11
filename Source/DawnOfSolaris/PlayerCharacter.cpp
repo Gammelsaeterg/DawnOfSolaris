@@ -426,6 +426,8 @@ inline bool APlayerCharacter::canAttack()
 
 inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 {
+	//ABaseCharacter::attackStart();
+
 	// TODO: Complete this and rest of function
 	currentMontage = inAttack.AttackAnimMontage;
 	GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
@@ -434,8 +436,6 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 
 	bAttackHitboxActive = false; // Disable old hitbox for new attack
 	clearHitActors();
-
-	ABaseCharacter::attackStart();
 }
 
 inline void APlayerCharacter::releaseStart_Implementation()
