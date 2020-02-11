@@ -98,7 +98,11 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 {	
-	if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
+	if (bCanSprintAttack)
+	{
+		sprintAttack(inActionType);
+	}
+	else if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
 	{
 		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
@@ -466,6 +470,25 @@ void APlayerCharacter::releaseEnd_Implementation()
 			{
 				bChargeAttackInputHeld = false;
 			}
+		}
+	}
+}
+
+void APlayerCharacter::sprintAttack(EActionType inActionType)
+{
+	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo) // TODO(?): May not be necessary
+	{
+		if (inActionType == EActionType::DefaultComboOne)
+		{
+			currentActionType = EActionType::SprintAttackOne;
+			// Do sprint attack one here 
+			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack one here"))
+		}
+		else if (inActionType == EActionType::DefaultComboTwo)
+		{
+			currentActionType = EActionType::SprintAttackTwo;
+			// Do sprint attack two here
+			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack two here"))
 		}
 	}
 }

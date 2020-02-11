@@ -112,6 +112,8 @@ enum class EActionType : uint8 // TODO: Add more actions
 	GrabAttack				UMETA(DisplayName = "Grab Attack"),
 	Interact				UMETA(DisplayName = "Interact"),
 	Sprint					UMETA(DisplayName = "Sprint"),
+	SprintAttackOne			UMETA(DisplayName = "SprintAttackOne"),
+	SprintAttackTwo			UMETA(DisplayName = "SprintAttackTwo"),
 	NONE					UMETA(DisplayName = "NONE")
 };
 

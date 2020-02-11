@@ -151,6 +151,8 @@ public:
 	void releaseEnd();
 	virtual void releaseEnd_Implementation() override;
 
+	void sprintAttack(EActionType inActionType);
+
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
 
 	//Hitbox overlap events
