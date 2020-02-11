@@ -111,7 +111,8 @@ enum class EActionType : uint8 // TODO: Add more actions
 	DefaultComboTwo	= 1		UMETA(DisplayName = "Attack Two Combo"),
 	GrabAttack				UMETA(DisplayName = "Grab Attack"),
 	Interact				UMETA(DisplayName = "Interact"),
-	Sprint					UMETA(DisplayName = "Sprint")
+	Sprint					UMETA(DisplayName = "Sprint"),
+	NONE					UMETA(DisplayName = "NONE")
 };
 
 UENUM()

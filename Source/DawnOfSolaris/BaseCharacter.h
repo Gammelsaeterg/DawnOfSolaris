@@ -183,6 +183,10 @@ public:
 	EActionType currentActionType;
 
 	bool bQueueAttacks{ true };
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
+	bool bQueuedInputHeld{ false };
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
+	EActionType lastQueuedActionHeld;
 
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
 	TArray<EActionType> queuedActionTypes;

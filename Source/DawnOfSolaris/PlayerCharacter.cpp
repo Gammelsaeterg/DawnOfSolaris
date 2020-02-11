@@ -109,20 +109,25 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 			bChargeAttackInputHeld = true;
 		}
 	}
-	else if (inActionType == currentActionType) // This if statement is also for queueing inputs while doing charge attack combos
-	{
-		if (!bQueueAttacks)
-		{
-			bChargeAttackInputHeld = true;
-		}
-		else
-		{
-			//bChargeAttackInputHeld = true;
-			queuedActionTypes.Push(inActionType);
-		}
-	}
+	//else if (inActionType == currentActionType) // This if statement is also for queueing inputs while doing charge attack combos
+	//{
+	//	if (!bQueueAttacks)
+	//	{
+	//		bChargeAttackInputHeld = true;
+	//	}
+	//	else
+	//	{
+	//		bChargeAttackInputHeld = true;
+	//		queuedActionTypes.Push(inActionType);
+
+	//		lastQueuedActionHeld = inActionType; // Remember queued input 
+	//		bQueuedInputHeld = true;
+	//	}
+	//}
 	else
 	{
+		bQueuedInputHeld = true;
+		lastQueuedActionHeld = inActionType; // Remember queued input 
 		queuedActionTypes.Push(inActionType); // For queuing up other actions // TODO: Collapse to addActionToQueue function
 		//UE_LOG(LogTemp, Warning, TEXT("Attack queued"))
 	}
@@ -152,6 +157,11 @@ void APlayerCharacter::comboAttackReleased(EActionType inActionType)
 				}
 			}
 		}
+	}
+
+	if (inActionType == lastQueuedActionHeld)
+	{
+		bQueuedInputHeld = false;
 	}
 }
 
@@ -454,11 +464,14 @@ void APlayerCharacter::releaseEnd_Implementation()
 	else
 	{
 		if (queuedActionTypes.Num() > 0) // Check if there are actions in queue
-		{
-			actionPressed(queuedActionTypes.Top());
-			queuedActionTypes.Empty();
+		{			
+			actionPressed(queuedActionTypes.Top());			
+			queuedActionTypes.Empty();					
 
-			bChargeAttackInputHeld = false;
+			if (!bQueuedInputHeld)
+			{
+				bChargeAttackInputHeld = false;
+			}
 		}
 	}
 }
