@@ -183,7 +183,6 @@ public:
 	EActionType currentActionType;
 
 	bool bQueueAttacks{ true };
-	bool bNextAttackIsQueued{ false }; // This variable will be used of QueueAttacks is enabled
 
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
 	TArray<EActionType> queuedActionTypes;

@@ -95,15 +95,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 }
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
-{
-	//if ((inActionType == currentActionType) && !canAttack())  // This if statement is for queueing charge inputs while doing charge attack combos
-	//{
-	//	if (bQueueAttacks)
-	//	{
-	//		bNextAttackIsQueued = true;
-	//	}
-	//}
-	
+{	
 	if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
 	{
 		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
@@ -119,11 +111,20 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 	}
 	else if (inActionType == currentActionType) // This if statement is also for queueing inputs while doing charge attack combos
 	{
-		bChargeAttackInputHeld = true;
+		if (!bQueueAttacks)
+		{
+			bChargeAttackInputHeld = true;
+		}
+		else
+		{
+			//bChargeAttackInputHeld = true;
+			queuedActionTypes.Push(inActionType);
+		}
 	}
 	else
 	{
 		queuedActionTypes.Push(inActionType); // For queuing up other actions // TODO: Collapse to addActionToQueue function
+		//UE_LOG(LogTemp, Warning, TEXT("Attack queued"))
 	}
 }
 
@@ -134,22 +135,20 @@ void APlayerCharacter::comboAttackReleased(EActionType inActionType)
 		releaseStart_Implementation();
 		bChargeAttackInputHeld = false;
 	}
-	else
+	else if (inActionType == currentActionType)
 	{
-		if (inActionType == currentActionType)
+		bChargeAttackInputHeld = false;
+	}
+
+	if (currentActionType != inActionType) // TODO: Collapse to removeQueuedActionFromQueue function
+	{
+		if (queuedActionTypes.Num() > 0 && !bQueueAttacks) // These if statements and for loops is for removing a queue action if button is released
 		{
-			bChargeAttackInputHeld = false;
-		}
-		else // TODO: Collapse to removeQueuedActionFromQueue function
-		{
-			if (queuedActionTypes.Num() > 0) // These if statements and for loops is for removing a queue action if button is released
+			for (int i = 0; i < queuedActionTypes.Num(); ++i)
 			{
-				for (int i = 0; i < queuedActionTypes.Num(); ++i)
+				if (inActionType == queuedActionTypes[i])
 				{
-					if (inActionType == queuedActionTypes[i])
-					{
-						queuedActionTypes.RemoveAt(i);
-					}
+					queuedActionTypes.RemoveAt(i, 1, true);
 				}
 			}
 		}
@@ -449,12 +448,8 @@ void APlayerCharacter::releaseEnd_Implementation()
 {
 	if (bChargeAttackInputHeld)
 	{
+		queuedActionTypes.Empty();
 		comboAttackPressed(currentActionType); // Will do button pressed procedure since the button is still held at this point
-	}
-	else if (bQueueAttacks && bNextAttackIsQueued)
-	{
-		bNextAttackIsQueued = false;
-		comboAttackPressed(currentActionType); // Will do button pressed procedure as bQueueAttacks is active
 	}
 	else
 	{
@@ -462,6 +457,8 @@ void APlayerCharacter::releaseEnd_Implementation()
 		{
 			actionPressed(queuedActionTypes.Top());
 			queuedActionTypes.Empty();
+
+			bChargeAttackInputHeld = false;
 		}
 	}
 }
