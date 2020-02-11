@@ -329,15 +329,21 @@ void APlayerCharacter::sprintTick(float DeltaTime)
 			{
 				//defaultMovementData.maxWalkSpeed = 1100.f;
 				defaultMovementData.maxWalkSpeed = FMath::FInterpTo(defaultMovementData.maxWalkSpeed, maxSprintSpeed, DeltaTime, 5.f);
-				if (GetVelocity().Size() > maxWalkSpeed)
+				if (GetVelocity().Size() > maxWalkSpeed + (maxSprintSpeed / 10.f))
 				{
-					currentStaminaPoints -= sprintStaminaCost * DeltaTime;									
+					currentStaminaPoints -= sprintStaminaCost * DeltaTime;
+					bCanSprintAttack = true;
+				}
+				else
+				{
+					bCanSprintAttack = false;
 				}
 			}
 			else
 			{
 				//defaultMovementData.maxWalkSpeed = 600.f;
 				defaultMovementData.maxWalkSpeed = FMath::FInterpTo(defaultMovementData.maxWalkSpeed, maxWalkSpeed, DeltaTime, 5.f);
+				bCanSprintAttack = false;
 			}
 		}
 	}

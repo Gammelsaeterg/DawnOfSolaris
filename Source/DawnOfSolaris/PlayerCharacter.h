@@ -104,6 +104,7 @@ public:
 	bool bSprintingActive{ false }; // Active when sprint button is held	
 	bool bChargeAttackStarted{ false }; // Active when player is charghing attack
 	bool bMinimumChargeReached{ false }; // Active after minimum charge notify is reached
+	bool bCanSprintAttack{ false }; // Active while succesfully sprinting
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bAttackHitboxActive{ false };
