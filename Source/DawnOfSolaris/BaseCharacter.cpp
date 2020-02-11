@@ -57,6 +57,9 @@ ABaseCharacter::ABaseCharacter()
 
 	// Reserve space for button queue for opimalization
 	queuedActionTypes.Reserve(20); // TODO(?): 20 inputs at the same time may be overkill, reduce later
+
+	// Can rotate character during root motion
+	GetCharacterMovement()->bAllowPhysicsRotationDuringAnimRootMotion = true;
 }
 
 // Called when the game starts or when spawned
@@ -130,6 +133,7 @@ void ABaseCharacter::updateMovement()
 	}
 
 	//Experimental functions below // TODO(?): Delete if necessary
+	//GetCharacterMovement()->RootMotionParams;
 }
 
 // Called to bind functionality to input
