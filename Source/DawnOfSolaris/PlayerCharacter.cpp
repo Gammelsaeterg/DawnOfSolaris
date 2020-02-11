@@ -14,6 +14,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "TimerManager.h"
+#include "Math/UnrealMathUtility.h"
+
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -109,21 +111,6 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 			bChargeAttackInputHeld = true;
 		}
 	}
-	//else if (inActionType == currentActionType) // This if statement is also for queueing inputs while doing charge attack combos
-	//{
-	//	if (!bQueueAttacks)
-	//	{
-	//		bChargeAttackInputHeld = true;
-	//	}
-	//	else
-	//	{
-	//		bChargeAttackInputHeld = true;
-	//		queuedActionTypes.Push(inActionType);
-
-	//		lastQueuedActionHeld = inActionType; // Remember queued input 
-	//		bQueuedInputHeld = true;
-	//	}
-	//}
 	else
 	{
 		bQueuedInputHeld = true;
@@ -334,23 +321,23 @@ inline void APlayerCharacter::standbyCheckTick() // Tick function to check if pl
 
 void APlayerCharacter::sprintTick(float DeltaTime)
 {
-	// TODO: Refine this, also should lerp
+	// TODO: Refine this, also should lerp // TODO update: May be in order now
 	{
 		if (!bSelfHitstunActive)
 		{
 			if (canSprint() && (currentStaminaPoints > 1.f))
 			{
-				currentMovementData.maxWalkSpeed = maxSprintSpeed; // Should lerp
+				//defaultMovementData.maxWalkSpeed = 1100.f;
+				defaultMovementData.maxWalkSpeed = FMath::FInterpTo(defaultMovementData.maxWalkSpeed, maxSprintSpeed, DeltaTime, 5.f);
 				if (GetVelocity().Size() > maxWalkSpeed)
 				{
-					currentStaminaPoints -= sprintStaminaCost * DeltaTime;
+					currentStaminaPoints -= sprintStaminaCost * DeltaTime;									
 				}
-				updateMovement();
 			}
 			else
 			{
-				currentMovementData.maxWalkSpeed = maxWalkSpeed; // Should lerp
-				updateMovement();
+				//defaultMovementData.maxWalkSpeed = 600.f;
+				defaultMovementData.maxWalkSpeed = FMath::FInterpTo(defaultMovementData.maxWalkSpeed, maxWalkSpeed, DeltaTime, 5.f);
 			}
 		}
 	}
@@ -377,6 +364,7 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 
 inline bool APlayerCharacter::canSprint()
 {
+	updateMovement(); // TODO(?): May be a cheaper way to do this
 	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && bSprintingActive)
 	{
 		return true;

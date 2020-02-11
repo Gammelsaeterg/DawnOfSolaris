@@ -94,7 +94,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float baseStaminaRegen{ 25.f };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	float sprintStaminaCost{ 45.f };
+	float sprintStaminaCost{ 5.f };
+
+	FMovementData sprintMovementData{ FMovementData(maxSprintSpeed, maxRotationRate) };
 
 	float currentChargeAmount{ 0.f };
 

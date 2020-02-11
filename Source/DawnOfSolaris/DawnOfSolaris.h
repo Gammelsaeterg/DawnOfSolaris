@@ -188,7 +188,16 @@ struct FMovementData
 	UPROPERTY(BlueprintReadOnly)
 	float maxRotationRate{ 540.f };
 
+	UPROPERTY(BlueprintReadOnly)
+	float rotInterpSpeed{ 10.f };
+
+	UPROPERTY(BlueprintReadOnly)
+	float walkSpeedInterpSpeed{ 10.f };
+
+
 	FMovementData(float inMaxWalkSpeed, float inMaxRotationRate) : maxWalkSpeed(inMaxWalkSpeed), maxRotationRate(inMaxRotationRate) {}
+	FMovementData(float inMaxWalkSpeed, float inMaxRotationRate, float inRotInterpSpeed, float inWalkSpeedInterpSpeed) 
+	: maxWalkSpeed(inMaxWalkSpeed), maxRotationRate(inMaxRotationRate), rotInterpSpeed(inRotInterpSpeed), walkSpeedInterpSpeed(inWalkSpeedInterpSpeed) {}
 	FMovementData() : maxWalkSpeed(600.f), maxRotationRate(540.f) {}
 };
 

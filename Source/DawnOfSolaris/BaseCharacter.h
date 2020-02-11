@@ -72,6 +72,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void movementSmoothingTick(float DeltaTime);
+
 	void updateMovement();
 
 	// Called to bind functionality to input
@@ -98,7 +100,7 @@ public:
 	FMovementData combatMovementData{ FMovementData(0.f, 50) };
 	FMovementData hitstunMovementData{ FMovementData(0.f, 0.f) };
 
-	void setMovementData(FMovementData inMovementData);
+	//void setMovementData(FMovementData inMovementData);
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsDeafeated{ false };

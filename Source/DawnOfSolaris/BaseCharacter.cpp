@@ -10,6 +10,7 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Math/UnrealMathUtility.h"
 
 
 
@@ -118,6 +119,19 @@ void ABaseCharacter::LookUpAtRate(float Rate)
 void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	movementSmoothingTick(DeltaTime);
+}
+
+void ABaseCharacter::movementSmoothingTick(float DeltaTime)
+{
+	//GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
+	//currentMovementData.maxWalkSpeed, DeltaTime, currentMovementData.walkSpeedInterpSpeed);
+	GetCharacterMovement()->RotationRate.Yaw = FMath::FInterpTo(GetCharacterMovement()->RotationRate.Yaw, 
+		currentMovementData.maxRotationRate, DeltaTime, currentMovementData.rotInterpSpeed);
+
+	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
+		currentMovementData.maxWalkSpeed, DeltaTime, 4.f);
 }
 
 void ABaseCharacter::updateMovement()
@@ -125,11 +139,16 @@ void ABaseCharacter::updateMovement()
 	// TODO: Lerp this
 	if (bAttackActionActive)
 	{
-		setMovementData(combatMovementData);
+		//setMovementData(combatMovementData);
+		currentMovementData = combatMovementData;
+	}
+	else if (bSelfHitstunActive)
+	{
+		currentMovementData = hitstunMovementData;
 	}
 	else
 	{
-		setMovementData(currentMovementData);		
+		currentMovementData = defaultMovementData;
 	}
 
 	//Experimental functions below // TODO(?): Delete if necessary
@@ -167,12 +186,13 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	// Sprint attempt
 }
 
-void ABaseCharacter::setMovementData(FMovementData inMovementData)
-{
-	GetCharacterMovement()->MaxWalkSpeed = inMovementData.maxWalkSpeed;
-	GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
-	//GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, inMovementData.maxRotationRate);
-}
+//void ABaseCharacter::setMovementData(FMovementData inMovementData)
+//{
+//	defaultMovementData = inMovementData;
+//
+//	//GetCharacterMovement()->MaxWalkSpeed = inMovementData.maxWalkSpeed;
+//	//GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
+//}
 
 float ABaseCharacter::getHealthPoints_Implementation()
 {
@@ -343,6 +363,7 @@ void ABaseCharacter::startIsDefeatedProcedure()
 
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetSimulatePhysics(true);
 	GetCharacterMovement()->DisableMovement();
 }
