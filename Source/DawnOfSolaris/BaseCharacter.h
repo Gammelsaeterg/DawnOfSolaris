@@ -199,4 +199,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugLaunchDefeat();
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugLaunchParticles(FVector location, FVector direction);
 };

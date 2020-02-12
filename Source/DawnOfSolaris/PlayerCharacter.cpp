@@ -548,7 +548,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 
 					currentAttackDataToSend = FAttackData(tempAttackData.damageAmount,
 					hitDirection, SweepResult.Location,
-					this, tempAttackData.hitstunStrength);
+					this, tempAttackData.hitstunStrength);					
 				}
 				else
 				{
@@ -557,6 +557,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 					this, currentAttackDataToSend.hitstunStrength);
 				}
 
+				debugLaunchParticles(SweepResult.Location, hitDirection);
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}								
 		}
