@@ -68,6 +68,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 	sprintTick(DeltaTime);
 	regenStaminaTick(DeltaTime);
 	standbyCheckTick();
+
+	// Temporary health regen // TODO: FIX
+	if (currentHealthPoints < (maxHealthPoints + 0.7f * DeltaTime))
+	{
+		currentHealthPoints += 3.f * DeltaTime;
+	}
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
