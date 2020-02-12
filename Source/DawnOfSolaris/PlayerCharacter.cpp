@@ -70,7 +70,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	standbyCheckTick();
 
 	// Temporary health regen // TODO: FIX
-	if (currentHealthPoints < (maxHealthPoints + 0.7f * DeltaTime))
+	if (currentHealthPoints < (maxHealthPoints + 0.05f * DeltaTime))
 	{
 		currentHealthPoints += 3.f * DeltaTime;
 	}
