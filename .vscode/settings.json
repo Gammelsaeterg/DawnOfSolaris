@@ -1,0 +1,9 @@
+{
+	"files.exclude": {
+		"C:/Users/Eier/Documents/Bachelor/DawnOfSolaris/.git": true,
+		"C:/Users/Eier/Documents/Bachelor/DawnOfSolaris/.vscode": true,
+		"C:/Users/Eier/Documents/Bachelor/DawnOfSolaris/Content": true,
+		"C:/Users/Eier/Documents/Bachelor/DawnOfSolaris/Intermediate": true,
+		"C:/Users/Eier/Documents/Bachelor/DawnOfSolaris/Saved": true
+	}
+}
