@@ -153,6 +153,7 @@ void ABaseCharacter::updateMovement()
 
 	//Experimental functions below // TODO(?): Delete if necessary
 	//GetCharacterMovement()->RootMotionParams;
+	//GetCharacterMovement()->AnimRootMotionVelocity = 2.f;
 }
 
 // Called to bind functionality to input
@@ -255,6 +256,8 @@ void ABaseCharacter::attackEnd_Implementation()
 void ABaseCharacter::canCancelAction_Implementation()
 {
 	bCanCancelAction = true;
+
+	defaultMovementData.maxRotationRate = 540.f; // TODO: Get a different variable to adjust this
 }
 
 ECombatAlignment ABaseCharacter::getAlignment_Implementation()
