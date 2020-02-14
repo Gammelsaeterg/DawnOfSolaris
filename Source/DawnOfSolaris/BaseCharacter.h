@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterInterface.h"
-#include "InterfaceAI.h"
 #include "Components/InputComponent.h"
 #include "Containers/Array.h"
 #include "DawnOfSolaris.h"
