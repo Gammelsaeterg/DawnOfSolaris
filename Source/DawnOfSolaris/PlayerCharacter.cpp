@@ -17,8 +17,10 @@
 #include "Math/UnrealMathUtility.h"
 
 
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UPlayerCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
+	
 	PrimaryActorTick.bCanEverTick = true; // Needed to make blueprint tick work // TODO: Remove when blueprint tick no longer is needed
 
 	// TODO: Needs refactoring
@@ -47,6 +49,13 @@ APlayerCharacter::APlayerCharacter()
 	RightFootHitbox->SetGenerateOverlapEvents(false);
 
 	//TODO: Research if these overlap events can be bound to one function
+}
+
+void APlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	PlayerCharacterMovementComponent = Cast<UPlayerCharacterMovementComponent>(Super::GetMovementComponent());
 }
 
 void APlayerCharacter::BeginPlay()

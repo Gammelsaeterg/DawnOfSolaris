@@ -20,7 +20,7 @@ class DAWNOFSOLARIS_API ABaseCharacter : public ACharacter, public ICharacterInt
 
 public:
 	// Sets default values for this character's properties
-	ABaseCharacter();
+	ABaseCharacter(const FObjectInitializer& ObjectInitializer);
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)

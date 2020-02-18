@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
+#include "PlayerCharacterMovementComponent.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -16,7 +17,13 @@ class DAWNOFSOLARIS_API APlayerCharacter : public ABaseCharacter
 	
 public:
 
-	APlayerCharacter();
+	APlayerCharacter(const FObjectInitializer& ObjectInitializer);
+
+	// Custom movement setup
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	FORCEINLINE class UPlayerCharacterMovementComponent* GetPlayerCharacterMovementComponent() const { return PlayerCharacterMovementComponent; }
+	UPlayerCharacterMovementComponent* PlayerCharacterMovementComponent;
+	virtual void PostInitializeComponents() override;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
