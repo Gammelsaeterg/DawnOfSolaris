@@ -154,6 +154,7 @@ void ABaseCharacter::updateMovement()
 	//Experimental functions below // TODO(?): Delete if necessary
 	//GetCharacterMovement()->RootMotionParams;
 	//GetCharacterMovement()->AnimRootMotionVelocity = 2.f;
+
 }
 
 // Called to bind functionality to input
@@ -238,7 +239,7 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 
 void ABaseCharacter::attackStart_Implementation()
 {
-	bAttackActionActive = true;
+	//bAttackActionActive = true; // TODO: Uncomment
 	bCanCancelAction = false;
 
 	updateMovement();
