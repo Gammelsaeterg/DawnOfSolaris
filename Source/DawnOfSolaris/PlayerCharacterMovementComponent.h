@@ -17,4 +17,8 @@ class DAWNOFSOLARIS_API UPlayerCharacterMovementComponent : public UCharacterMov
 	virtual void PhysWalking(float deltaTime, int32 Iterations) override;
 
 	virtual void CalcVelocity(float DeltaTime, float Friction, bool bFluid, float BrakingDeceleration) override;
+
+	virtual void ApplyVelocityBraking(float DeltaTime, float Friction, float BrakingDeceleration) override;
+
+	virtual void PerformMovement(float DeltaTime) override;
 };

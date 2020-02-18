@@ -239,7 +239,7 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 
 void ABaseCharacter::attackStart_Implementation()
 {
-	bAttackActionActive = true; // TODO: Uncomment
+	//bAttackActionActive = true; // TODO: Uncomment
 	bCanCancelAction = false;
 
 	updateMovement();
