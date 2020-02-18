@@ -29,6 +29,11 @@
 
 #include "ProfilingDebugging/CsvProfiler.h"
 
+FORCEINLINE static float FastAcos(float rad)
+{
+	return (-0.69813170079773212 * rad * rad - 0.87266462599716477) * rad + 1.5707963267948966;
+}
+
 void UPlayerCharacterMovementComponent::PhysWalking(float deltaTime, int32 Iterations)
 {
 	//Super::PhysWalking(deltaTime, Iterations);
@@ -82,7 +87,11 @@ void UPlayerCharacterMovementComponent::PhysWalking(float deltaTime, int32 Itera
 		// Apply acceleration
 		CalcVelocity(timeTick, GroundFriction, false, GetMaxBrakingDeceleration());
 
-		Velocity += (AnimRootMotionVelocity);
+		if (!bHitVerticalObject)
+		{
+			Velocity += (AnimRootMotionVelocity);
+		}
+
 
 		if (IsFalling())
 		{
@@ -559,6 +568,7 @@ void UPlayerCharacterMovementComponent::PerformMovement(float DeltaTime)
 		}
 		else
 		{
+			bHitVerticalObject = false;
 			AnimRootMotionVelocity = FVector(0.f, 0.f, 0.f); // NOTE: RESET ANIMATION VELOCITY WHEN THERE IS NO ROOT ANIMATION
 		}
 		//UE_LOG(LogTemp, Warning, TEXT("Current root animation speed: %s"), *AnimRootMotionVelocity.ToString())
@@ -683,4 +693,40 @@ void UPlayerCharacterMovementComponent::PerformMovement(float DeltaTime)
 	LastUpdateLocation = NewLocation;
 	LastUpdateRotation = NewRotation;
 	LastUpdateVelocity = Velocity;
+}
+
+void UPlayerCharacterMovementComponent::HandleImpact(const FHitResult & Hit, float TimeSlice, const FVector & MoveDelta)
+{
+	if (CharacterOwner)
+	{
+		CharacterOwner->MoveBlockedBy(Hit);
+	}
+
+	IPathFollowingAgentInterface* PFAgent = GetPathFollowingAgent();
+	if (PFAgent)
+	{
+		// Also notify path following!
+		PFAgent->OnMoveBlockedBy(Hit);
+	}
+
+	APawn* OtherPawn = Cast<APawn>(Hit.GetActor());
+	if (OtherPawn)
+	{
+		NotifyBumpedPawn(OtherPawn);
+	}
+
+	if (bEnablePhysicsInteraction)
+	{
+		const FVector ForceAccel = Acceleration + (IsFalling() ? FVector(0.f, 0.f, GetGravityZ()) : FVector::ZeroVector);
+		ApplyImpactPhysicsForces(Hit, ForceAccel, Velocity);
+	}
+
+	float hitAngle = FMath::RadiansToDegrees(FastAcos(FMath::Abs(FVector::DotProduct(Velocity.GetSafeNormal(), Hit.ImpactNormal))));
+
+	if (!bHitVerticalObject && hitAngle < angleThreshold)
+	{
+		bHitVerticalObject = true;
+		//AnimRootMotionVelocity = FVector(0.f, 0.f, 0.f);
+		UE_LOG(LogTemp, Warning, TEXT("Angle: %f"), hitAngle)
+	}
 }

@@ -21,4 +21,8 @@ class DAWNOFSOLARIS_API UPlayerCharacterMovementComponent : public UCharacterMov
 	virtual void ApplyVelocityBraking(float DeltaTime, float Friction, float BrakingDeceleration) override;
 
 	virtual void PerformMovement(float DeltaTime) override;
+
+	virtual void HandleImpact(const FHitResult& Hit, float TimeSlice = 0.f, const FVector& MoveDelta = FVector::ZeroVector) override;
+	bool bHitVerticalObject{ false };
+	float angleThreshold{ 50.f };
 };
