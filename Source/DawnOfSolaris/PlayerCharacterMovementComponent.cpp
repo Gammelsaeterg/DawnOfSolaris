@@ -727,6 +727,11 @@ void UPlayerCharacterMovementComponent::HandleImpact(const FHitResult & Hit, flo
 	{
 		bHitVerticalObject = true;
 		//AnimRootMotionVelocity = FVector(0.f, 0.f, 0.f);
-		UE_LOG(LogTemp, Warning, TEXT("Angle: %f"), hitAngle)
+		//UE_LOG(LogTemp, Warning, TEXT("Angle: %f"), hitAngle)
 	}
+}
+
+void UPlayerCharacterMovementComponent::resetThresholdHit()
+{
+	bHitVerticalObject = false;
 }

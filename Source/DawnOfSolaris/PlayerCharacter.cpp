@@ -15,6 +15,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "TimerManager.h"
 #include "Math/UnrealMathUtility.h"
+//#include "PlayerCharacterMovementComponent.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
@@ -449,6 +450,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 {
 	if (bChargeAttackStarted == true)
 	{
+		GetPlayerCharacterMovementComponent()->resetThresholdHit();
 		// Sets current montage pos as charge amount // TODO(?): May be a better way to get position
 		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 		//UE_LOG(LogTemp, Warning, TEXT("Took hitstunValue: %f"), GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
@@ -574,7 +576,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 
 				FVector hitDirection;
 				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
-				if (hitDirection.Size() < 1) // If getting physics velocity fails
+				if (hitDirection.Size() < 1.f) // If getting physics velocity fails
 				{
 					hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
 				}

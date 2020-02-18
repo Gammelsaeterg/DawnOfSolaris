@@ -32,7 +32,7 @@ enum class EAttackHitboxType : uint8
 	RightFoot     UMETA(DisplayName = "Right Foot"),
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType) // TODO: Add ChargeTime (default is 1.f (1 second)), add RootAnim multiplier
 struct FChargeAttackData
 {
 	//GENERATED_USTRUCT_BODY()

@@ -317,6 +317,7 @@ void ABaseCharacter::endHitstun_Implementation()
 // Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
 void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure"))
 	if (inHitstunStrengthReceived < 0.1f)
 	{
 		if (IsValid(hitstunAnimations.hitstunGrade1AnimMontage))
@@ -335,7 +336,7 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		// TODO: Make stun timer
 	}
 	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived < 0.7f)
-	{
+	{		
 		if (IsValid(hitstunAnimations.hitstunGrade3AnimMontage))
 		{
 			currentMontage = hitstunAnimations.hitstunGrade3AnimMontage;
@@ -346,6 +347,7 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		//Knockback handling
 		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0.f).GetSafeNormal()) * calculateKnockbackLength(inHitstunStrengthReceived);
 		LaunchCharacter(adjustedDirection, false, false);
+		//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure: %s"), *adjustedDirection.ToString())
 	}
 	else if (inHitstunStrengthReceived > 0.7f)
 	{
