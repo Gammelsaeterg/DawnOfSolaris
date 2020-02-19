@@ -89,7 +89,7 @@ void UPlayerCharacterMovementComponent::PhysWalking(float deltaTime, int32 Itera
 
 		if (!bHitVerticalObject)
 		{
-			Velocity += (AnimRootMotionVelocity);
+			Velocity += (AnimRootMotionVelocity) * rootMotionVelocityMultiplier;
 		}
 
 
@@ -734,4 +734,9 @@ void UPlayerCharacterMovementComponent::HandleImpact(const FHitResult & Hit, flo
 void UPlayerCharacterMovementComponent::resetThresholdHit()
 {
 	bHitVerticalObject = false;
+}
+
+void UPlayerCharacterMovementComponent::setRootMotionVelocityMultiplier(float inMultiplier)
+{
+	rootMotionVelocityMultiplier = inMultiplier;
 }

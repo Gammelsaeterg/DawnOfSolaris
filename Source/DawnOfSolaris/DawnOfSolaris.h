@@ -51,6 +51,12 @@ struct FChargeAttackData
 	float maxHitstunValue{ 0.6f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float rootMotionMultiplier{ 1.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float maxChargeTime{ 1.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackHitboxType AttackHitbox;
 };
 

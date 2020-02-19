@@ -15,7 +15,6 @@
 #include "Components/PrimitiveComponent.h"
 #include "TimerManager.h"
 #include "Math/UnrealMathUtility.h"
-//#include "PlayerCharacterMovementComponent.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
@@ -454,6 +453,8 @@ inline void APlayerCharacter::releaseStart_Implementation()
 		// Sets current montage pos as charge amount // TODO(?): May be a better way to get position
 		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 		//UE_LOG(LogTemp, Warning, TEXT("Took hitstunValue: %f"), GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
+
+		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(currentChargeAmount); // TODO: Multiply this with attack's root motion velocity multiplier from attack struct
 
 		bChargeAttackStarted = false;
 		bMinimumChargeReached = false;
