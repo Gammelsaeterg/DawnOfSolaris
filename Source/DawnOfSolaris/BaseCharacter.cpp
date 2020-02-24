@@ -299,7 +299,7 @@ void ABaseCharacter::startHitstun_Implementation()
 	// TODO: Lerp this
 	FVector tempDirection = currentReceivedAttackData.hitDirection * -1; // Sets rotation to follow direction
 	SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
-
+	// TODO: Set slide friction on
 
 	updateMovement();
 
@@ -310,6 +310,7 @@ void ABaseCharacter::endHitstun_Implementation()
 {
 	currentMovementData = defaultMovementData;
 	bSelfHitstunActive = false;
+	// TODO: Set slide friction off
 
 	updateMovement();
 }

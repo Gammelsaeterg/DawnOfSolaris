@@ -437,7 +437,8 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 
 	// TODO: Complete this and rest of function
 	currentMontage = inAttack.AttackAnimMontage;
-	GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+	float tempChargeAttackTimePlayRate = 1.f / inAttack.maxChargeTime;
+	GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, tempChargeAttackTimePlayRate, EMontagePlayReturnType::MontageLength, 0.f, true);
 
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
 
@@ -459,6 +460,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 		bChargeAttackStarted = false;
 		bMinimumChargeReached = false;
 
+		GetMesh()->GetAnimInstance()->Montage_SetPlayRate(currentMontage, 1.f);
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
 		incrementAttackCombo(currentActionType);
 	}
