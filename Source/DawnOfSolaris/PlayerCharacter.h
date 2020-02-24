@@ -106,6 +106,7 @@ public:
 	FMovementData sprintMovementData{ FMovementData(maxSprintSpeed, maxRotationRate) };
 
 	float currentChargeAmount{ 0.f };
+	float currentRootAnimationMultiplier{ 1.f };
 
 	bool bDodgingActive{ false }; // Active in dodge frames
 	bool bSprintingActive{ false }; // Active when sprint button is held	

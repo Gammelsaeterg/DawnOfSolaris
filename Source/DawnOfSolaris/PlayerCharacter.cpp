@@ -441,6 +441,7 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	GetMesh()->GetAnimInstance()->Montage_Play(inAttack.AttackAnimMontage, tempChargeAttackTimePlayRate, EMontagePlayReturnType::MontageLength, 0.f, true);
 
 	GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("windUp"));
+	currentRootAnimationMultiplier = inAttack.rootMotionMultiplier;
 
 	bAttackHitboxActive = false; // Disable old hitbox for new attack
 	clearHitActors();
@@ -455,7 +456,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 		//UE_LOG(LogTemp, Warning, TEXT("Took hitstunValue: %f"), GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 
-		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(currentChargeAmount); // TODO: Multiply this with attack's root motion velocity multiplier from attack struct
+		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(currentChargeAmount * (currentRootAnimationMultiplier)); // TODO: Multiply this with attack's root motion velocity multiplier from attack struct
 
 		bChargeAttackStarted = false;
 		bMinimumChargeReached = false;
