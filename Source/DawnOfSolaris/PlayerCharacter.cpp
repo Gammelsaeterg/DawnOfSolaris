@@ -609,7 +609,9 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr)) // Default nullptr and self check // (OtherComp->IsA(USkeletalMesh::StaticClass()))
 	{
+		
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
+		UE_LOG(LogTemp, Warning, TEXT("Interface?: %s"), (characterInterface ? TEXT("True") : TEXT("False")));
 		if (characterInterface && !(isActorAlreadyHit(OtherActor))) // Check if actor has interface and has not already been hit
 		{
 			if (canDamageInteract(CombatAlignment, characterInterface->Execute_getAlignment(OtherActor))) // Check if can damage interact
