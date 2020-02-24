@@ -123,6 +123,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> defaultComboTwoAttacks;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDodgeRollData dodgeRoll;
+
 	//Hitbox collisions
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* LeftHandHitbox;
@@ -215,6 +218,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void deactivateAttackHitbox();
 	virtual void deactivateAttackHitbox_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void startDodge();
+	virtual void startDodge_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void endDodge();
+	virtual void endDodge_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	void setChargeAmount(float newChargeAmount); // TODO: Charge determined based on montage position, should be based on how far in it is compared to the charge/windUp animation

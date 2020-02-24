@@ -109,6 +109,19 @@ struct FAttackData // Used for storing and sending attack info
 	hitLocation(FVector{ 0.f, 0.f, 0.f }), damageDealingActor(nullptr), hitstunStrength(0.f) {}
 };
 
+USTRUCT(BlueprintType)
+struct FDodgeRollData // Used for storing and sending attack info
+{
+	//GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* dodgeAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float dodgeRootAnimationMultiplier{ 1.f };
+};
+
 UENUM()
 enum class EActionType : uint8 // TODO: Add more actions
 {
@@ -120,6 +133,7 @@ enum class EActionType : uint8 // TODO: Add more actions
 	Sprint					UMETA(DisplayName = "Sprint"),
 	SprintAttackOne			UMETA(DisplayName = "SprintAttackOne"),
 	SprintAttackTwo			UMETA(DisplayName = "SprintAttackTwo"),
+	DodgeRoll			    UMETA(DisplayName = "DodgeRoll"),
 	NONE					UMETA(DisplayName = "NONE")
 };
 

@@ -652,6 +652,16 @@ void APlayerCharacter::deactivateAttackHitbox_Implementation()
 	clearHitActors();
 }
 
+void APlayerCharacter::startDodge_Implementation()
+{
+	bDodgingActive = true;
+}
+
+void APlayerCharacter::endDodge_Implementation()
+{
+	bDodgingActive = false;
+}
+
 void APlayerCharacter::setChargeAmount_Implementation(float newChargeAmount)
 {
 	currentChargeAmount = newChargeAmount;
