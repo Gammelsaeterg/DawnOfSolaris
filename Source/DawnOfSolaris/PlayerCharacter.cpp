@@ -320,11 +320,14 @@ void APlayerCharacter::startDodgeRoll()
 {
 	if (canDodge())
 	{
-		currentMontage = currentDodgeRollData.dodgeAnimMontage;
+		if (currentStaminaPoints > 23.f) // TODO: Set stamina cost as variable
+		{
+			currentStaminaPoints -= 23.f;
 
-		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * currentDodgeRollData.dodgeRootAnimationMultiplier);
-
-		GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			currentMontage = currentDodgeRollData.dodgeAnimMontage;
+			GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * currentDodgeRollData.dodgeRootAnimationMultiplier);
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+		}
 	}
 }
 
@@ -344,6 +347,10 @@ inline void APlayerCharacter::standbyCheckTick() // Tick function to check if pl
 	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
 	{
 		bStandbyActive = true;
+	}
+	else if (bDodgingActive)
+	{
+		bStandbyActive = false;
 	}
 	else
 	{
