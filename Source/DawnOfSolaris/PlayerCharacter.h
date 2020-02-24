@@ -49,7 +49,7 @@ public:
 	void Action2Released();
 	void Action3Released();
 
-	EActionType Action0Input{ EActionType::Interact };
+	EActionType Action0Input{ EActionType::DodgeRoll };
 	EActionType Action1Input{ EActionType::DefaultComboOne };
 	EActionType Action2Input{ EActionType::DefaultComboTwo };
 	EActionType Action3Input{ EActionType::GrabAttack };
@@ -69,6 +69,8 @@ public:
 
 	void sprintPressed();
 	void sprintReleased();
+
+	void startDodgeRoll();
 
 	// AI input
 	UFUNCTION(BlueprintCallable)
@@ -124,7 +126,7 @@ public:
 	TArray<FChargeAttackData> defaultComboTwoAttacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FDodgeRollData dodgeRoll;
+	FDodgeRollData currentDodgeRollData;
 
 	//Hitbox collisions
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -150,6 +152,7 @@ public:
 	bool canSprint();
 	bool canRegenerateStamina();
 	bool canAttack();
+	bool canDodge();
 
 	//Attack functions
 	void windUpChargeAttack(FChargeAttackData& inAttack);

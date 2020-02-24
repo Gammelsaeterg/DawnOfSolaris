@@ -96,13 +96,17 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 	PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &APlayerCharacter::sprintPressed);
 	PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &APlayerCharacter::sprintReleased);
 
+	PlayerInputComponent->BindAction("Action0", IE_Pressed, this, &APlayerCharacter::Action0Pressed);
+	PlayerInputComponent->BindAction("Action0", IE_Released, this, &APlayerCharacter::Action0Released);
+
 	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &APlayerCharacter::Action1Pressed);
 	PlayerInputComponent->BindAction("Action1", IE_Released, this, &APlayerCharacter::Action1Released);
 
 	PlayerInputComponent->BindAction("Action2", IE_Pressed, this, &APlayerCharacter::Action2Pressed);
 	PlayerInputComponent->BindAction("Action2", IE_Released, this, &APlayerCharacter::Action2Released);
 
-	// Sprint attempt
+	PlayerInputComponent->BindAction("Action3", IE_Pressed, this, &APlayerCharacter::Action3Pressed);
+	PlayerInputComponent->BindAction("Action3", IE_Released, this, &APlayerCharacter::Action3Released);
 }
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
@@ -232,6 +236,9 @@ void APlayerCharacter::actionPressed(EActionType inActionType)
 	case EActionType::DefaultComboTwo:
 		comboAttackPressed(inActionType);
 		break;
+	case EActionType::DodgeRoll:
+		startDodgeRoll();
+		break;
 	default:
 		break;
 	}
@@ -307,6 +314,18 @@ inline void APlayerCharacter::sprintPressed()
 inline void APlayerCharacter::sprintReleased()
 {
 	bSprintingActive = false;
+}
+
+void APlayerCharacter::startDodgeRoll()
+{
+	if (canDodge())
+	{
+		currentMontage = currentDodgeRollData.dodgeAnimMontage;
+
+		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * currentDodgeRollData.dodgeRootAnimationMultiplier);
+
+		GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+	}
 }
 
 void APlayerCharacter::attackAI(EActionType inAttackCombo, float chargeAmount)
@@ -408,7 +427,7 @@ inline bool APlayerCharacter::canRegenerateStamina()
 
 inline bool APlayerCharacter::canAttack()
 {
-	if (bCanCancelAction)
+	if (bCanCancelAction && !bDodgingActive) // TODO(?): Make it so you can cancel dodge into attack
 	{
 		return true;
 	}
@@ -428,7 +447,32 @@ inline bool APlayerCharacter::canAttack()
 	{
 		return false;
 	}
+}
 
+bool APlayerCharacter::canDodge()
+{
+	if (!bSelfHitstunActive && !bDodgingActive && !bAttackActionActive)
+	{
+		if (!bChargeAttackStarted)
+		{
+			return true;
+		}
+		else
+		{
+			if (bCanCancelAction)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}			
+		}
+	}
+	else
+	{
+		return false;
+	}
 }
 
 inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
@@ -456,7 +500,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 		//UE_LOG(LogTemp, Warning, TEXT("Took hitstunValue: %f"), GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 
-		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(currentChargeAmount * (currentRootAnimationMultiplier)); // TODO: Multiply this with attack's root motion velocity multiplier from attack struct
+		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(currentChargeAmount * (currentRootAnimationMultiplier)); 
 
 		bChargeAttackStarted = false;
 		bMinimumChargeReached = false;
