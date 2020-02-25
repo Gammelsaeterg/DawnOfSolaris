@@ -73,7 +73,7 @@ struct FSprintAttackData
 	float damageValue{ 20 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float hitstunValue{ 0.1f };
+	float hitstunValue{ 0.5f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackHitboxType AttackHitbox;

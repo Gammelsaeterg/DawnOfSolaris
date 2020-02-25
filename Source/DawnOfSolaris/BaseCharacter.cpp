@@ -244,8 +244,6 @@ void ABaseCharacter::attackStart_Implementation()
 
 	updateMovement();
 	//UE_LOG(LogTemp, Warning, TEXT("Attack start"))
-
-	debugSpawnFX();
 }
 
 void ABaseCharacter::attackEnd_Implementation()

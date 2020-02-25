@@ -365,6 +365,7 @@ void APlayerCharacter::sprintTick(float DeltaTime)
 			{
 				//defaultMovementData.maxWalkSpeed = 1100.f;
 				defaultMovementData.maxWalkSpeed = FMath::FInterpTo(defaultMovementData.maxWalkSpeed, maxSprintSpeed, DeltaTime, 5.f);
+				defaultMovementData.maxRotationRate = FMath::FInterpTo(defaultMovementData.maxRotationRate, maxSprintRotationRate, DeltaTime, 5.f);
 				if (GetVelocity().Size() > maxWalkSpeed + (maxSprintSpeed / 10.f))
 				{
 					currentStaminaPoints -= sprintStaminaCost * DeltaTime;
@@ -379,6 +380,7 @@ void APlayerCharacter::sprintTick(float DeltaTime)
 			{
 				//defaultMovementData.maxWalkSpeed = 600.f;
 				defaultMovementData.maxWalkSpeed = FMath::FInterpTo(defaultMovementData.maxWalkSpeed, maxWalkSpeed, DeltaTime, 5.f);
+				defaultMovementData.maxRotationRate = FMath::FInterpTo(defaultMovementData.maxRotationRate, maxRotationRate, DeltaTime, 5.f);
 				bCanSprintAttack = false;
 			}
 		}
@@ -503,6 +505,11 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 	clearHitActors();
 }
 
+void APlayerCharacter::windUpStart_Implementation()
+{
+	debugSpawnFX();
+}
+
 inline void APlayerCharacter::releaseStart_Implementation()
 {
 	if (bChargeAttackStarted == true)
@@ -559,6 +566,10 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			{
 				currentMontage = sprintAttackOne.sprintAttackAnimMontage;
 				currentAttackHitboxType = sprintAttackOne.AttackHitbox;
+
+				currentAttackDataToSend.damageAmount = sprintAttackOne.damageValue;
+				currentAttackDataToSend.hitstunStrength = sprintAttackOne.hitstunValue;
+
 				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 			}
 		}
@@ -572,9 +583,14 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			{
 				currentMontage = sprintAttackTwo.sprintAttackAnimMontage;
 				currentAttackHitboxType = sprintAttackTwo.AttackHitbox;
+
+				currentAttackDataToSend.damageAmount = sprintAttackTwo.damageValue;
+				currentAttackDataToSend.hitstunStrength = sprintAttackTwo.hitstunValue;
+
 				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);				
 			}
 		}
+		//debugSpawnFX();
 	}
 }
 

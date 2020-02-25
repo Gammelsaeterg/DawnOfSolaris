@@ -105,7 +105,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float sprintStaminaCost{ 5.f };
 
-	FMovementData sprintMovementData{ FMovementData(maxSprintSpeed, maxRotationRate) };
+	float maxSprintRotationRate{ 200.f };
+	FMovementData sprintMovementData{ FMovementData(maxSprintSpeed, maxSprintRotationRate) };
 
 	UPROPERTY(BlueprintReadOnly)
 	float tickWindUpChargeAmount{ 0.f };
@@ -165,6 +166,10 @@ public:
 
 	//Attack functions
 	void windUpChargeAttack(FChargeAttackData& inAttack);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void windUpStart();
+	virtual void windUpStart_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void releaseStart();
