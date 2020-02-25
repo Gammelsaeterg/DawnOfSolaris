@@ -107,6 +107,8 @@ public:
 
 	FMovementData sprintMovementData{ FMovementData(maxSprintSpeed, maxRotationRate) };
 
+	UPROPERTY(BlueprintReadOnly)
+	float tickWindUpChargeAmount{ 0.f };
 	float currentChargeAmount{ 0.f };
 	float currentRootAnimationMultiplier{ 1.f };
 
@@ -148,6 +150,7 @@ public:
 	void standbyCheckTick(); // Tick function to check if player is in standby
 	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
 	void regenStaminaTick(float DeltaTime);
+	void windUpChargeAmountTick();
 
 	bool canSprint();
 	bool canRegenerateStamina();
@@ -213,6 +216,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	void setStaminaPoints(float newStaminaPoints);
 	virtual void setStaminaPoints_Implementation(float newStaminaPoints) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	float getWindUpChargeAmount();
+	virtual float getWindUpChargeAmount_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void activateAttackHitbox();

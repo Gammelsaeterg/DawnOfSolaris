@@ -77,6 +77,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	sprintTick(DeltaTime);
 	regenStaminaTick(DeltaTime);
 	standbyCheckTick();
+	windUpChargeAmountTick();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
@@ -348,10 +349,6 @@ inline void APlayerCharacter::standbyCheckTick() // Tick function to check if pl
 	{
 		bStandbyActive = true;
 	}
-	else if (bDodgingActive)
-	{
-		bStandbyActive = false;
-	}
 	else
 	{
 		bStandbyActive = false;
@@ -402,6 +399,14 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 	else if (currentStaminaPoints > maxStaminaPoints)
 	{
 		//currentStaminaPoints = 100.f;
+	}
+}
+
+void APlayerCharacter::windUpChargeAmountTick()
+{
+	if (bChargeAttackStarted)
+	{
+		tickWindUpChargeAmount = GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage);
 	}
 }
 
@@ -689,6 +694,11 @@ float APlayerCharacter::getMaxStaminaPoints_Implementation()
 inline void APlayerCharacter::setStaminaPoints_Implementation(float newStaminaPoints)
 {
 	currentStaminaPoints = newStaminaPoints;
+}
+
+float APlayerCharacter::getWindUpChargeAmount_Implementation()
+{
+	return tickWindUpChargeAmount;
 }
 
 void APlayerCharacter::activateAttackHitbox_Implementation()
