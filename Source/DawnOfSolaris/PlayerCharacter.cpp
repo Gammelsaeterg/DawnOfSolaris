@@ -545,7 +545,7 @@ void APlayerCharacter::releaseEnd_Implementation()
 	}
 }
 
-void APlayerCharacter::sprintAttack(EActionType inActionType)
+void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refactor this function
 {
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo) // TODO(?): May not be necessary
 	{
@@ -553,13 +553,27 @@ void APlayerCharacter::sprintAttack(EActionType inActionType)
 		{
 			currentActionType = EActionType::SprintAttackOne;
 			// Do sprint attack one here 
-			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack one here"))
+			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack one here"));
+
+			if (sprintAttackOne.sprintAttackAnimMontage->IsValidLowLevelFast())
+			{
+				currentMontage = sprintAttackOne.sprintAttackAnimMontage;
+				currentAttackHitboxType = sprintAttackOne.AttackHitbox;
+				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			}
 		}
 		else if (inActionType == EActionType::DefaultComboTwo)
 		{
 			currentActionType = EActionType::SprintAttackTwo;
 			// Do sprint attack two here
-			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack two here"))
+			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack two here"));
+
+			if (sprintAttackTwo.sprintAttackAnimMontage->IsValidLowLevelFast())
+			{
+				currentMontage = sprintAttackTwo.sprintAttackAnimMontage;
+				currentAttackHitboxType = sprintAttackTwo.AttackHitbox;
+				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);				
+			}
 		}
 	}
 }

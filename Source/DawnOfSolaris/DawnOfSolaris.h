@@ -61,6 +61,25 @@ struct FChargeAttackData
 };
 
 USTRUCT(BlueprintType)
+struct FSprintAttackData
+{
+	//GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* sprintAttackAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float damageValue{ 20 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float hitstunValue{ 0.1f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAttackHitboxType AttackHitbox;
+};
+
+USTRUCT(BlueprintType)
 struct FDefaultAttackData
 {
 	//GENERATED_USTRUCT_BODY()

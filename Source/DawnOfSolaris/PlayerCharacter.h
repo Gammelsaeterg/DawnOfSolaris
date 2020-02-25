@@ -128,6 +128,12 @@ public:
 	TArray<FChargeAttackData> defaultComboTwoAttacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSprintAttackData sprintAttackOne;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSprintAttackData sprintAttackTwo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDodgeRollData currentDodgeRollData;
 
 	//Hitbox collisions
