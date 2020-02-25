@@ -244,6 +244,8 @@ void ABaseCharacter::attackStart_Implementation()
 
 	updateMovement();
 	//UE_LOG(LogTemp, Warning, TEXT("Attack start"))
+
+	debugSpawnFX();
 }
 
 void ABaseCharacter::attackEnd_Implementation()
@@ -257,8 +259,9 @@ void ABaseCharacter::attackEnd_Implementation()
 void ABaseCharacter::canCancelAction_Implementation()
 {
 	bCanCancelAction = true;
-
 	defaultMovementData.maxRotationRate = 540.f; // TODO: Get a different variable to adjust this
+
+	debugDespawnFX();
 }
 
 ECombatAlignment ABaseCharacter::getAlignment_Implementation()

@@ -403,7 +403,7 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 }
 
 void APlayerCharacter::windUpChargeAmountTick()
-{
+{	
 	if (bChargeAttackStarted)
 	{
 		tickWindUpChargeAmount = GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage);
@@ -524,7 +524,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 }
 
 void APlayerCharacter::releaseEnd_Implementation()
-{
+{	
 	if (bChargeAttackInputHeld)
 	{
 		queuedActionTypes.Empty();
