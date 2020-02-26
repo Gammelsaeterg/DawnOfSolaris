@@ -49,10 +49,10 @@ public:
 	void Action2Released();
 	void Action3Released();
 
-	EActionType Action0Input{ EActionType::Interact };
-	EActionType Action1Input{ EActionType::DodgeRoll };
+	EActionType Action0Input{ EActionType::DodgeRoll };
+	EActionType Action1Input{ EActionType::DefaultComboOne };
 	EActionType Action2Input{ EActionType::DefaultComboTwo };
-	EActionType Action3Input{ EActionType::DefaultComboOne };
+	EActionType Action3Input{ EActionType::Interact };
 
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY is for debugging purposes // TODO: Delete later, remember to delete blueprints using this variable
 	bool bChargeAttackInputHeld{ false };

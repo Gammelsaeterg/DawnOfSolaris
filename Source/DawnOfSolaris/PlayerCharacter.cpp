@@ -576,6 +576,7 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 				currentAttackDataToSend.damageAmount = sprintAttackOne.damageValue;
 				currentAttackDataToSend.hitstunStrength = sprintAttackOne.hitstunValue;
 
+				GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * sprintAttackOne.rootMotionMultiplier);
 				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 			}
 		}
@@ -593,6 +594,7 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 				currentAttackDataToSend.damageAmount = sprintAttackTwo.damageValue;
 				currentAttackDataToSend.hitstunStrength = sprintAttackTwo.hitstunValue;
 
+				GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * sprintAttackTwo.rootMotionMultiplier);
 				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);				
 			}
 		}
