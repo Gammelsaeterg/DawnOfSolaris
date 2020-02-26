@@ -141,14 +141,17 @@ void ABaseCharacter::updateMovement()
 	{
 		//setMovementData(combatMovementData);
 		currentMovementData = combatMovementData;
+		GetCharacterMovement()->bUseSeparateBrakingFriction = false;
 	}
 	else if (bSelfHitstunActive)
 	{
 		currentMovementData = hitstunMovementData;
+		GetCharacterMovement()->bUseSeparateBrakingFriction = true;
 	}
 	else
 	{
 		currentMovementData = defaultMovementData;
+		GetCharacterMovement()->bUseSeparateBrakingFriction = false;
 	}
 
 	//Experimental functions below // TODO(?): Delete if necessary

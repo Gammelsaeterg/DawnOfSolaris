@@ -38,7 +38,7 @@ float calculateKnockbackLength(float inMultiplier)
 		float inMultiplierInPercent = (inMultiplier - flinchAndKnockbackMinLimit) / (launchMinLimit - flinchAndKnockbackMinLimit);
 		
 		float minKnockbackValue = 100.f;
-		float maxKnockbackValue = 2000.f;
+		float maxKnockbackValue = 1500.f;
 		float knockbackDifferene = maxKnockbackValue - minKnockbackValue;
 
 		return minKnockbackValue + (inMultiplierInPercent * knockbackDifferene);
