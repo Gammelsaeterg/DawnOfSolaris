@@ -89,7 +89,7 @@ void UPlayerCharacterMovementComponent::PhysWalking(float deltaTime, int32 Itera
 
 		if (!bHitVerticalObject)
 		{
-			Velocity += (AnimRootMotionVelocity) * rootMotionVelocityMultiplier;
+			Velocity += (AnimRootMotionVelocity * deltaTime * 100.f) * rootMotionVelocityMultiplier;
 		}
 
 
