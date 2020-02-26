@@ -77,7 +77,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	sprintTick(DeltaTime);
 	regenStaminaTick(DeltaTime);
 	standbyCheckTick();
-	windUpChargeAmountTick();
+	windUpChargeAmountTick(DeltaTime);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
@@ -125,6 +125,7 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 			currentActionType = inActionType;
 			windUpChargeAttack(getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]]);
 			currentAttackHitboxType = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
+			currentChargeAttackStaminaConsumptionRate = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].baseStaminaConsumptionRate;
 
 			bChargeAttackInputHeld = true;
 		}
@@ -404,11 +405,16 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 	}
 }
 
-void APlayerCharacter::windUpChargeAmountTick()
+void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
 {	
 	if (bChargeAttackStarted)
 	{
 		tickWindUpChargeAmount = GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage);
+
+		if (currentStaminaPoints > currentChargeAttackStaminaConsumptionRate * deltaTime)
+		{
+			currentStaminaPoints -= currentChargeAttackStaminaConsumptionRate * deltaTime;
+		}
 	}
 }
 
@@ -689,6 +695,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 					this, currentAttackDataToSend.hitstunStrength);
 				}
 
+				debugSpawnHitFX(OverlappedComp->GetComponentLocation());
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}								
 		}

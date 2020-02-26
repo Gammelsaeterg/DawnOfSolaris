@@ -57,6 +57,9 @@ struct FChargeAttackData
 	float maxChargeTime{ 1.f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float baseStaminaConsumptionRate{ 0.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackHitboxType AttackHitbox;
 };
 

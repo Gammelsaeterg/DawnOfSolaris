@@ -108,6 +108,8 @@ public:
 	float maxSprintRotationRate{ 200.f };
 	FMovementData sprintMovementData{ FMovementData(maxSprintSpeed, maxSprintRotationRate) };
 
+	float currentChargeAttackStaminaConsumptionRate{ 0.f };
+
 	UPROPERTY(BlueprintReadOnly)
 	float tickWindUpChargeAmount{ 0.f };
 	float currentChargeAmount{ 0.f };
@@ -157,7 +159,7 @@ public:
 	void standbyCheckTick(); // Tick function to check if player is in standby
 	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
 	void regenStaminaTick(float DeltaTime);
-	void windUpChargeAmountTick();
+	void windUpChargeAmountTick(float deltaTime);
 
 	bool canSprint();
 	bool canRegenerateStamina();
