@@ -119,6 +119,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentReceivedAttackData;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsHitstunned();
+	virtual bool getIsHitstunned_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getHealthPoints();

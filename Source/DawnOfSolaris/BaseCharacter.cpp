@@ -196,6 +196,11 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 //	//GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
 //}
 
+bool ABaseCharacter::getIsHitstunned_Implementation()
+{
+	return bSelfHitstunActive;
+}
+
 float ABaseCharacter::getHealthPoints_Implementation()
 {
 	return currentHealthPoints;
