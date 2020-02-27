@@ -387,9 +387,9 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 	else if (inHitstunStrengthReceived > 0.7f)
 	{
 		// TODO: Make stun timer and launch character in air
-		float tempLaunchZaxisMultiplier{ 3.f }; // TODO: Make this a variable in the header file
+		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
 
-		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, tempLaunchZaxisMultiplier * hitDirection.Z).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived);
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);
 		LaunchCharacter(adjustedDirection, false, false);
 
 		startLaunch();
@@ -403,18 +403,19 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 
 void ABaseCharacter::startLaunch()
 {
-	GetCapsuleComponent()->SetCapsuleHalfHeight(launchedCapsuleHalfHeight);
 	Execute_startHitstun(this);
-
+	//GetCapsuleComponent()->SetCapsuleHalfHeight(launchedCapsuleHalfHeight);
+	
 	bIsLaunched = true;
 }
 
 void ABaseCharacter::endLaunch()
 {
-	GetCapsuleComponent()->SetCapsuleHalfHeight(defaultCapsuleHalfHeight);
+	//GetCapsuleComponent()->SetCapsuleHalfHeight(defaultCapsuleHalfHeight);
 	Execute_endHitstun(this);
 
 	bIsLaunched = false;
+	Execute_endHitstun(this);
 }
 
 void ABaseCharacter::startIsDefeatedProcedure()
