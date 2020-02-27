@@ -68,6 +68,9 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+
 	// TODO(?)
 	//defaultComboOneComboMaxIndex = defaultComboOneAttacks.Num();
 	//defaultComboTwoComboMaxIndex = defaultComboTwoAttacks.Num();
@@ -121,6 +124,7 @@ void ABaseCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	movementSmoothingTick(DeltaTime);
+	launchedTick(DeltaTime);
 }
 
 void ABaseCharacter::movementSmoothingTick(float DeltaTime)
@@ -132,6 +136,17 @@ void ABaseCharacter::movementSmoothingTick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
 		currentMovementData.maxWalkSpeed, DeltaTime, 4.f);
+}
+
+void ABaseCharacter::launchedTick(float DeltaTime)
+{
+	if (bIsLaunched)
+	{
+		if (!GetCharacterMovement()->IsFalling())
+		{
+			endLaunch();
+		}
+	}
 }
 
 void ABaseCharacter::updateMovement()
@@ -202,6 +217,16 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 bool ABaseCharacter::getIsHitstunned_Implementation()
 {
 	return bSelfHitstunActive;
+}
+
+bool ABaseCharacter::getIsLaunched_Implementation()
+{
+	return bIsLaunched;
+}
+
+bool ABaseCharacter::getIsGrounded_Implementation()
+{
+	return bIsGrounded;
 }
 
 float ABaseCharacter::getHealthPoints_Implementation()
@@ -362,12 +387,34 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 	else if (inHitstunStrengthReceived > 0.7f)
 	{
 		// TODO: Make stun timer and launch character in air
+		float tempLaunchZaxisMultiplier{ 3.f }; // TODO: Make this a variable in the header file
+
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, tempLaunchZaxisMultiplier * hitDirection.Z).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived);
+		LaunchCharacter(adjustedDirection, false, false);
+
+		startLaunch();
 	}
 	else
 	{
 		// Debug else, function should normally not reach this line
 		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
 	}
+}
+
+void ABaseCharacter::startLaunch()
+{
+	GetCapsuleComponent()->SetCapsuleHalfHeight(launchedCapsuleHalfHeight);
+	Execute_startHitstun(this);
+
+	bIsLaunched = true;
+}
+
+void ABaseCharacter::endLaunch()
+{
+	GetCapsuleComponent()->SetCapsuleHalfHeight(defaultCapsuleHalfHeight);
+	Execute_endHitstun(this);
+
+	bIsLaunched = false;
 }
 
 void ABaseCharacter::startIsDefeatedProcedure()

@@ -249,6 +249,7 @@ struct FMovementData
 };
 
 float calculateKnockbackLength(float inMultiplier);
+float calculateLaunchLength(float inMultiplier);
 
 template<typename TEnum>
 static FORCEINLINE FString GetEnumValueAsString(const FString& Name, TEnum Value)

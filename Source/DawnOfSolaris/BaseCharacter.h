@@ -73,6 +73,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void movementSmoothingTick(float DeltaTime);
+	void launchedTick(float DeltaTime);
 
 	void updateMovement();
 
@@ -94,6 +95,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxRotationRate{ 540.f }; //
 
+	float defaultCapsuleHalfHeight{ 96.f };
+	float launchedCapsuleHalfHeight{ 22.f };
+
 	//FMovementData currentMovementData{ FMovementData(600.f, 540.f) };
 	FMovementData currentMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData defaultMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
@@ -112,6 +116,12 @@ public:
 	bool bStandbyActive{ true }; // Active when none of the above is active
 	bool bDefaultAttackStarted{ false };
 	bool bCanCancelAction{ false }; // Active after can cancel action notify is reached
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsLaunched{ false }; // Active after struck by an attack that launches (hitstun valiue larger than 0.7f)
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsGrounded{ false }; // Active after a launch and character lies flat on ground
 	
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentAttackDataToSend;
@@ -122,6 +132,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsHitstunned();
 	virtual bool getIsHitstunned_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsLaunched();
+	virtual bool getIsLaunched_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsGrounded();
+	virtual bool getIsGrounded_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getHealthPoints();
@@ -169,6 +187,9 @@ public:
 
 	// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
 	void runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection);
+
+	void startLaunch();
+	void endLaunch();
 
 	void cancelAttackActions(); // TODO: Complete this function
 

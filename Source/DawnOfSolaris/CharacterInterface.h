@@ -49,6 +49,12 @@ public:
 	bool getIsHitstunned();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsLaunched();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsGrounded();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getWindUpChargeAmount();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")

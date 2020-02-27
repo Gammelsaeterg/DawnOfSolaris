@@ -49,3 +49,16 @@ float calculateKnockbackLength(float inMultiplier)
 	}
 
 }
+
+float calculateLaunchLength(float inMultiplier)
+{
+	if (inMultiplier > launchMinLimit)
+	{
+		float BaseLaunchValue = 2000.f;
+		return (inMultiplier * BaseLaunchValue);
+	}
+	else
+	{
+		return 0.f;
+	}
+}
