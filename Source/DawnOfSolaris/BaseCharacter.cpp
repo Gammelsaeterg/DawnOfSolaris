@@ -301,6 +301,7 @@ void ABaseCharacter::attackEnd_Implementation()
 
 void ABaseCharacter::activateAttackHitbox_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Hitbox activated"))
 	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
 	{
 		Execute_sendAttackDataToWeapon(Weapon->GetChildActor(), currentDefaultAttackData, CombatAlignment);
