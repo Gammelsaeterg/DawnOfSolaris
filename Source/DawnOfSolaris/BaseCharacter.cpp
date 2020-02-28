@@ -355,26 +355,26 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 	//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure"))
 	if (inHitstunStrengthReceived < 0.1f)
 	{
-		if (IsValid(hitstunAnimations.hitstunGrade1AnimMontage))
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
 		{
-			currentMontage = hitstunAnimations.hitstunGrade1AnimMontage;
+			currentMontage = hitstunAnimations.hitstunLightAnimMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 		}
 	}
 	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived < 0.3f)
 	{
-		if (IsValid(hitstunAnimations.hitstunGrade2AnimMontage))
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
 		{
-			currentMontage = hitstunAnimations.hitstunGrade2AnimMontage;
+			currentMontage = hitstunAnimations.hitstunLightAnimMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 		}
 		// TODO: Make stun timer
 	}
 	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived < 0.7f)
 	{		
-		if (IsValid(hitstunAnimations.hitstunGrade3AnimMontage))
+		if (IsValid(hitstunAnimations.hitstunHeavyAnimMontage))
 		{
-			currentMontage = hitstunAnimations.hitstunGrade3AnimMontage;
+			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 		}
 		// TODO: Make stun timer
