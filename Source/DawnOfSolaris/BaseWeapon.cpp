@@ -12,11 +12,10 @@ ABaseWeapon::ABaseWeapon()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(RootComponent);
+	RootComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollisionMesh"));
-	CollisionMesh->SetupAttachment(WeaponMesh);
+	CollisionMesh->SetupAttachment(RootComponent);
 	CollisionMesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnOverlapBeginWeaponHitbox);
 }
 
@@ -41,7 +40,6 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 											 UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 											 bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Overlap event launched"))
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && (CurrentCharacterOwner != OtherActor)) // Default nullptr and self check // (OtherComp->IsA(USkeletalMesh::StaticClass()))
 	{
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
@@ -55,7 +53,7 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 				hitDirection = FVector(OverlappedComp->GetPhysicsLinearVelocity().X, OverlappedComp->GetPhysicsLinearVelocity().Y, 0.f).GetSafeNormal(0.000001f);
 				if (hitDirection.Size() < 1.f) // If getting physics velocity fails
 				{
-					hitDirection = CurrentCharacterOwner->GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
+					hitDirection = CurrentCharacterOwner->GetMesh()->GetRightVector().GetSafeNormal(0.000001f); // TODO(?): Red error line, fix
 				}
 
 				FAttackData currentAttackDataToSend = FAttackData(CurrentMeleeWeaponAttackData.damageValue,
