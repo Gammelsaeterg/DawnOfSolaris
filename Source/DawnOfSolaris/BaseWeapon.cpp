@@ -14,8 +14,8 @@ ABaseWeapon::ABaseWeapon()
 	WeaponMesh->SetupAttachment(RootComponent);
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollisionMesh"));
-	CollisionMesh->SetupAttachment(RootComponent);
-	CollisionMesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnOverlapBeginWeaponHitbox);
+	CollisionMesh->SetupAttachment(WeaponMesh);
+	WeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnOverlapBeginWeaponHitbox);
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +36,7 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 											 UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 											 bool bFromSweep, const FHitResult & SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Overlap event launched"))
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr)) // Default nullptr and self check // (OtherComp->IsA(USkeletalMesh::StaticClass()))
 	{
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
@@ -43,6 +44,7 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 		{
 			if (canDamageInteract(CurrentWeaponCombatAlignment, characterInterface->Execute_getAlignment(OtherActor)))
 			{
+				//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
 				FVector hitDirection;
 				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
 				if (hitDirection.Size() < 1.f) // If getting physics velocity fails
@@ -69,14 +71,18 @@ void ABaseWeapon::sendAttackDataToWeapon_Implementation(FDefaultAttackData inAtt
 
 void ABaseWeapon::activateAttackHitbox_Implementation()
 {
-	CollisionMesh->SetGenerateOverlapEvents(true);
-	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	UPrimitiveComponent* overlapCollisionToEnable = WeaponMesh; // TODO(?): Redundant?
+
+	overlapCollisionToEnable->SetGenerateOverlapEvents(true);
+	overlapCollisionToEnable->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ABaseWeapon::deactivateAttackHitbox_Implementation()
 {
-	CollisionMesh->SetGenerateOverlapEvents(false);
-	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	UPrimitiveComponent* overlapCollisionToEnable = WeaponMesh; // TODO(?): Redundant?
+
+	overlapCollisionToEnable->SetGenerateOverlapEvents(false);
+	overlapCollisionToEnable->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	clearHitActors();
 }
