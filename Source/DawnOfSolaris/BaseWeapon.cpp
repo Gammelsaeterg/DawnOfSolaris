@@ -36,7 +36,26 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 											 UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 											 bool bFromSweep, const FHitResult & SweepResult)
 {
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr)) // Default nullptr and self check // (OtherComp->IsA(USkeletalMesh::StaticClass()))
+	{
+		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
+		if (characterInterface && !(isActorAlreadyHit(OtherActor)))
+		{
+			FVector hitDirection;
+			hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
+			if (hitDirection.Size() < 1.f) // If getting physics velocity fails
+			{
+				//hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
+				hitDirection = CollisionMesh->GetForwardVector().GetSafeNormal(0.000001f); // TODO(?): Unsure of this is correct
+			}
 
+			FAttackData currentAttackDataToSend = FAttackData(CurrentMeleeWeaponAttackData.damageValue,
+															  hitDirection, SweepResult.Location,
+															  this, CurrentMeleeWeaponAttackData.hitstunValue);
+
+			characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
+		}
+	}
 }
 
 void ABaseWeapon::sendAttackDataToWeapon_Implementation(FDefaultAttackData inAttackData, ECombatAlignment inAlignment)
@@ -55,5 +74,27 @@ void ABaseWeapon::deactivateAttackHitbox_Implementation()
 {
 	CollisionMesh->SetGenerateOverlapEvents(false);
 	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+bool ABaseWeapon::isActorAlreadyHit(AActor * inActor)
+{
+	// TODO: Simplify this
+	bool bIsActorAlreadyHit{ false };
+	for (AActor * hitActor : hitActors)
+	{
+		if (inActor == hitActor)
+		{
+			bIsActorAlreadyHit = true;
+		}
+	}
+
+	if (bIsActorAlreadyHit)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 

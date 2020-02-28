@@ -35,7 +35,8 @@ public:
 	class UStaticMeshComponent* ProjectileMesh;
 
 	FDefaultAttackData CurrentMeleeWeaponAttackData;
-	ECombatAlignment CurrentWeaponCombatAlignment;
+	ECombatAlignment CurrentWeaponCombatAlignment;	
+	TArray<AActor*> hitActors; //Storing current hit actors to avoid multiple hits in one attack
 
 	UFUNCTION()
 	void OnOverlapBeginWeaponHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
@@ -53,4 +54,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void deactivateAttackHitbox();
 	virtual void deactivateAttackHitbox_Implementation() override;
+
+	bool isActorAlreadyHit(AActor* inActor);
 };
