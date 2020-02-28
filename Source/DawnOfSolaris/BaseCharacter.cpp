@@ -67,6 +67,8 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
 	Weapon->SetupAttachment(GetMesh(), "hand_r");
+
+	//Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "hand_r");
 }
 
 // Called when the game starts or when spawned
@@ -286,7 +288,7 @@ void ABaseCharacter::attackStart_Implementation()
 {
 	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
 	{
-		Execute_sendAttackDataToWeapon(Weapon->GetChildActor(), currentDefaultAttackData, CombatAlignment);
+		Execute_sendAttackDataToWeapon(Weapon->GetChildActor(), currentDefaultAttackData, CombatAlignment, this);
 	}
 
 	bAttackActionActive = true; // TODO(?): Uncomment if commented out
@@ -308,7 +310,6 @@ void ABaseCharacter::activateAttackHitbox_Implementation()
 {
 	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
 	{
-		//Execute_sendAttackDataToWeapon(Weapon->GetChildActor(), currentDefaultAttackData, CombatAlignment);
 		Execute_activateAttackHitbox(Weapon->GetChildActor());
 	}
 }

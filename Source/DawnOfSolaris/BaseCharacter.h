@@ -66,7 +66,7 @@ public:
 	class UCapsuleComponent* OuterCapsuleComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UChildActorComponent* Weapon;
+	class UChildActorComponent* Weapon{ nullptr };
 
 public:	
 	// Called when the game starts or when spawned

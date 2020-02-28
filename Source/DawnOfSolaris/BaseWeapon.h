@@ -31,11 +31,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* CollisionMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* ProjectileMesh;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//class UStaticMeshComponent* ProjectileMesh;
 
 	FDefaultAttackData CurrentMeleeWeaponAttackData;
 	ECombatAlignment CurrentWeaponCombatAlignment;	
+	class ABaseCharacter* CurrentCharacterOwner;
 	TArray<AActor*> hitActors; //Storing current hit actors to avoid multiple hits in one attack
 
 	UFUNCTION()
@@ -44,8 +45,8 @@ public:
 									bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-	void sendAttackDataToWeapon(FDefaultAttackData inAttackData, ECombatAlignment inAlignment);
-	virtual void sendAttackDataToWeapon_Implementation(FDefaultAttackData inAttackData, ECombatAlignment inAlignment) override;
+	void sendAttackDataToWeapon(FDefaultAttackData inAttackData, ECombatAlignment inAlignment, ABaseCharacter* inOwner);
+	virtual void sendAttackDataToWeapon_Implementation(FDefaultAttackData inAttackData, ECombatAlignment inAlignment, ABaseCharacter* inOwner) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void activateAttackHitbox();

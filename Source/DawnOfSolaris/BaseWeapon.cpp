@@ -3,6 +3,8 @@
 
 #include "BaseWeapon.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/PrimitiveComponent.h"
+#include "BaseCharacter.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -15,7 +17,7 @@ ABaseWeapon::ABaseWeapon()
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollisionMesh"));
 	CollisionMesh->SetupAttachment(WeaponMesh);
-	WeaponMesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnOverlapBeginWeaponHitbox);
+	CollisionMesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnOverlapBeginWeaponHitbox);
 }
 
 // Called when the game starts or when spawned
@@ -23,6 +25,9 @@ void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//CollisionMesh->SetRelativeLocation(FVector::ZeroVector); // TODO(?): This should not be necessary
+	WeaponMesh->SetMobility(EComponentMobility::Movable); // TODO(?): This should not be necessary
+	CollisionMesh->SetMobility(EComponentMobility::Movable); // TODO(?): This should not be necessary
 }
 
 // Called every frame
@@ -37,20 +42,20 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 											 bool bFromSweep, const FHitResult & SweepResult)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Overlap event launched"))
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr)) // Default nullptr and self check // (OtherComp->IsA(USkeletalMesh::StaticClass()))
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && (CurrentCharacterOwner != OtherActor)) // Default nullptr and self check // (OtherComp->IsA(USkeletalMesh::StaticClass()))
 	{
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
 		if (characterInterface && !(isActorAlreadyHit(OtherActor)))
 		{
 			if (canDamageInteract(CurrentWeaponCombatAlignment, characterInterface->Execute_getAlignment(OtherActor)))
 			{
+				hitActors.Add(OtherActor);
 				//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
 				FVector hitDirection;
-				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
+				hitDirection = FVector(OverlappedComp->GetPhysicsLinearVelocity().X, OverlappedComp->GetPhysicsLinearVelocity().Y, 0.f).GetSafeNormal(0.000001f);
 				if (hitDirection.Size() < 1.f) // If getting physics velocity fails
 				{
-					//hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
-					hitDirection = CollisionMesh->GetForwardVector().GetSafeNormal(0.000001f); // TODO(?): Unsure of this is correct
+					hitDirection = CurrentCharacterOwner->GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
 				}
 
 				FAttackData currentAttackDataToSend = FAttackData(CurrentMeleeWeaponAttackData.damageValue,
@@ -63,15 +68,16 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 	}
 }
 
-void ABaseWeapon::sendAttackDataToWeapon_Implementation(FDefaultAttackData inAttackData, ECombatAlignment inAlignment)
+void ABaseWeapon::sendAttackDataToWeapon_Implementation(FDefaultAttackData inAttackData, ECombatAlignment inAlignment, ABaseCharacter* inOwner)
 {
 	CurrentMeleeWeaponAttackData = inAttackData;
 	CurrentWeaponCombatAlignment = inAlignment;
+	CurrentCharacterOwner = inOwner;
 }
 
 void ABaseWeapon::activateAttackHitbox_Implementation()
 {
-	UPrimitiveComponent* overlapCollisionToEnable = WeaponMesh; // TODO(?): Redundant?
+	UPrimitiveComponent* overlapCollisionToEnable = CollisionMesh; // TODO(?): Redundant?
 
 	overlapCollisionToEnable->SetGenerateOverlapEvents(true);
 	overlapCollisionToEnable->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -79,7 +85,7 @@ void ABaseWeapon::activateAttackHitbox_Implementation()
 
 void ABaseWeapon::deactivateAttackHitbox_Implementation()
 {
-	UPrimitiveComponent* overlapCollisionToEnable = WeaponMesh; // TODO(?): Redundant?
+	UPrimitiveComponent* overlapCollisionToEnable = CollisionMesh; // TODO(?): Redundant?
 
 	overlapCollisionToEnable->SetGenerateOverlapEvents(false);
 	overlapCollisionToEnable->SetCollisionEnabled(ECollisionEnabled::NoCollision);
