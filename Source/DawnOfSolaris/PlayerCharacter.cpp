@@ -523,6 +523,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 		GetPlayerCharacterMovementComponent()->resetThresholdHit();
 		// Sets current montage pos as charge amount // TODO(?): May be a better way to get position
 		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
+		GetMesh()->GetAnimInstance()->Montage_SetPlayRate(currentMontage, 1.f);
 		//UE_LOG(LogTemp, Warning, TEXT("Took hitstunValue: %f"), GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
 
 		GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(currentChargeAmount * (currentRootAnimationMultiplier)); 

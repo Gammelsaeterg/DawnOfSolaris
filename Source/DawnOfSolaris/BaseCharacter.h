@@ -65,6 +65,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* OuterCapsuleComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UChildActorComponent* CurrentHeldWeapon;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	//class ABaseWeapon* CurrentWeaponHeld{ nullptr };
+
 public:	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
