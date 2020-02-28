@@ -228,6 +228,11 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 //	//GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
 //}
 
+bool ABaseCharacter::getIsAttacking_Implementation()
+{
+	return bAttackActionActive;
+}
+
 bool ABaseCharacter::getIsHitstunned_Implementation()
 {
 	return bSelfHitstunActive;

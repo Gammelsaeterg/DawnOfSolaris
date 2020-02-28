@@ -54,6 +54,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsGrounded();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsAttacking();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void sendAttackDataToWeapon(FDefaultAttackData inAttackData, ECombatAlignment inCombatAlignment, ABaseCharacter* inOwner);
 

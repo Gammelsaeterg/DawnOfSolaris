@@ -125,6 +125,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsGrounded{ false }; // Active after a launch and character lies flat on ground
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsAttacking();
+	virtual bool getIsAttacking_Implementation() override;
 	
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentAttackDataToSend;
