@@ -299,6 +299,16 @@ void ABaseCharacter::attackEnd_Implementation()
 	//UE_LOG(LogTemp, Warning, TEXT("Attack end"))
 }
 
+void ABaseCharacter::activateAttackHitbox_Implementation()
+{
+
+}
+
+void ABaseCharacter::deactivateAttackHitbox_Implementation()
+{
+
+}
+
 void ABaseCharacter::canCancelAction_Implementation()
 {
 	bCanCancelAction = true;

@@ -169,6 +169,14 @@ public:
 	void attackEnd_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void activateAttackHitbox();
+	virtual void activateAttackHitbox_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void deactivateAttackHitbox();
+	virtual void deactivateAttackHitbox_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void canCancelAction();
 	virtual void canCancelAction_Implementation();
 
