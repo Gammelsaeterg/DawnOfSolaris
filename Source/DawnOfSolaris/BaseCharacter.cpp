@@ -301,12 +301,19 @@ void ABaseCharacter::attackEnd_Implementation()
 
 void ABaseCharacter::activateAttackHitbox_Implementation()
 {
-
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_sendAttackDataToWeapon(Weapon->GetChildActor(), currentDefaultAttackData, CombatAlignment);
+		Execute_activateAttackHitbox(Weapon->GetChildActor());
+	}
 }
 
 void ABaseCharacter::deactivateAttackHitbox_Implementation()
 {
-
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(Weapon->GetChildActor());
+	}
 }
 
 void ABaseCharacter::canCancelAction_Implementation()
@@ -333,6 +340,7 @@ void ABaseCharacter::defaultAttackStart(int attackIndex)
 
 	if (defaultAttacks.IsValidIndex(attackIndex))  // To check if attacks exist
 	{
+		currentDefaultAttackData = defaultAttacks[attackIndex];
 		currentMontage = defaultAttacks[attackIndex].AttackAnimMontage;
 		if (GetMesh()->GetAnimInstance() != nullptr)
 		{

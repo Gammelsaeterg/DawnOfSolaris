@@ -234,11 +234,11 @@ public:
 	float getWindUpChargeAmount();
 	virtual float getWindUpChargeAmount_Implementation() override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+//	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void activateAttackHitbox();
 	virtual void activateAttackHitbox_Implementation() override;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+//	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void deactivateAttackHitbox();
 	virtual void deactivateAttackHitbox_Implementation() override;
 

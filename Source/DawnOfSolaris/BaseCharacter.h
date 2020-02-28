@@ -132,6 +132,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentReceivedAttackData;
 
+	UPROPERTY(BlueprintReadOnly)
+	FDefaultAttackData currentDefaultAttackData;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsHitstunned();
 	virtual bool getIsHitstunned_Implementation();

@@ -41,19 +41,22 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
 		if (characterInterface && !(isActorAlreadyHit(OtherActor)))
 		{
-			FVector hitDirection;
-			hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
-			if (hitDirection.Size() < 1.f) // If getting physics velocity fails
+			if (canDamageInteract(CurrentWeaponCombatAlignment, characterInterface->Execute_getAlignment(OtherActor)))
 			{
-				//hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
-				hitDirection = CollisionMesh->GetForwardVector().GetSafeNormal(0.000001f); // TODO(?): Unsure of this is correct
+				FVector hitDirection;
+				hitDirection = OverlappedComp->GetPhysicsLinearVelocity().GetSafeNormal(0.000001f);
+				if (hitDirection.Size() < 1.f) // If getting physics velocity fails
+				{
+					//hitDirection = GetMesh()->GetRightVector().GetSafeNormal(0.000001f);
+					hitDirection = CollisionMesh->GetForwardVector().GetSafeNormal(0.000001f); // TODO(?): Unsure of this is correct
+				}
+
+				FAttackData currentAttackDataToSend = FAttackData(CurrentMeleeWeaponAttackData.damageValue,
+					hitDirection, SweepResult.Location,
+					this, CurrentMeleeWeaponAttackData.hitstunValue);
+
+				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}
-
-			FAttackData currentAttackDataToSend = FAttackData(CurrentMeleeWeaponAttackData.damageValue,
-															  hitDirection, SweepResult.Location,
-															  this, CurrentMeleeWeaponAttackData.hitstunValue);
-
-			characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 		}
 	}
 }
