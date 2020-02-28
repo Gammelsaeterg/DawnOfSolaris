@@ -65,7 +65,7 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 
 	// Set weapon
 	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
-	Weapon->SetChildActorClass(WeaponClass);
+	Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
 	Weapon->SetupAttachment(GetMesh(), "hand_r");
 }
 

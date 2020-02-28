@@ -68,10 +68,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent* Weapon;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	TSubclassOf<class ABaseWeapon> WeaponClass;
-
-
 public:	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
