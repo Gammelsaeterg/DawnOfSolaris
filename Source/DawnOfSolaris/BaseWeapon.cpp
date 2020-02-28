@@ -15,6 +15,7 @@ ABaseWeapon::ABaseWeapon()
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollisionMesh"));
 	CollisionMesh->SetupAttachment(RootComponent);
+	CollisionMesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::OnOverlapBeginWeaponHitbox);
 }
 
 // Called when the game starts or when spawned
@@ -29,5 +30,30 @@ void ABaseWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, 
+											 UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
+											 bool bFromSweep, const FHitResult & SweepResult)
+{
+
+}
+
+void ABaseWeapon::sendAttackDataToWeapon_Implementation(FDefaultAttackData inAttackData, ECombatAlignment inAlignment)
+{
+	CurrentMeleeWeaponAttackData = inAttackData;
+	CurrentWeaponCombatAlignment = inAlignment;
+}
+
+void ABaseWeapon::activateAttackHitbox_Implementation()
+{
+	CollisionMesh->SetGenerateOverlapEvents(true);
+	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+}
+
+void ABaseWeapon::deactivateAttackHitbox_Implementation()
+{
+	CollisionMesh->SetGenerateOverlapEvents(false);
+	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 

@@ -216,7 +216,7 @@ enum class ECombatAlignment : uint8
 	Player     UMETA(DisplayName = "Player") // Players can damage interact with Humans, Neutrals and other Players
 };
 
-bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAlignment);
+bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment inAlignment);
 
 USTRUCT(BlueprintType) //// TODO(?): Utilize later
 struct FMovementData

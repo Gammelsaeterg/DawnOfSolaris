@@ -5,18 +5,25 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DawnOfSolaris.h"
+#include "CharacterInterface.h"
 
 #include "BaseWeapon.generated.h"
 
 
 UCLASS()
-class DAWNOFSOLARIS_API ABaseWeapon : public AActor
+class DAWNOFSOLARIS_API ABaseWeapon : public AActor, public ICharacterInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	ABaseWeapon();
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* WeaponMesh;
@@ -27,12 +34,23 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* ProjectileMesh;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	FDefaultAttackData CurrentMeleeWeaponAttackData;
+	ECombatAlignment CurrentWeaponCombatAlignment;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	void OnOverlapBeginWeaponHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
+									UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
+									bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void sendAttackDataToWeapon(FDefaultAttackData inAttackData, ECombatAlignment inAlignment);
+	virtual void sendAttackDataToWeapon_Implementation(FDefaultAttackData inAttackData, ECombatAlignment inAlignment) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void activateAttackHitbox();
+	virtual void activateAttackHitbox_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void deactivateAttackHitbox();
+	virtual void deactivateAttackHitbox_Implementation() override;
 };
