@@ -8,7 +8,6 @@
 #include "Components/InputComponent.h"
 #include "Containers/Array.h"
 #include "DawnOfSolaris.h"
-#include "BaseWeapon.h"
 
 #include "BaseCharacter.generated.h"
 
@@ -66,14 +65,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* OuterCapsuleComponent;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	//class UChildActorComponent* CurrentHeldWeapon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UChildActorComponent* Weapon;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	//TSubclassOf<ABaseWeapon> Weapon;
+	TSubclassOf<class ABaseWeapon> WeaponClass;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	//class ABaseWeapon* CurrentWeaponHeld{ nullptr };
 
 public:	
 	// Called when the game starts or when spawned

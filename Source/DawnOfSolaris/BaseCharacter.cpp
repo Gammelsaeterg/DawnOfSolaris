@@ -12,6 +12,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Math/UnrealMathUtility.h"
 #include "Components/ChildActorComponent.h"
+#include "BaseWeapon.h"
 
 
 // Sets default values
@@ -29,10 +30,6 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 	OuterCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("OuterCapsuleComponent"));
 	OuterCapsuleComponent->InitCapsuleSize(45.f, 100.0f);
 	OuterCapsuleComponent->SetupAttachment(RootComponent);
-
-	//CurrentHeldWeapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
-	//CurrentHeldWeapon->SetChildActorClass(Weapon);
-	//CurrentHeldWeapon->SetupAttachment(GetMesh(), "hand_r");
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
@@ -65,6 +62,11 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 
 	// Can rotate character during root motion
 	GetCharacterMovement()->bAllowPhysicsRotationDuringAnimRootMotion = true;
+
+	// Set weapon
+	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	Weapon->SetChildActorClass(WeaponClass);
+	Weapon->SetupAttachment(GetMesh(), "hand_r");
 }
 
 // Called when the game starts or when spawned
@@ -74,6 +76,9 @@ void ABaseCharacter::BeginPlay()
 
 	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+
+	//Weapon->SetChildActorClass(WeaponClass);
+	//HeldWeapon = Cast<ABaseWeapon>(Weapon->GetChildActor());
 
 	//CurrentWeaponHeld = GetWorld()->SpawnActor<ABaseWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
 	//CurrentWeaponHeld->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "hand_r");
