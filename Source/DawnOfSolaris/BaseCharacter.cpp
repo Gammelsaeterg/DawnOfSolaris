@@ -12,7 +12,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Math/UnrealMathUtility.h"
 #include "Components/ChildActorComponent.h"
-#include "BaseWeapon.h"
 
 
 // Sets default values
@@ -31,9 +30,9 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 	OuterCapsuleComponent->InitCapsuleSize(45.f, 100.0f);
 	OuterCapsuleComponent->SetupAttachment(RootComponent);
 
-	CurrentHeldWeapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
-	CurrentHeldWeapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
-	CurrentHeldWeapon->SetupAttachment(GetMesh(), "hand_r");
+	//CurrentHeldWeapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	//CurrentHeldWeapon->SetChildActorClass(Weapon);
+	//CurrentHeldWeapon->SetupAttachment(GetMesh(), "hand_r");
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
