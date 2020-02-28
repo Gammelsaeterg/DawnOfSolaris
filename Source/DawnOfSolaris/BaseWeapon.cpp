@@ -74,6 +74,8 @@ void ABaseWeapon::deactivateAttackHitbox_Implementation()
 {
 	CollisionMesh->SetGenerateOverlapEvents(false);
 	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	clearHitActors();
 }
 
 bool ABaseWeapon::isActorAlreadyHit(AActor * inActor)
@@ -96,5 +98,10 @@ bool ABaseWeapon::isActorAlreadyHit(AActor * inActor)
 	{
 		return false;
 	}
+}
+
+void ABaseWeapon::clearHitActors()
+{
+	hitActors.Empty();
 }
 

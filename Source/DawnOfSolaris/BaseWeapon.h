@@ -56,4 +56,5 @@ public:
 	virtual void deactivateAttackHitbox_Implementation() override;
 
 	bool isActorAlreadyHit(AActor* inActor);
+	void clearHitActors();
 };
