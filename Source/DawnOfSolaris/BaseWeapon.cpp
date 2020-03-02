@@ -103,6 +103,8 @@ void ABaseWeapon::fireProjectile_Implementation()
 		FTransform spawnTransform = FTransform(WeaponMesh->GetSocketRotation("ProjectileSpawnLocation"), WeaponMesh->GetSocketLocation("ProjectileSpawnLocation"), WeaponMesh->GetRelativeScale3D());
 		auto ProjectileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponProjectile, spawnTransform);
 
+		Cast<ABaseProjectile>(ProjectileToSpawn)->setOwnerInfo(CurrentCharacterOwner);
+
 		UGameplayStatics::FinishSpawningActor(ProjectileToSpawn, ProjectileToSpawn->GetTransform());
 	}
 }

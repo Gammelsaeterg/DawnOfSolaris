@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+
 // Sets default values
 ABaseProjectile::ABaseProjectile()
 {
@@ -34,5 +35,11 @@ void ABaseProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ABaseProjectile::setOwnerInfo(AActor* inOwner)
+{
+	CurrentOwner = inOwner;
+	CurrentProjectileCombatAlignment = Execute_getAlignment(CurrentOwner);
 }
 
