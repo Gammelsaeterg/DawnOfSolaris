@@ -22,6 +22,16 @@ public:
 	// Sets default values for this character's properties
 	ABaseCharacter(const FObjectInitializer& ObjectInitializer);
 
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//Current input component
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseTurnRate;
@@ -69,20 +79,11 @@ public:
 	class UChildActorComponent* Weapon{ nullptr };
 
 public:	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	void movementSmoothingTick(float DeltaTime);
 	void launchedTick(float DeltaTime);
 
 	void updateMovement();
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	//Current input component
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	ECombatAlignment CombatAlignment = ECombatAlignment::Neutral;
@@ -184,6 +185,10 @@ public:
 	virtual void deactivateAttackHitbox_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void fireProjectile();
+	virtual void fireProjectile_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void canCancelAction();
 	virtual void canCancelAction_Implementation();
 
@@ -191,7 +196,8 @@ public:
 	ECombatAlignment getAlignment();
 	virtual ECombatAlignment getAlignment_Implementation() override;
 
-	void defaultAttackStartFromInput();
+	void defaultAttackStartFromInputOne();
+	void defaultAttackStartFromInputTwo();
 	void defaultAttackStart(int attackIndex = 0);
 	void defaultAttackEnd();
 

@@ -78,17 +78,37 @@ void ABaseCharacter::BeginPlay()
 
 	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+}
 
-	//Weapon->SetChildActorClass(WeaponClass);
-	//HeldWeapon = Cast<ABaseWeapon>(Weapon->GetChildActor());
+// Called every frame
+void ABaseCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 
-	//CurrentWeaponHeld = GetWorld()->SpawnActor<ABaseWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
-	//CurrentWeaponHeld->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "hand_r");
+	movementSmoothingTick(DeltaTime);
+	launchedTick(DeltaTime);
+}
 
-	// TODO(?)
-	//defaultComboOneComboMaxIndex = defaultComboOneAttacks.Num();
-	//defaultComboTwoComboMaxIndex = defaultComboTwoAttacks.Num();
-	//UE_LOG(LogTemp, Warning, TEXT("Current defaultComboOneComboMaxIndex is %d"), defaultComboOneComboMaxIndex)
+// Called to bind functionality to input
+void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	// Set up gameplay key bindings
+	check(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &ABaseCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ABaseCharacter::MoveRight);
+
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ABaseCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
+
+	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInputOne); //default attack one
+	PlayerInputComponent->BindAction("Action2", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInputTwo); //default attack two
+
 }
 
 void ABaseCharacter::MoveForward(float Value)
@@ -130,15 +150,6 @@ void ABaseCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
-// Called every frame
-void ABaseCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	movementSmoothingTick(DeltaTime);
-	launchedTick(DeltaTime);
 }
 
 void ABaseCharacter::movementSmoothingTick(float DeltaTime)
@@ -189,36 +200,6 @@ void ABaseCharacter::updateMovement()
 
 }
 
-// Called to bind functionality to input
-void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	// Set up gameplay key bindings
-	check(PlayerInputComponent);
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	PlayerInputComponent->BindAxis("MoveForward", this, &ABaseCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ABaseCharacter::MoveRight);
-
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ABaseCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
-
-	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInput); //default attack
-
-	//PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
-	//PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
-
-	//PlayerInputComponent->BindAction("defaultComboOne", IE_Pressed, this, &ABaseCharacter::defaultComboOnePressed);
-	//PlayerInputComponent->BindAction("defaultComboOne", IE_Released, this, &ABaseCharacter::defaultComboOneReleased);
-
-	//PlayerInputComponent->BindAction("defaultComboTwo", IE_Pressed, this, &ABaseCharacter::defaultComboTwoPressed);
-	//PlayerInputComponent->BindAction("defaultComboTwo", IE_Released, this, &ABaseCharacter::defaultComboTwoReleased);
-
-	// Sprint attempt
-}
 
 //void ABaseCharacter::setMovementData(FMovementData inMovementData)
 //{
@@ -327,6 +308,15 @@ void ABaseCharacter::deactivateAttackHitbox_Implementation()
 	}
 }
 
+void ABaseCharacter::fireProjectile_Implementation()
+{
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
+		Execute_fireProjectile(Weapon->GetChildActor());
+	}
+}
+
 void ABaseCharacter::canCancelAction_Implementation()
 {
 	bCanCancelAction = true;
@@ -340,9 +330,14 @@ ECombatAlignment ABaseCharacter::getAlignment_Implementation()
 	return CombatAlignment;
 }
 
-void ABaseCharacter::defaultAttackStartFromInput()
+void ABaseCharacter::defaultAttackStartFromInputOne()
 {
 	defaultAttackStart();
+}
+
+void ABaseCharacter::defaultAttackStartFromInputTwo()
+{
+	defaultAttackStart(1);
 }
 
 void ABaseCharacter::defaultAttackStart(int attackIndex)

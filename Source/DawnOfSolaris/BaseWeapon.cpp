@@ -4,7 +4,10 @@
 #include "BaseWeapon.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "Engine/World.h"
 #include "BaseCharacter.h"
+#include "BaseProjectile.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -12,7 +15,8 @@ ABaseWeapon::ABaseWeapon()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+	RootComponent = WeaponMesh;
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollisionMesh"));
 	CollisionMesh->SetupAttachment(RootComponent);
@@ -89,6 +93,18 @@ void ABaseWeapon::deactivateAttackHitbox_Implementation()
 	overlapCollisionToEnable->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	clearHitActors();
+}
+
+void ABaseWeapon::fireProjectile_Implementation()
+{
+	if (WeaponProjectile != nullptr)
+	{
+		//ProjectileToSpawn = GetWorld()->SpawnActorDeferred<ABaseProjectile>(WeaponProjectile, FTransform(CollisionMesh->GetSocketRotation("ProjectileSpawnLocation"), CollisionMesh->GetSocketLocation("ProjectileSpawnLocation"), FVector(1.f, 1.f, 1.f)), GetOwner(), GetOwner()->Instigator);
+		FTransform spawnTransform = FTransform(WeaponMesh->GetSocketRotation("ProjectileSpawnLocation"), WeaponMesh->GetSocketLocation("ProjectileSpawnLocation"), WeaponMesh->GetRelativeScale3D());
+		auto ProjectileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponProjectile, spawnTransform);
+
+		UGameplayStatics::FinishSpawningActor(ProjectileToSpawn, ProjectileToSpawn->GetTransform());
+	}
 }
 
 bool ABaseWeapon::isActorAlreadyHit(AActor * inActor)

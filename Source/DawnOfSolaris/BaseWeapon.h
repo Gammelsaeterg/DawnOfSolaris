@@ -56,6 +56,13 @@ public:
 	void deactivateAttackHitbox();
 	virtual void deactivateAttackHitbox_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void fireProjectile();
+	virtual void fireProjectile_Implementation() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class ABaseProjectile> WeaponProjectile;
+
 	bool isActorAlreadyHit(AActor* inActor);
 	void clearHitActors();
 };
