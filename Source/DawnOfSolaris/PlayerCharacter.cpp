@@ -228,6 +228,14 @@ void APlayerCharacter::Action3Released()
 	actionReleased(Action3Input);
 }
 
+void APlayerCharacter::interact()
+{
+	if (true) // TODO(?): Complete interact check, this if test will check if player is inside interact area
+	{
+		actionPressed(InteractionMainActionType);
+	}
+}
+
 void APlayerCharacter::actionPressed(EActionType inActionType)
 {
 	switch (inActionType)
@@ -239,6 +247,8 @@ void APlayerCharacter::actionPressed(EActionType inActionType)
 		comboAttackPressed(inActionType);
 		break;
 	case EActionType::DodgeRoll:
+		startDodgeRoll();
+	case EActionType::Interact:
 		startDodgeRoll();
 		break;
 	default:
