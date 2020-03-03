@@ -8,6 +8,7 @@
 #include "BaseCharacter.h"
 #include "BaseProjectile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -99,8 +100,9 @@ void ABaseWeapon::fireProjectile_Implementation()
 {
 	if (WeaponProjectile != nullptr)
 	{
-		//ProjectileToSpawn = GetWorld()->SpawnActorDeferred<ABaseProjectile>(WeaponProjectile, FTransform(CollisionMesh->GetSocketRotation("ProjectileSpawnLocation"), CollisionMesh->GetSocketLocation("ProjectileSpawnLocation"), FVector(1.f, 1.f, 1.f)), GetOwner(), GetOwner()->Instigator);
-		FTransform spawnTransform = FTransform(WeaponMesh->GetSocketRotation("ProjectileSpawnLocation"), WeaponMesh->GetSocketLocation("ProjectileSpawnLocation"), WeaponMesh->GetRelativeScale3D());
+		FTransform spawnTransform = FTransform(CurrentCharacterOwner->GetMesh()->GetRightVector().ToOrientationRotator(), // Using parent actor's rotation instead of object rotation
+											   WeaponMesh->GetSocketLocation("ProjectileSpawnLocation"), 
+			                                   WeaponMesh->GetRelativeScale3D());
 		auto ProjectileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponProjectile, spawnTransform);
 
 		Cast<ABaseProjectile>(ProjectileToSpawn)->setOwnerInfo(CurrentCharacterOwner);
