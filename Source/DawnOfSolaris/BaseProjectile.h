@@ -34,10 +34,15 @@ public:
 	float damageAmount{ 7.f };
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float hitstunValue{ 0.1 };
+	float hitstunValue{ 0.0f };
 
 	ECombatAlignment CurrentProjectileCombatAlignment;
 	class AActor* CurrentOwner;
 
 	void setOwnerInfo(AActor* inOwner);
+
+	UFUNCTION()
+	void OnOverlapBeginProjectileHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
+										UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
+										bool bFromSweep, const FHitResult& SweepResult);
 };

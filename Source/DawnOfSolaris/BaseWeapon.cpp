@@ -62,8 +62,8 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 				}
 
 				FAttackData currentAttackDataToSend = FAttackData(CurrentMeleeWeaponAttackData.damageValue,
-					hitDirection, SweepResult.Location,
-					this, CurrentMeleeWeaponAttackData.hitstunValue);
+													  hitDirection, SweepResult.Location,
+													  this, CurrentMeleeWeaponAttackData.hitstunValue);
 
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}

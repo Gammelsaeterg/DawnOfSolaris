@@ -312,7 +312,6 @@ void ABaseCharacter::fireProjectile_Implementation()
 {
 	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
 		Execute_fireProjectile(Weapon->GetChildActor());
 	}
 }
@@ -389,7 +388,7 @@ void ABaseCharacter::endHitstun_Implementation()
 void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure"))
-	if (inHitstunStrengthReceived < 0.1f)
+	if (inHitstunStrengthReceived <= 0.1f)
 	{
 		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
 		{
@@ -397,7 +396,7 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 		}
 	}
-	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived < 0.3f)
+	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived <= 0.3f)
 	{
 		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
 		{
@@ -406,7 +405,7 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		}
 		// TODO: Make stun timer
 	}
-	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived < 0.7f)
+	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived <= 0.7f)
 	{		
 		if (IsValid(hitstunAnimations.hitstunHeavyAnimMontage))
 		{

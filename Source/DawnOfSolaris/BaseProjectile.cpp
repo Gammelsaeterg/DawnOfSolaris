@@ -13,7 +13,9 @@ ABaseProjectile::ABaseProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
+	ProjectileMesh->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::OnOverlapBeginProjectileHitbox);
 	RootComponent = ProjectileMesh;
+	ProjectileMesh->SetGenerateOverlapEvents(true);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->SetUpdatedComponent(RootComponent);
@@ -43,3 +45,33 @@ void ABaseProjectile::setOwnerInfo(AActor* inOwner)
 	CurrentProjectileCombatAlignment = Execute_getAlignment(CurrentOwner);
 }
 
+void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
+													 UPrimitiveComponent * OtherComp, int32 OtherBodyIndex,
+													 bool bFromSweep, const FHitResult & SweepResult)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && (CurrentOwner != OtherActor)) // Default nullptr and self check)
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
+		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
+		if (characterInterface)
+		{
+			if (canDamageInteract(CurrentProjectileCombatAlignment, characterInterface->Execute_getAlignment(OtherActor)))
+			{
+				FVector hitDirection;
+				hitDirection = ProjectileMesh->GetForwardVector();
+
+				FAttackData currentAttackDataToSend = FAttackData(damageAmount,
+															      hitDirection, SweepResult.Location,
+																  this, hitstunValue);
+
+				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
+			}
+		}
+
+
+		// When projectile hits something
+		// TODO: Place FX hit effects here
+		Destroy();
+	}
+}
