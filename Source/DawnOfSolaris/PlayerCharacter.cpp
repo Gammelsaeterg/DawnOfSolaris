@@ -15,6 +15,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "TimerManager.h"
 #include "Math/UnrealMathUtility.h"
+#include "InteractableObject.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
@@ -78,6 +79,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	regenStaminaTick(DeltaTime);
 	standbyCheckTick();
 	windUpChargeAmountTick(DeltaTime);
+	interactableTick(DeltaTime);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
@@ -242,8 +244,9 @@ void APlayerCharacter::actionPressed(EActionType inActionType)
 		break;
 	case EActionType::DodgeRoll:
 		startDodgeRoll();
+		break;
 	case EActionType::Interact:
-		startDodgeRoll();
+		interact();
 		break;
 	default:
 		break;
@@ -418,6 +421,18 @@ void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
 		if (currentStaminaPoints > currentChargeAttackStaminaConsumptionRate * deltaTime)
 		{
 			currentStaminaPoints -= currentChargeAttackStaminaConsumptionRate * deltaTime;
+		}
+	}
+}
+
+void APlayerCharacter::interactableTick(float deltaTime)
+{
+	if (currentInteractableObject != nullptr)
+	{
+		if (!IsOverlappingActor(currentInteractableObject))
+		{
+			bInteractableObjectInRange = false;
+			currentInteractableObject = nullptr;
 		}
 	}
 }
@@ -861,15 +876,28 @@ void APlayerCharacter::clearHitActors()
 	hitActors.Empty();
 }
 
-void APlayerCharacter::setInteractableObjectInRange_Implementation(AInteractableObject * inObject)
-{
-
-}
-
 void APlayerCharacter::interact()
 {
-	if (true) // TODO(?): Complete interact check, this if test will check if player is inside interact area
+	if (bInteractableObjectInRange)
+	{
+		if (currentInteractableObject != nullptr) // TODO(?): May not be necessary
+		{
+			Execute_interact(currentInteractableObject, this);
+		}
+	}
+	else
 	{
 		actionPressed(InteractionMainActionType);
 	}
+}
+
+void APlayerCharacter::setInteractableObjectInRange_Implementation(AInteractableObject * inObject)
+{
+	currentInteractableObject = inObject;
+	bInteractableObjectInRange = true;
+}
+
+bool APlayerCharacter::getInteractableObjectInRange_Implementation()
+{
+	return bInteractableObjectInRange;
 }

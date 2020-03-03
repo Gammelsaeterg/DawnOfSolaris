@@ -122,4 +122,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void setInteractableObjectInRange(class AInteractableObject* inObject);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool getInteractableObjectInRange();
 };

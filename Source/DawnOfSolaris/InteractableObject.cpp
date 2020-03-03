@@ -27,10 +27,10 @@ void AInteractableObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (!bAutoTrigger)
-	{
-		TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &AInteractableObject::OnOverlapBeginTriggerBox);
-	}
+	//if (!bAutoTrigger)
+	//{
+	//	TriggerBox->OnComponentBeginOverlap.RemoveDynamic(this, &AInteractableObject::OnOverlapBeginTriggerBox);
+	//}
 }
 
 // Called every frame
@@ -51,22 +51,32 @@ void AInteractableObject::OnOverlapBeginTriggerBox(UPrimitiveComponent * Overlap
 		{
 			if (alignmentThatCanTrigger == Execute_getAlignment(OtherActor) && !actorIsAlreadyOverlapping(OverlappedActorAndComponent(OtherActor, OtherComp)))
 			{
-				if (bDoOnce)
+				if (!bAutoTrigger)
 				{
-					if (!bHasDoneOnce)
-					{
-						objectInteracted(OtherActor);
-						actorsOverlappingTriggerBox.Add(OverlappedActorAndComponent(OtherActor, OtherComp));
+					Execute_setInteractableObjectInRange(OtherActor, this);
+					actorsOverlappingTriggerBox.Add(OverlappedActorAndComponent(OtherActor, OtherComp));
 
-						bHasDoneOnce = true;
-					}
-
+					//objectInteracted(OtherActor); // For debugging
 				}
 				else
 				{
-					objectInteracted(OtherActor);
-					actorsOverlappingTriggerBox.Add(OverlappedActorAndComponent(OtherActor, OtherComp));
-				}
+					if (bDoOnce)
+					{
+						if (!bHasDoneOnce)
+						{
+							objectInteracted(OtherActor);
+							actorsOverlappingTriggerBox.Add(OverlappedActorAndComponent(OtherActor, OtherComp));
+
+							bHasDoneOnce = true;
+						}
+
+					}
+					else
+					{
+						objectInteracted(OtherActor);
+						actorsOverlappingTriggerBox.Add(OverlappedActorAndComponent(OtherActor, OtherComp));
+					}
+				}		
 			}
 		}
 	}

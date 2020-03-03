@@ -161,6 +161,7 @@ public:
 	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
 	void regenStaminaTick(float DeltaTime);
 	void windUpChargeAmountTick(float deltaTime);
+	void interactableTick(float deltaTime);
 
 	bool canSprint();
 	bool canRegenerateStamina();
@@ -275,7 +276,16 @@ public:
 	//Interaction
 	void interact();
 
+	class AInteractableObject* currentInteractableObject;
+	
+	UPROPERTY(BlueprintReadOnly) // TODO: This is for debugging purposes, delete when no longer needed
+	bool bInteractableObjectInRange{ false };
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void setInteractableObjectInRange(class AInteractableObject* inObject);
 	virtual void setInteractableObjectInRange_Implementation(class AInteractableObject* inObject) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool getInteractableObjectInRange();
+	virtual bool getInteractableObjectInRange_Implementation() override;
 };
