@@ -202,6 +202,10 @@ public:
 	void defaultAttackEnd();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void startDefaultAttack(int index);
+	virtual void startDefaultAttack_Implementation(int index) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void startHitstun();
 	virtual void startHitstun_Implementation() override;
 

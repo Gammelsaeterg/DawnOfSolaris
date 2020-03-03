@@ -360,6 +360,11 @@ void ABaseCharacter::defaultAttackEnd()
 	bDefaultAttackStarted = false;
 }
 
+void ABaseCharacter::startDefaultAttack_Implementation(int index)
+{
+	defaultAttackStart(index);
+}
+
 void ABaseCharacter::startHitstun_Implementation()
 {
 	bSelfHitstunActive = true;
