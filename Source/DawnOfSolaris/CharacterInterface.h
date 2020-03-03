@@ -116,4 +116,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void interact(class AActor* interactorActor);
 };
