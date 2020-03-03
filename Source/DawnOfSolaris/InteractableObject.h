@@ -35,7 +35,7 @@ public:
 	ECombatAlignment alignmentThatCanTrigger{ ECombatAlignment::Player };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractionObjectSettings")
-	bool faceCharacterTowardsTriggerLocation{ true };
+	bool faceCharacterTowardsTriggerLocation{ true }; // TODO: Does not work yet, implement or delete
 
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* TriggerBox;
@@ -56,8 +56,8 @@ public:
 	void objectInteracted(class AActor* InteractorActor);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void interact(class AActor* InteractorActor);
-	virtual void interact_Implementation(class AActor* interactorActor) override;
+	FVector interact(class AActor* InteractorActor);
+	virtual FVector interact_Implementation(class AActor* interactorActor) override;
 
 
 	// TODO(?): Code below may be overcomplicated, investigate this later

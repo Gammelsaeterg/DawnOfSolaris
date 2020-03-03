@@ -58,8 +58,6 @@ public:
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY is for debugging purposes // TODO: Delete later, remember to delete blueprints using this variable
 	bool bChargeAttackInputHeld{ false };
 
-	void interact();
-
 	void actionPressed(EActionType inActionType);
 	void actionReleased(EActionType inActionType);
 	void actionReleased();
@@ -273,4 +271,11 @@ public:
 	TArray<AActor*> hitActors;
 	bool isActorAlreadyHit(AActor* inActor);
 	void clearHitActors();
+
+	//Interaction
+	void interact();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setInteractableObjectInRange(class AInteractableObject* inObject);
+	virtual void setInteractableObjectInRange_Implementation(class AInteractableObject* inObject) override;
 };

@@ -15,6 +15,9 @@ AInteractableObject::AInteractableObject()
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
 	RootComponent = TriggerBox;
 
+	TriggerLocation = CreateDefaultSubobject<USceneComponent>(TEXT("TriggerLocation"));
+	TriggerLocation->SetupAttachment(RootComponent);
+
 	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractableObject::OnOverlapBeginTriggerBox);
 	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AInteractableObject::OnOverlapEndTriggerBox);  // TODO(?): May need this later
 }
@@ -70,9 +73,10 @@ void AInteractableObject::OnOverlapBeginTriggerBox(UPrimitiveComponent * Overlap
 }
 
 
-void AInteractableObject::interact_Implementation(AActor* interactorActor)
+FVector AInteractableObject::interact_Implementation(AActor* interactorActor)
 {
 	objectInteracted(interactorActor);
+	return TriggerLocation->GetComponentLocation();
 }
 
 void AInteractableObject::OnOverlapEndTriggerBox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,  // TODO(?): May need this later

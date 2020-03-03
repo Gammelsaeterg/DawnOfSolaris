@@ -118,5 +118,8 @@ public:
 	ECombatAlignment getAlignment();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void interact(class AActor* interactorActor);
+	FVector interact(class AActor* interactorActor);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setInteractableObjectInRange(class AInteractableObject* inObject);
 };

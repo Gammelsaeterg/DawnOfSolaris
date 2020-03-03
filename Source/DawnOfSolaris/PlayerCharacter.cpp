@@ -228,13 +228,7 @@ void APlayerCharacter::Action3Released()
 	actionReleased(Action3Input);
 }
 
-void APlayerCharacter::interact()
-{
-	if (true) // TODO(?): Complete interact check, this if test will check if player is inside interact area
-	{
-		actionPressed(InteractionMainActionType);
-	}
-}
+
 
 void APlayerCharacter::actionPressed(EActionType inActionType)
 {
@@ -865,4 +859,17 @@ bool APlayerCharacter::isActorAlreadyHit(AActor * inActor)
 void APlayerCharacter::clearHitActors()
 {
 	hitActors.Empty();
+}
+
+void APlayerCharacter::setInteractableObjectInRange_Implementation(AInteractableObject * inObject)
+{
+
+}
+
+void APlayerCharacter::interact()
+{
+	if (true) // TODO(?): Complete interact check, this if test will check if player is inside interact area
+	{
+		actionPressed(InteractionMainActionType);
+	}
 }
