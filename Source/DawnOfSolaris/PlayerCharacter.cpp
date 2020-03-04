@@ -69,6 +69,8 @@ void APlayerCharacter::BeginPlay()
 	updateComboMaxIndexes();
 	updateCurrentIndexes();
 	//UE_LOG(LogTemp, Warning, TEXT("Current defaultComboOneComboMaxIndex is %d"), defaultComboOneComboMaxIndex)
+
+	//setMoveset(&combatMovesets[2]); // Debug code // TODO: Delete when no longer needed
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -291,30 +293,6 @@ void APlayerCharacter::incrementAttackCombo(EActionType inActionType)
 	}
 }
 
-TArray<FChargeAttackData> APlayerCharacter::getCurrentComboAttacks(EActionType inActionType, int inComboIndex)
-{
-	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
-	{
-
-		switch (inActionType)
-		{
-		case EActionType::DefaultComboOne:
-			return defaultComboOneAttacks;
-			break;
-		case EActionType::DefaultComboTwo:
-			return defaultComboTwoAttacks;
-			break;
-		default:
-			return TArray<FChargeAttackData>(); // Should not happen
-			break;
-		}
-	}
-	else // TODO(?): Return inComboIndex
-	{
-		return TArray<FChargeAttackData>(); // Should not happen
-	}
-}
-
 inline void APlayerCharacter::sprintPressed()
 {
 	bSprintingActive = true;
@@ -410,6 +388,53 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 	{
 		//currentStaminaPoints = 100.f;
 	}
+}
+
+
+TArray<FChargeAttackData> APlayerCharacter::getCurrentComboAttacks(EActionType inActionType, int inComboIndex)
+{
+	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
+	{
+
+		switch (inActionType)
+		{
+		case EActionType::DefaultComboOne:
+			return defaultComboOneAttacks;
+			break;
+		case EActionType::DefaultComboTwo:
+			return defaultComboTwoAttacks;
+			break;
+		default:
+			return TArray<FChargeAttackData>(); // Should not happen
+			break;
+		}
+	}
+	else // TODO(?): Return inComboIndex
+	{
+		return TArray<FChargeAttackData>(); // Should not happen
+	}
+}
+
+void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
+{
+	// TODO: Add more nullptr/IsValid() checks before assigning movesets
+
+	currentMovesetData = inMovesetData;
+
+	//Clear old attack combos // TODO(?): May not be necessary
+	defaultComboOneAttacks.Empty();
+	defaultComboTwoAttacks.Empty();
+
+	defaultComboOneAttacks = inMovesetData->ChargeAttacksOne;
+	defaultComboTwoAttacks = inMovesetData->ChargeAttacksTwo;
+
+	sprintAttackOne = inMovesetData->SprintAttackOne;
+	sprintAttackTwo = inMovesetData->SprintAttackTwo;
+
+	GetMesh()->SetAnimClass(inMovesetData->movesetAnimBlueprint->GetAnimBlueprintGeneratedClass());
+
+	updateComboMaxIndexes();
+	updateCurrentIndexes();
 }
 
 void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
