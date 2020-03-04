@@ -63,14 +63,17 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	defaultComboOneMaxIndex = defaultComboOneAttacks.Num();
-	defaultComboTwoMaxIndex = defaultComboTwoAttacks.Num();
+	defaultComboOneMaxIndex = defaultComboOneAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
+	defaultComboTwoMaxIndex = defaultComboTwoAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
 
-	updateComboMaxIndexes();
-	updateCurrentIndexes();
-	//UE_LOG(LogTemp, Warning, TEXT("Current defaultComboOneComboMaxIndex is %d"), defaultComboOneComboMaxIndex)
-
-	//setMoveset(&combatMovesets[2]); // Debug code // TODO: Delete when no longer needed
+	// Sets first moveset in moveset array as default moveset
+	if (combatMovesets.Num() > 0)
+	{
+		if (&combatMovesets[0])
+		{
+			setMoveset(&combatMovesets[0]); 
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

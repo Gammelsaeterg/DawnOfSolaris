@@ -122,16 +122,16 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bAttackHitboxActive{ false };
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> defaultComboOneAttacks;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> defaultComboTwoAttacks;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSprintAttackData sprintAttackOne;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSprintAttackData sprintAttackTwo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
