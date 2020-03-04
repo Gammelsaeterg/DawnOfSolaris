@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimMontage.h"
-#include "Components/Image.h"
+#include "Engine/Texture2D.h"
 #include "Animation/AnimBlueprint.h"
 
 #include "DawnOfSolaris.generated.h"
@@ -197,10 +197,16 @@ struct FHitstunData
 	// TODO(?): Add more variables
 };
 
+USTRUCT(BlueprintType)
 struct FMovesetData
 {
+	GENERATED_BODY()
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UImage* movesetIcon;
+	FString movesetName { "Set moveset name here" };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* movesetIcon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> ChargeAttacksOne;

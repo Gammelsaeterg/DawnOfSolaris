@@ -120,14 +120,14 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 	}
 	else if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
 	{
-		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
+		if (getCurrentComboAttacks(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
 			// Inititate attack
 			bChargeAttackStarted = true;
 			currentActionType = inActionType;
-			windUpChargeAttack(getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]]);
-			currentAttackHitboxType = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
-			currentChargeAttackStaminaConsumptionRate = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].baseStaminaConsumptionRate;
+			windUpChargeAttack(getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]]);
+			currentAttackHitboxType = getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
+			currentChargeAttackStaminaConsumptionRate = getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]].baseStaminaConsumptionRate;
 
 			bChargeAttackInputHeld = true;
 		}
@@ -177,8 +177,8 @@ void APlayerCharacter::updateComboMaxIndexes()
 {
 	maxComboIndexes.Empty();
 	maxComboIndexes.Reserve(2); // TODO(?) Update number to max movesets
-	maxComboIndexes.Push(getCurrentMoveset(EActionType::DefaultComboOne).Num());
-	maxComboIndexes.Push(getCurrentMoveset(EActionType::DefaultComboTwo).Num());
+	maxComboIndexes.Push(getCurrentComboAttacks(EActionType::DefaultComboOne).Num());
+	maxComboIndexes.Push(getCurrentComboAttacks(EActionType::DefaultComboTwo).Num());
 }
 
 void APlayerCharacter::updateCurrentIndexes()
@@ -291,7 +291,7 @@ void APlayerCharacter::incrementAttackCombo(EActionType inActionType)
 	}
 }
 
-TArray<FChargeAttackData> APlayerCharacter::getCurrentMoveset(EActionType inActionType, int inMovesetIndex)
+TArray<FChargeAttackData> APlayerCharacter::getCurrentComboAttacks(EActionType inActionType, int inComboIndex)
 {
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
 	{
@@ -309,7 +309,7 @@ TArray<FChargeAttackData> APlayerCharacter::getCurrentMoveset(EActionType inActi
 			break;
 		}
 	}
-	else // TODO(?): Return inMovesetIndex
+	else // TODO(?): Return inComboIndex
 	{
 		return TArray<FChargeAttackData>(); // Should not happen
 	}
@@ -704,7 +704,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 				if ((currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo))
 				{
 					FAttackData tempAttackData; // TODO: Refactor
-					tempAttackData = calculateChargeAttackValues(getCurrentMoveset(currentActionType)[currentComboIndexes[(uint8)currentActionType]]);
+					tempAttackData = calculateChargeAttackValues(getCurrentComboAttacks(currentActionType)[currentComboIndexes[(uint8)currentActionType]]);
 
 					currentAttackDataToSend = FAttackData(tempAttackData.damageAmount,
 					hitDirection, SweepResult.Location,

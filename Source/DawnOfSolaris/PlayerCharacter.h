@@ -63,7 +63,7 @@ public:
 	void actionReleased();
 
 	void incrementAttackCombo(EActionType inActionType);
-	TArray<FChargeAttackData> getCurrentMoveset(EActionType inActionType, int inMovesetIndex = 2);
+	TArray<FChargeAttackData> getCurrentComboAttacks(EActionType inActionType, int inComboIndex = 2);
 
 	void grabAttackPressed(); //TODO: Complete function
 	void grabAttackReleased(); //TODO: Complete function
@@ -136,6 +136,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSprintAttackData sprintAttackTwo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FMovesetData> combatMovesets;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDodgeRollData currentDodgeRollData;
