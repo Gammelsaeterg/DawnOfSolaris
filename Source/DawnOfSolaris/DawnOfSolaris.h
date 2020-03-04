@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimMontage.h"
+#include "Components/Image.h"
+#include "Animation/AnimBlueprint.h"
 
 #include "DawnOfSolaris.generated.h"
 
@@ -195,6 +197,27 @@ struct FHitstunData
 	// TODO(?): Add more variables
 };
 
+struct FMovesetData
+{
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UImage* movesetIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> ChargeAttacksOne;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> ChargeAttacksTwo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSprintAttackData SprintAttackOne;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSprintAttackData SprintAttackTwo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimBlueprint* movesetAnimBlueprint;
+};
+
 //UENUM() // TODO(?): Complete or delete
 //enum class EHitstunGrade : uint8
 //{
@@ -203,8 +226,6 @@ struct FHitstunData
 //	hitstunGrade3			UMETA(DisplayName = "hitstunGrade3"),
 //	hitstunGrade4			UMETA(DisplayName = "hitstunGrade4")
 //};
-
-
 
 
 UENUM(BlueprintType)
