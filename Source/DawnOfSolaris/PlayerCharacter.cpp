@@ -434,7 +434,7 @@ void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
 	sprintAttackOne = inMovesetData->SprintAttackOne;
 	sprintAttackTwo = inMovesetData->SprintAttackTwo;
 
-	GetMesh()->SetAnimClass(inMovesetData->movesetAnimBlueprint->GetAnimBlueprintGeneratedClass());
+	//SetAnimClass(inMovesetData->movesetAnimBlueprint->GetAnimBlueprintGeneratedClass()); // TODO: This crashes the build, fix or remove for later
 
 	updateComboMaxIndexes();
 	updateCurrentIndexes();
