@@ -49,11 +49,19 @@ public:
 	void Action2Released();
 	void Action3Released();
 
+	void BrowseUpPressed();
+	void BrowseDownPressed();
+
+
 	EActionType Action0Input{ EActionType::Interact }; EActionType InteractionMainActionType{ EActionType::DodgeRoll };
 	EActionType Action1Input{ EActionType::DefaultComboOne };
 	EActionType Action2Input{ EActionType::DefaultComboTwo };
 	EActionType Action3Input{ EActionType::NONE };
 
+	//EActionType BrowseUp // TODO(?): Complete these inputs in the same way as the action inputs
+	//EActionType BrowseDown
+	//void BrowseDownPressed();
+	//void BrowseDownReleased();
 
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY is for debugging purposes // TODO: Delete later, remember to delete blueprints using this variable
 	bool bChargeAttackInputHeld{ false };
@@ -134,10 +142,14 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSprintAttackData sprintAttackTwo;
 
+	int currentMovesetIndex{ 0 };
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FMovesetData> combatMovesets;
 
 	FMovesetData* currentMovesetData;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getCurrentMovesetFromPlayer();
+	virtual FMovesetData getCurrentMovesetFromPlayer_Implementation() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDodgeRollData currentDodgeRollData;
@@ -175,6 +187,8 @@ public:
 	TArray<FChargeAttackData> getCurrentComboAttacks(EActionType inActionType, int inComboIndex = 2);
 
 	void setMoveset(FMovesetData* inMovesetData);
+	FMovesetData* findNextMoveset(bool setNewMoveset);
+	FMovesetData* findPreviousMoveset(bool setNewMoveset);
 
 	void windUpChargeAttack(FChargeAttackData& inAttack);
 

@@ -72,6 +72,7 @@ void APlayerCharacter::BeginPlay()
 		if (&combatMovesets[0])
 		{
 			setMoveset(&combatMovesets[0]); 
+			currentMovesetIndex = 0; // TODO(?): May not be necessary as it is already initialized as 0;
 		}
 	}
 }
@@ -115,6 +116,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 	PlayerInputComponent->BindAction("Action3", IE_Pressed, this, &APlayerCharacter::Action3Pressed);
 	PlayerInputComponent->BindAction("Action3", IE_Released, this, &APlayerCharacter::Action3Released);
+
+	PlayerInputComponent->BindAction("BrowseUp", IE_Pressed, this, &APlayerCharacter::BrowseUpPressed);
+	PlayerInputComponent->BindAction("BrowseDown", IE_Pressed, this, &APlayerCharacter::BrowseDownPressed);
 }
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
@@ -235,7 +239,15 @@ void APlayerCharacter::Action3Released()
 	actionReleased(Action3Input);
 }
 
+void APlayerCharacter::BrowseUpPressed()
+{
+	findNextMoveset(true);
+}
 
+void APlayerCharacter::BrowseDownPressed()
+{
+	findNextMoveset(true);
+}
 
 void APlayerCharacter::actionPressed(EActionType inActionType)
 {
@@ -330,6 +342,11 @@ void APlayerCharacter::attackAI(EActionType inAttackCombo, float chargeAmount)
 		GetWorldTimerManager().SetTimer(attackTimerAI, this, &APlayerCharacter::actionReleased, chargeAmount);
 	}
 
+}
+
+FMovesetData APlayerCharacter::getCurrentMovesetFromPlayer_Implementation()
+{
+	return *currentMovesetData;
 }
 
 inline void APlayerCharacter::standbyCheckTick() // Tick function to check if player is in standby
@@ -438,6 +455,85 @@ void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
 
 	updateComboMaxIndexes();
 	updateCurrentIndexes();
+}
+
+FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
+{
+	if (combatMovesets.Num() > 2) // Checks if there are at least two movesets
+	{
+		if ((currentMovesetIndex + 1) < combatMovesets.Num())
+		{
+			if (setNewMoveset)
+			{
+				currentMovesetIndex += 1;
+
+				setMoveset(&combatMovesets[currentMovesetIndex]);			
+				return &combatMovesets[currentMovesetIndex];
+			}
+			else
+			{
+				return &combatMovesets[currentMovesetIndex + 1];
+			}
+		}
+		else
+		{
+			if (setNewMoveset)
+			{
+				setMoveset(&combatMovesets[0]);
+				currentMovesetIndex = 0;
+				return &combatMovesets[0];
+			}
+			else
+			{
+				return &combatMovesets[0];
+			}
+
+		}
+	}
+	else
+	{
+		return &combatMovesets[0];
+	}
+}
+
+FMovesetData * APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
+{
+	if (combatMovesets.Num() > 2) // Checks if there are at least two movesets
+	{
+		if (currentMovesetIndex < 1)
+		{
+			if (setNewMoveset)
+			{
+				currentMovesetIndex = combatMovesets.Num();
+
+				setMoveset(&combatMovesets[currentMovesetIndex]);
+				return &combatMovesets[currentMovesetIndex];
+			}
+			else
+			{
+				return &combatMovesets[combatMovesets.Num()];
+			}
+
+		}
+		else
+		{
+			if (setNewMoveset)
+			{
+				setMoveset(&combatMovesets[currentMovesetIndex - 1]);
+				currentMovesetIndex -= 1;
+				return &combatMovesets[currentMovesetIndex];
+			}
+			else
+			{
+				return &combatMovesets[currentMovesetIndex - 1];
+			}
+
+		}
+	}
+	else
+	{
+		return &combatMovesets[0];
+	}
 }
 
 void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
