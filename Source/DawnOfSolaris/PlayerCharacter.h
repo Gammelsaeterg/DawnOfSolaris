@@ -142,14 +142,25 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSprintAttackData sprintAttackTwo;
 
+	UPROPERTY(BlueprintReadOnly) // TODO: This is for debugging purposes, delete when no longer needed
 	int currentMovesetIndex{ 0 };
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FMovesetData> combatMovesets;
 
 	FMovesetData* currentMovesetData;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	FMovesetData getCurrentMovesetFromPlayer();
 	virtual FMovesetData getCurrentMovesetFromPlayer_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getNextMovesetFromPlayer();
+	virtual FMovesetData getNextMovesetFromPlayer_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getPreviousMovesetFromPlayer();
+	virtual FMovesetData getPreviousMovesetFromPlayer_Implementation() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDodgeRollData currentDodgeRollData;

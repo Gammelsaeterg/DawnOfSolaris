@@ -246,7 +246,7 @@ void APlayerCharacter::BrowseUpPressed()
 
 void APlayerCharacter::BrowseDownPressed()
 {
-	findNextMoveset(true);
+	findPreviousMoveset(true);
 }
 
 void APlayerCharacter::actionPressed(EActionType inActionType)
@@ -347,6 +347,16 @@ void APlayerCharacter::attackAI(EActionType inAttackCombo, float chargeAmount)
 FMovesetData APlayerCharacter::getCurrentMovesetFromPlayer_Implementation()
 {
 	return *currentMovesetData;
+}
+
+FMovesetData APlayerCharacter::getNextMovesetFromPlayer_Implementation()
+{
+	return *findNextMoveset(false);
+}
+
+FMovesetData APlayerCharacter::getPreviousMovesetFromPlayer_Implementation()
+{
+	return *findPreviousMoveset(false);
 }
 
 inline void APlayerCharacter::standbyCheckTick() // Tick function to check if player is in standby
@@ -496,7 +506,7 @@ FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
 	}
 }
 
-FMovesetData * APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
+FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 {
 	if (combatMovesets.Num() > 2) // Checks if there are at least two movesets
 	{
@@ -504,14 +514,14 @@ FMovesetData * APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 		{
 			if (setNewMoveset)
 			{
-				currentMovesetIndex = combatMovesets.Num();
+				currentMovesetIndex = combatMovesets.Num() - 1;
 
 				setMoveset(&combatMovesets[currentMovesetIndex]);
 				return &combatMovesets[currentMovesetIndex];
 			}
 			else
 			{
-				return &combatMovesets[combatMovesets.Num()];
+				return &combatMovesets[combatMovesets.Num() - 1];
 			}
 
 		}
@@ -519,8 +529,9 @@ FMovesetData * APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 		{
 			if (setNewMoveset)
 			{
-				setMoveset(&combatMovesets[currentMovesetIndex - 1]);
 				currentMovesetIndex -= 1;
+
+				setMoveset(&combatMovesets[currentMovesetIndex]);
 				return &combatMovesets[currentMovesetIndex];
 			}
 			else
