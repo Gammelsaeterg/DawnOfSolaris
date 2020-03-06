@@ -49,6 +49,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	RightFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightFootHitbox);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
 
+	Weapon->SetupAttachment(GetMesh(), "hand_l");
 	//TODO: Research if these overlap events can be bound to one function
 }
 
