@@ -29,37 +29,31 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	LeftHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHandHitbox"));
 	LeftHandHitbox->SetupAttachment(GetMesh(), FName("hand_l"));
 	LeftHandHitbox->SetCapsuleSize(20.f, 20.f, true);
-	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHitLeftHandHitbox); 
 	LeftHandHitbox->SetGenerateOverlapEvents(false);
 
 	RightHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHandHitbox"));
 	RightHandHitbox->SetupAttachment(GetMesh(), FName("hand_r"));
 	RightHandHitbox->SetCapsuleSize(20.f, 20.f, true);
-	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHitRightHandHitbox);
 	RightHandHitbox->SetGenerateOverlapEvents(false);
 
 	LeftFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftFootHitbox"));
 	LeftFootHitbox->SetupAttachment(GetMesh(), FName("foot_l"));
 	LeftFootHitbox->SetCapsuleSize(20.f, 20.f, true);
-	LeftFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHitLeftFootHitbox);
 	LeftFootHitbox->SetGenerateOverlapEvents(false);
 
 	RightFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightFootHitbox"));
 	RightFootHitbox->SetupAttachment(GetMesh(), FName("foot_r"));
 	RightFootHitbox->SetCapsuleSize(20.f, 20.f, true);
-	RightFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHitRightFootHitbox);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
 
 	LeftKneeHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftKneeHitbox"));
 	LeftKneeHitbox->SetupAttachment(GetMesh(), FName("calf_l"));
 	LeftKneeHitbox->SetCapsuleSize(20.f, 20.f, true);
-	LeftKneeHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHitLeftKneeHitbox);
 	LeftKneeHitbox->SetGenerateOverlapEvents(false);
 
 	RightKneeHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightKneeHitbox"));
 	RightKneeHitbox->SetupAttachment(GetMesh(), FName("calf_r"));
 	RightKneeHitbox->SetCapsuleSize(20.f, 20.f, true);
-	RightKneeHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHitRightKneeHitbox);
 	RightKneeHitbox->SetGenerateOverlapEvents(false); 
 
 	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
@@ -77,6 +71,13 @@ void APlayerCharacter::PostInitializeComponents()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	LeftFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	LeftKneeHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	RightKneeHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+
 	
 	defaultComboOneMaxIndex = defaultComboOneAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
 	defaultComboTwoMaxIndex = defaultComboTwoAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
@@ -818,42 +819,6 @@ FAttackData APlayerCharacter::calculateChargeAttackValues(FChargeAttackData inCh
 	return tempChargeAttackData;
 }
 
-void APlayerCharacter::OnOverlapBeginAttackHitLeftHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginAttackHitRightHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginAttackHitLeftFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginAttackHitRightFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginAttackHitLeftKneeHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginAttackHitRightKneeHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
 void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
 											   UPrimitiveComponent * OtherComp, int32 OtherBodyIndex,
 											   bool bFromSweep, const FHitResult & SweepResult)
@@ -872,7 +837,6 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 				//UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 				//UE_LOG(LogTemp, Warning, TEXT("Other alignment is: %s"), *(GetEnumValueAsString<ECombatAlignment>("ECombatAlignment", characterInterface->Execute_getAlignment(OtherActor))));
 				hitActors.Add(OtherActor);
-
 				// TODO: On other actor take damage, set charge value multiplier to damage and hitstun strength sent			
 
 				FVector hitDirection;

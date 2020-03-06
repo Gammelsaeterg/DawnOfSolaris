@@ -228,37 +228,6 @@ public:
 
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
 
-	//TODO(!): Research if these overlap events can be bound to one function, TODO(Update): Answer: No
-	UFUNCTION()
-	void OnOverlapBeginAttackHitLeftHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-											   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-											   bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnOverlapBeginAttackHitRightHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-												UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-												bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnOverlapBeginAttackHitLeftFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-											   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-											   bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnOverlapBeginAttackHitRightFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-												UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-												bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnOverlapBeginAttackHitLeftKneeHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-											   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-											   bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnOverlapBeginAttackHitRightKneeHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-												UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-												bool bFromSweep, const FHitResult& SweepResult);
-
 	UFUNCTION()
 	void OnOverlapBeginAttackHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 								 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
