@@ -312,6 +312,14 @@ void APlayerCharacter::incrementAttackCombo(EActionType inActionType)
 	}
 }
 
+void APlayerCharacter::resetAttackCombos()
+{
+	for (int i = 0; i < currentComboIndexes.Num(); ++i)
+	{
+		currentComboIndexes[i] = 0;
+	}
+}
+
 inline void APlayerCharacter::sprintPressed()
 {
 	bSprintingActive = true;
@@ -723,6 +731,10 @@ void APlayerCharacter::releaseEnd_Implementation()
 			{
 				bChargeAttackInputHeld = false;
 			}
+		}
+		else
+		{
+			resetAttackCombos(); 
 		}
 	}
 }

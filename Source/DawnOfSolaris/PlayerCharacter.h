@@ -150,6 +150,8 @@ public:
 
 	FMovesetData* currentMovesetData;
 
+	FChargeAttackData currentChargeAttackDataToSend;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	FMovesetData getCurrentMovesetFromPlayer();
 	virtual FMovesetData getCurrentMovesetFromPlayer_Implementation() override;
@@ -195,6 +197,7 @@ public:
 
 	//Attack functions
 	void incrementAttackCombo(EActionType inActionType);
+	void resetAttackCombos();
 	TArray<FChargeAttackData> getCurrentComboAttacks(EActionType inActionType, int inComboIndex = 2);
 
 	void setMoveset(FMovesetData* inMovesetData);
@@ -218,7 +221,6 @@ public:
 	void sprintAttack(EActionType inActionType);
 
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
-	FChargeAttackData currentChargeAttackDataToSend;
 
 	//Hitbox overlap events
 	UFUNCTION()
