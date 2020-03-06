@@ -218,6 +218,7 @@ public:
 	void sprintAttack(EActionType inActionType);
 
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
+	FChargeAttackData currentChargeAttackDataToSend;
 
 	//Hitbox overlap events
 	UFUNCTION()

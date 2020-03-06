@@ -700,6 +700,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 
 		GetMesh()->GetAnimInstance()->Montage_SetPlayRate(currentMontage, 1.f);
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
+		currentChargeAttackDataToSend = getCurrentComboAttacks(currentActionType)[currentComboIndexes[(uint8)currentActionType]];
 		incrementAttackCombo(currentActionType);
 	}
 }
@@ -852,7 +853,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 				if ((currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo))
 				{
 					FAttackData tempAttackData; // TODO: Refactor
-					tempAttackData = calculateChargeAttackValues(getCurrentComboAttacks(currentActionType)[currentComboIndexes[(uint8)currentActionType]]);
+					tempAttackData = calculateChargeAttackValues(currentChargeAttackDataToSend);
 
 					currentAttackDataToSend = FAttackData(tempAttackData.damageAmount,
 					hitDirection, SweepResult.Location,
