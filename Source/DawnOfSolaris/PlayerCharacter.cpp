@@ -16,6 +16,7 @@
 #include "TimerManager.h"
 #include "Math/UnrealMathUtility.h"
 #include "InteractableObject.h"
+#include "BaseWeapon.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
@@ -49,6 +50,8 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	RightFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightFootHitbox);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
 
+	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
 	Weapon->SetupAttachment(GetMesh(), "hand_l");
 	//TODO: Research if these overlap events can be bound to one function
 }
@@ -451,6 +454,15 @@ void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
 	// TODO: Add more nullptr/IsValid() checks before assigning movesets
 
 	currentMovesetData = inMovesetData;
+
+	if (currentMovesetData->playerWeaponMorph)
+	{
+		Weapon->SetChildActorClass(currentMovesetData->playerWeaponMorph);
+	}
+	else
+	{
+		Weapon->DestroyChildActor();
+	}
 
 	//Clear old attack combos // TODO(?): May not be necessary
 	defaultComboOneAttacks.Empty();

@@ -208,6 +208,12 @@ struct FMovesetData
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* movesetIcon;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class ABaseWeapon* playerWeaponMorph{ nullptr };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class TSubclassOf<class ABaseWeapon> playerWeaponMorph;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> ChargeAttacksOne;
 
