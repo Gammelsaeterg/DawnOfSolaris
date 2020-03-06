@@ -180,6 +180,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* RightFootHitbox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* LeftKneeHitbox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* RightKneeHitbox;
+
 	UPROPERTY(BlueprintReadOnly)
 	EAttackHitboxType currentAttackHitboxType;
 
@@ -221,24 +227,6 @@ public:
 	void sprintAttack(EActionType inActionType);
 
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
-
-	//Hitbox overlap events
-	UFUNCTION()
-	void OnOverlapBeginLeftHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
-									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
-									  bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapBeginRightHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-									   bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapBeginLeftFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-									  bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapBeginRightFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-								       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-								       bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnOverlapBeginAttackHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
