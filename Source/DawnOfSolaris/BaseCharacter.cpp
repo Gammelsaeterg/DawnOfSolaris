@@ -214,6 +214,11 @@ bool ABaseCharacter::getIsAttacking_Implementation()
 	return bAttackActionActive;
 }
 
+bool ABaseCharacter::getIsDefeated_Implementation()
+{
+	return bIsDefeated;
+}
+
 bool ABaseCharacter::getIsHitstunned_Implementation()
 {
 	return bSelfHitstunActive;
@@ -249,7 +254,7 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage base char: %s"), *this->GetName());
 
-	if (!bIsDeafeated) // TODO: Change if statement to disable overlap events instead
+	if (!bIsDefeated) // TODO: Change if statement to disable overlap events instead
 	{		
 		if (currentHealthPoints > inAttackData.damageAmount)
 		{
@@ -262,7 +267,7 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 		}
 		else
 		{
-			bIsDeafeated = true;
+			bIsDefeated = true;
 			currentHealthPoints = 0;
 			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
 			startIsDefeatedProcedure();

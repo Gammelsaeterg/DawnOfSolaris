@@ -111,7 +111,7 @@ public:
 	//void setMovementData(FMovementData inMovementData);
 
 	UPROPERTY(BlueprintReadOnly)
-	bool bIsDeafeated{ false };
+	bool bIsDefeated{ false };
 
 	// TODO: Make this into an enum state(?)
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
@@ -139,6 +139,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FDefaultAttackData currentDefaultAttackData;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsDefeated();
+	virtual bool getIsDefeated_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsHitstunned();

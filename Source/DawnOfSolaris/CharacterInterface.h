@@ -126,6 +126,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsDefeated();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	FVector interact(class AActor* interactorActor);
 
