@@ -224,6 +224,9 @@ public:
 	void releaseEnd();
 	virtual void releaseEnd_Implementation() override;
 
+	void canCancelAction();
+	virtual void canCancelAction_Implementation();
+
 	void sprintAttack(EActionType inActionType);
 
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);

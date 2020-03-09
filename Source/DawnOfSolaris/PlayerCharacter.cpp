@@ -752,6 +752,30 @@ void APlayerCharacter::releaseEnd_Implementation()
 	}
 }
 
+void APlayerCharacter::canCancelAction_Implementation()
+{
+	Super::canCancelAction_Implementation();
+
+	if (bChargeAttackInputHeld)
+	{
+		queuedActionTypes.Empty();
+		comboAttackPressed(currentActionType); // Will do button pressed procedure since the button is still held at this point
+	}
+	else
+	{
+		if (queuedActionTypes.Num() > 0) // Check if there are actions in queue
+		{
+			actionPressed(queuedActionTypes.Top());
+			queuedActionTypes.Empty();
+
+			if (!bQueuedInputHeld)
+			{
+				bChargeAttackInputHeld = false;
+			}
+		}
+	}
+}
+
 void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refactor this function
 {
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo) // TODO(?): May not be necessary
