@@ -257,4 +257,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugSpawnHitFX(FVector hitLocation);
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void eventIsDefeated();
 };

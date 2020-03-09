@@ -470,6 +470,8 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetSimulatePhysics(true);
 	GetCharacterMovement()->DisableMovement();
+
+	eventIsDefeated();
 }
 
 
