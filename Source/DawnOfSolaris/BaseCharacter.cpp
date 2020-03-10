@@ -317,6 +317,7 @@ void ABaseCharacter::fireProjectile_Implementation()
 {
 	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Reference UE_LOG"))
 		Execute_fireProjectile(Weapon->GetChildActor());
 	}
 }
