@@ -49,10 +49,19 @@ public:
 	void Action2Released();
 	void Action3Released();
 
-	EActionType Action0Input{ EActionType::DodgeRoll };
+	void BrowseUpPressed();
+	void BrowseDownPressed();
+
+
+	EActionType Action0Input{ EActionType::Interact }; EActionType InteractionMainActionType{ EActionType::DodgeRoll };
 	EActionType Action1Input{ EActionType::DefaultComboOne };
 	EActionType Action2Input{ EActionType::DefaultComboTwo };
-	EActionType Action3Input{ EActionType::Interact };
+	EActionType Action3Input{ EActionType::NONE };
+
+	//EActionType BrowseUp // TODO(?): Complete these inputs in the same way as the action inputs
+	//EActionType BrowseDown
+	//void BrowseDownPressed();
+	//void BrowseDownReleased();
 
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY is for debugging purposes // TODO: Delete later, remember to delete blueprints using this variable
 	bool bChargeAttackInputHeld{ false };
@@ -60,9 +69,6 @@ public:
 	void actionPressed(EActionType inActionType);
 	void actionReleased(EActionType inActionType);
 	void actionReleased();
-
-	void incrementAttackCombo(EActionType inActionType);
-	TArray<FChargeAttackData> getCurrentMoveset(EActionType inActionType, int inMovesetIndex = 2);
 
 	void grabAttackPressed(); //TODO: Complete function
 	void grabAttackReleased(); //TODO: Complete function
@@ -124,17 +130,39 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bAttackHitboxActive{ false };
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> defaultComboOneAttacks;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FChargeAttackData> defaultComboTwoAttacks;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSprintAttackData sprintAttackOne;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSprintAttackData sprintAttackTwo;
+
+	UPROPERTY(BlueprintReadOnly) // TODO: This is for debugging purposes, delete when no longer needed
+	int currentMovesetIndex{ 0 };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FMovesetData> combatMovesets;
+
+	FMovesetData* currentMovesetData;
+
+	FChargeAttackData currentChargeAttackDataToSend;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getCurrentMovesetFromPlayer();
+	virtual FMovesetData getCurrentMovesetFromPlayer_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getNextMovesetFromPlayer();
+	virtual FMovesetData getNextMovesetFromPlayer_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getPreviousMovesetFromPlayer();
+	virtual FMovesetData getPreviousMovesetFromPlayer_Implementation() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDodgeRollData currentDodgeRollData;
@@ -152,6 +180,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* RightFootHitbox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* LeftKneeHitbox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* RightKneeHitbox;
+
 	UPROPERTY(BlueprintReadOnly)
 	EAttackHitboxType currentAttackHitboxType;
 
@@ -160,6 +194,7 @@ public:
 	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
 	void regenStaminaTick(float DeltaTime);
 	void windUpChargeAmountTick(float deltaTime);
+	void interactableTick(float deltaTime);
 
 	bool canSprint();
 	bool canRegenerateStamina();
@@ -167,6 +202,14 @@ public:
 	bool canDodge();
 
 	//Attack functions
+	void incrementAttackCombo(EActionType inActionType);
+	void resetAttackCombos();
+	TArray<FChargeAttackData> getCurrentComboAttacks(EActionType inActionType, int inComboIndex = 2);
+
+	void setMoveset(FMovesetData* inMovesetData);
+	FMovesetData* findNextMoveset(bool setNewMoveset);
+	FMovesetData* findPreviousMoveset(bool setNewMoveset);
+
 	void windUpChargeAttack(FChargeAttackData& inAttack);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
@@ -181,27 +224,12 @@ public:
 	void releaseEnd();
 	virtual void releaseEnd_Implementation() override;
 
+	void canCancelAction();
+	virtual void canCancelAction_Implementation();
+
 	void sprintAttack(EActionType inActionType);
 
 	FAttackData calculateChargeAttackValues(FChargeAttackData inChargeAttackData);
-
-	//Hitbox overlap events
-	UFUNCTION()
-	void OnOverlapBeginLeftHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
-									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
-									  bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapBeginRightHandHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-									   bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapBeginLeftFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-									  bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnOverlapBeginRightFootHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-								       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-								       bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnOverlapBeginAttackHit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -270,4 +298,20 @@ public:
 	TArray<AActor*> hitActors;
 	bool isActorAlreadyHit(AActor* inActor);
 	void clearHitActors();
+
+	//Interaction
+	void interact();
+
+	class AInteractableObject* currentInteractableObject;
+	
+	UPROPERTY(BlueprintReadOnly) // TODO: This is for debugging purposes, delete when no longer needed
+	bool bInteractableObjectInRange{ false };
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setInteractableObjectInRange(class AInteractableObject* inObject);
+	virtual void setInteractableObjectInRange_Implementation(class AInteractableObject* inObject) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool getInteractableObjectInRange();
+	virtual bool getInteractableObjectInRange_Implementation() override;
 };

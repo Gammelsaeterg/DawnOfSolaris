@@ -15,6 +15,8 @@
 #include "Components/PrimitiveComponent.h"
 #include "TimerManager.h"
 #include "Math/UnrealMathUtility.h"
+#include "InteractableObject.h"
+#include "BaseWeapon.h"
 
 
 APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
@@ -27,28 +29,36 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	LeftHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftHandHitbox"));
 	LeftHandHitbox->SetupAttachment(GetMesh(), FName("hand_l"));
 	LeftHandHitbox->SetCapsuleSize(20.f, 20.f, true);
-	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginLeftHandHitbox);
 	LeftHandHitbox->SetGenerateOverlapEvents(false);
 
 	RightHandHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightHandHitbox"));
 	RightHandHitbox->SetupAttachment(GetMesh(), FName("hand_r"));
 	RightHandHitbox->SetCapsuleSize(20.f, 20.f, true);
-	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightHandHitbox);
 	RightHandHitbox->SetGenerateOverlapEvents(false);
 
 	LeftFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftFootHitbox"));
 	LeftFootHitbox->SetupAttachment(GetMesh(), FName("foot_l"));
 	LeftFootHitbox->SetCapsuleSize(20.f, 20.f, true);
-	LeftFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginLeftFootHitbox);
 	LeftFootHitbox->SetGenerateOverlapEvents(false);
 
 	RightFootHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightFootHitbox"));
 	RightFootHitbox->SetupAttachment(GetMesh(), FName("foot_r"));
 	RightFootHitbox->SetCapsuleSize(20.f, 20.f, true);
-	RightFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginRightFootHitbox);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
 
-	//TODO: Research if these overlap events can be bound to one function
+	LeftKneeHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("LeftKneeHitbox"));
+	LeftKneeHitbox->SetupAttachment(GetMesh(), FName("calf_l"));
+	LeftKneeHitbox->SetCapsuleSize(20.f, 20.f, true);
+	LeftKneeHitbox->SetGenerateOverlapEvents(false);
+
+	RightKneeHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightKneeHitbox"));
+	RightKneeHitbox->SetupAttachment(GetMesh(), FName("calf_r"));
+	RightKneeHitbox->SetCapsuleSize(20.f, 20.f, true);
+	RightKneeHitbox->SetGenerateOverlapEvents(false); 
+
+	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
+	Weapon->SetupAttachment(GetMesh(), "hand_l");
 }
 
 void APlayerCharacter::PostInitializeComponents()
@@ -61,13 +71,26 @@ void APlayerCharacter::PostInitializeComponents()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	defaultComboOneMaxIndex = defaultComboOneAttacks.Num();
-	defaultComboTwoMaxIndex = defaultComboTwoAttacks.Num();
 
-	updateComboMaxIndexes();
-	updateCurrentIndexes();
-	//UE_LOG(LogTemp, Warning, TEXT("Current defaultComboOneComboMaxIndex is %d"), defaultComboOneComboMaxIndex)
+	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	LeftFootHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	LeftKneeHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+	RightKneeHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
+
+	
+	defaultComboOneMaxIndex = defaultComboOneAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
+	defaultComboTwoMaxIndex = defaultComboTwoAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
+
+	// Sets first moveset in moveset array as default moveset
+	if (combatMovesets.Num() > 0)
+	{
+		if (&combatMovesets[0])
+		{
+			setMoveset(&combatMovesets[0]); 
+			currentMovesetIndex = 0; // TODO(?): May not be necessary as it is already initialized as 0;
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -78,6 +101,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	regenStaminaTick(DeltaTime);
 	standbyCheckTick();
 	windUpChargeAmountTick(DeltaTime);
+	interactableTick(DeltaTime);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
@@ -108,6 +132,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent * PlayerInputCo
 
 	PlayerInputComponent->BindAction("Action3", IE_Pressed, this, &APlayerCharacter::Action3Pressed);
 	PlayerInputComponent->BindAction("Action3", IE_Released, this, &APlayerCharacter::Action3Released);
+
+	PlayerInputComponent->BindAction("BrowseUp", IE_Pressed, this, &APlayerCharacter::BrowseUpPressed);
+	PlayerInputComponent->BindAction("BrowseDown", IE_Pressed, this, &APlayerCharacter::BrowseDownPressed);
 }
 
 void APlayerCharacter::comboAttackPressed(EActionType inActionType)
@@ -118,14 +145,14 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 	}
 	else if (canAttack() && (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo))
 	{
-		if (getCurrentMoveset(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
+		if (getCurrentComboAttacks(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
 			// Inititate attack
 			bChargeAttackStarted = true;
 			currentActionType = inActionType;
-			windUpChargeAttack(getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]]);
-			currentAttackHitboxType = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
-			currentChargeAttackStaminaConsumptionRate = getCurrentMoveset(inActionType)[currentComboIndexes[(uint8)inActionType]].baseStaminaConsumptionRate;
+			windUpChargeAttack(getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]]);
+			currentAttackHitboxType = getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]].AttackHitbox;
+			currentChargeAttackStaminaConsumptionRate = getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]].baseStaminaConsumptionRate;
 
 			bChargeAttackInputHeld = true;
 		}
@@ -175,8 +202,8 @@ void APlayerCharacter::updateComboMaxIndexes()
 {
 	maxComboIndexes.Empty();
 	maxComboIndexes.Reserve(2); // TODO(?) Update number to max movesets
-	maxComboIndexes.Push(getCurrentMoveset(EActionType::DefaultComboOne).Num());
-	maxComboIndexes.Push(getCurrentMoveset(EActionType::DefaultComboTwo).Num());
+	maxComboIndexes.Push(getCurrentComboAttacks(EActionType::DefaultComboOne).Num());
+	maxComboIndexes.Push(getCurrentComboAttacks(EActionType::DefaultComboTwo).Num());
 }
 
 void APlayerCharacter::updateCurrentIndexes()
@@ -228,6 +255,16 @@ void APlayerCharacter::Action3Released()
 	actionReleased(Action3Input);
 }
 
+void APlayerCharacter::BrowseUpPressed()
+{
+	findNextMoveset(true);
+}
+
+void APlayerCharacter::BrowseDownPressed()
+{
+	findPreviousMoveset(true);
+}
+
 void APlayerCharacter::actionPressed(EActionType inActionType)
 {
 	switch (inActionType)
@@ -240,6 +277,9 @@ void APlayerCharacter::actionPressed(EActionType inActionType)
 		break;
 	case EActionType::DodgeRoll:
 		startDodgeRoll();
+		break;
+	case EActionType::Interact:
+		interact();
 		break;
 	default:
 		break;
@@ -284,27 +324,11 @@ void APlayerCharacter::incrementAttackCombo(EActionType inActionType)
 	}
 }
 
-TArray<FChargeAttackData> APlayerCharacter::getCurrentMoveset(EActionType inActionType, int inMovesetIndex)
+void APlayerCharacter::resetAttackCombos()
 {
-	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
+	for (int i = 0; i < currentComboIndexes.Num(); ++i)
 	{
-
-		switch (inActionType)
-		{
-		case EActionType::DefaultComboOne:
-			return defaultComboOneAttacks;
-			break;
-		case EActionType::DefaultComboTwo:
-			return defaultComboTwoAttacks;
-			break;
-		default:
-			return TArray<FChargeAttackData>(); // Should not happen
-			break;
-		}
-	}
-	else // TODO(?): Return inMovesetIndex
-	{
-		return TArray<FChargeAttackData>(); // Should not happen
+		currentComboIndexes[i] = 0;
 	}
 }
 
@@ -342,6 +366,21 @@ void APlayerCharacter::attackAI(EActionType inAttackCombo, float chargeAmount)
 		GetWorldTimerManager().SetTimer(attackTimerAI, this, &APlayerCharacter::actionReleased, chargeAmount);
 	}
 
+}
+
+FMovesetData APlayerCharacter::getCurrentMovesetFromPlayer_Implementation()
+{
+	return *currentMovesetData;
+}
+
+FMovesetData APlayerCharacter::getNextMovesetFromPlayer_Implementation()
+{
+	return *findNextMoveset(false);
+}
+
+FMovesetData APlayerCharacter::getPreviousMovesetFromPlayer_Implementation()
+{
+	return *findPreviousMoveset(false);
 }
 
 inline void APlayerCharacter::standbyCheckTick() // Tick function to check if player is in standby
@@ -405,6 +444,142 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 	}
 }
 
+
+TArray<FChargeAttackData> APlayerCharacter::getCurrentComboAttacks(EActionType inActionType, int inComboIndex)
+{
+	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
+	{
+
+		switch (inActionType)
+		{
+		case EActionType::DefaultComboOne:
+			return defaultComboOneAttacks;
+			break;
+		case EActionType::DefaultComboTwo:
+			return defaultComboTwoAttacks;
+			break;
+		default:
+			return TArray<FChargeAttackData>(); // Should not happen
+			break;
+		}
+	}
+	else // TODO(?): Return inComboIndex
+	{
+		return TArray<FChargeAttackData>(); // Should not happen
+	}
+}
+
+void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
+{
+	// TODO: Add more nullptr/IsValid() checks before assigning movesets
+
+	currentMovesetData = inMovesetData;
+
+	if (currentMovesetData->playerWeaponMorph)
+	{
+		Weapon->SetChildActorClass(currentMovesetData->playerWeaponMorph);
+	}
+	else
+	{
+		Weapon->DestroyChildActor();
+	}
+
+	//Clear old attack combos // TODO(?): May not be necessary
+	defaultComboOneAttacks.Empty();
+	defaultComboTwoAttacks.Empty();
+
+	defaultComboOneAttacks = inMovesetData->ChargeAttacksOne;
+	defaultComboTwoAttacks = inMovesetData->ChargeAttacksTwo;
+
+	sprintAttackOne = inMovesetData->SprintAttackOne;
+	sprintAttackTwo = inMovesetData->SprintAttackTwo;
+
+	//SetAnimClass(inMovesetData->movesetAnimBlueprint->GetAnimBlueprintGeneratedClass()); // TODO: This crashes the build, fix or remove for later
+
+	updateComboMaxIndexes();
+	updateCurrentIndexes();
+}
+
+FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
+{
+	if (combatMovesets.Num() > 2) // Checks if there are at least two movesets
+	{
+		if ((currentMovesetIndex + 1) < combatMovesets.Num())
+		{
+			if (setNewMoveset)
+			{
+				currentMovesetIndex += 1;
+
+				setMoveset(&combatMovesets[currentMovesetIndex]);			
+				return &combatMovesets[currentMovesetIndex];
+			}
+			else
+			{
+				return &combatMovesets[currentMovesetIndex + 1];
+			}
+		}
+		else
+		{
+			if (setNewMoveset)
+			{
+				setMoveset(&combatMovesets[0]);
+				currentMovesetIndex = 0;
+				return &combatMovesets[0];
+			}
+			else
+			{
+				return &combatMovesets[0];
+			}
+
+		}
+	}
+	else
+	{
+		return &combatMovesets[0];
+	}
+}
+
+FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
+{
+	if (combatMovesets.Num() > 2) // Checks if there are at least two movesets
+	{
+		if (currentMovesetIndex < 1)
+		{
+			if (setNewMoveset)
+			{
+				currentMovesetIndex = combatMovesets.Num() - 1;
+
+				setMoveset(&combatMovesets[currentMovesetIndex]);
+				return &combatMovesets[currentMovesetIndex];
+			}
+			else
+			{
+				return &combatMovesets[combatMovesets.Num() - 1];
+			}
+
+		}
+		else
+		{
+			if (setNewMoveset)
+			{
+				currentMovesetIndex -= 1;
+
+				setMoveset(&combatMovesets[currentMovesetIndex]);
+				return &combatMovesets[currentMovesetIndex];
+			}
+			else
+			{
+				return &combatMovesets[currentMovesetIndex - 1];
+			}
+
+		}
+	}
+	else
+	{
+		return &combatMovesets[0];
+	}
+}
+
 void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
 {	
 	if (bChargeAttackStarted)
@@ -414,6 +589,18 @@ void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
 		if (currentStaminaPoints > currentChargeAttackStaminaConsumptionRate * deltaTime)
 		{
 			currentStaminaPoints -= currentChargeAttackStaminaConsumptionRate * deltaTime;
+		}
+	}
+}
+
+void APlayerCharacter::interactableTick(float deltaTime)
+{
+	if (currentInteractableObject != nullptr)
+	{
+		if (!IsOverlappingActor(currentInteractableObject))
+		{
+			bInteractableObjectInRange = false;
+			currentInteractableObject = nullptr;
 		}
 	}
 }
@@ -533,6 +720,8 @@ inline void APlayerCharacter::releaseStart_Implementation()
 
 		GetMesh()->GetAnimInstance()->Montage_SetPlayRate(currentMontage, 1.f);
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(FName("release"));
+
+		currentChargeAttackDataToSend = getCurrentComboAttacks(currentActionType)[currentComboIndexes[(uint8)currentActionType]];
 		incrementAttackCombo(currentActionType);
 	}
 }
@@ -550,6 +739,34 @@ void APlayerCharacter::releaseEnd_Implementation()
 		{			
 			actionPressed(queuedActionTypes.Top());			
 			queuedActionTypes.Empty();					
+
+			if (!bQueuedInputHeld)
+			{
+				bChargeAttackInputHeld = false;
+			}
+		}
+		else
+		{
+			resetAttackCombos(); 
+		}
+	}
+}
+
+void APlayerCharacter::canCancelAction_Implementation()
+{
+	Super::canCancelAction_Implementation();
+
+	if (bChargeAttackInputHeld)
+	{
+		queuedActionTypes.Empty();
+		comboAttackPressed(currentActionType); // Will do button pressed procedure since the button is still held at this point
+	}
+	else
+	{
+		if (queuedActionTypes.Num() > 0) // Check if there are actions in queue
+		{
+			actionPressed(queuedActionTypes.Top());
+			queuedActionTypes.Empty();
 
 			if (!bQueuedInputHeld)
 			{
@@ -626,34 +843,6 @@ FAttackData APlayerCharacter::calculateChargeAttackValues(FChargeAttackData inCh
 	return tempChargeAttackData;
 }
 
-void APlayerCharacter::OnOverlapBeginLeftHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, 
-												    UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
-													bool bFromSweep, const FHitResult & SweepResult)
-{
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginRightHandHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
-												     UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
-													 bool bFromSweep, const FHitResult & SweepResult)
-{
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginLeftFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
-												    UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
-													bool bFromSweep, const FHitResult & SweepResult)
-{
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
-void APlayerCharacter::OnOverlapBeginRightFootHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
-												     UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
-													 bool bFromSweep, const FHitResult & SweepResult)
-{
-	OnOverlapBeginAttackHit(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
-
 void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,
 											   UPrimitiveComponent * OtherComp, int32 OtherBodyIndex,
 											   bool bFromSweep, const FHitResult & SweepResult)
@@ -672,7 +861,6 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 				//UE_LOG(LogTemp, Warning, TEXT("Overlapped self hitbox: %s"), *(GetEnumValueAsString<EAttackHitboxType>("EAttackHitboxType", currentAttackHitboxType)));
 				//UE_LOG(LogTemp, Warning, TEXT("Other alignment is: %s"), *(GetEnumValueAsString<ECombatAlignment>("ECombatAlignment", characterInterface->Execute_getAlignment(OtherActor))));
 				hitActors.Add(OtherActor);
-
 				// TODO: On other actor take damage, set charge value multiplier to damage and hitstun strength sent			
 
 				FVector hitDirection;
@@ -685,7 +873,7 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 				if ((currentActionType == EActionType::DefaultComboOne || currentActionType == EActionType::DefaultComboTwo))
 				{
 					FAttackData tempAttackData; // TODO: Refactor
-					tempAttackData = calculateChargeAttackValues(getCurrentMoveset(currentActionType)[currentComboIndexes[(uint8)currentActionType]]);
+					tempAttackData = calculateChargeAttackValues(currentChargeAttackDataToSend);
 
 					currentAttackDataToSend = FAttackData(tempAttackData.damageAmount,
 					hitDirection, SweepResult.Location,
@@ -805,6 +993,12 @@ void APlayerCharacter::enableHitbox(EAttackHitboxType inHitbox, bool enabled)
 	case EAttackHitboxType::RightFoot:
 		overlapCollisionToEnable = RightFootHitbox;
 		break;
+	case EAttackHitboxType::LeftKnee:
+		overlapCollisionToEnable = LeftKneeHitbox;
+		break;
+	case EAttackHitboxType::RightKnee:
+		overlapCollisionToEnable = RightKneeHitbox;
+		break;
 	default:
 		overlapCollisionToEnable = LeftHandHitbox; // TODO: Default if all fails, change this!
 	}
@@ -823,11 +1017,15 @@ void APlayerCharacter::disableAllHitboxes()
 	RightHandHitbox->SetGenerateOverlapEvents(false);
 	LeftFootHitbox->SetGenerateOverlapEvents(false);
 	RightFootHitbox->SetGenerateOverlapEvents(false);
+	LeftKneeHitbox->SetGenerateOverlapEvents(false);
+	RightKneeHitbox->SetGenerateOverlapEvents(false);
 
 	LeftHandHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightHandHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	LeftFootHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	RightFootHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	LeftKneeHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RightKneeHitbox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 bool APlayerCharacter::isActorAlreadyHit(AActor * inActor)
@@ -855,4 +1053,30 @@ bool APlayerCharacter::isActorAlreadyHit(AActor * inActor)
 void APlayerCharacter::clearHitActors()
 {
 	hitActors.Empty();
+}
+
+void APlayerCharacter::interact()
+{
+	if (bInteractableObjectInRange)
+	{
+		if (currentInteractableObject != nullptr) // TODO(?): May not be necessary
+		{
+			Execute_interact(currentInteractableObject, this);
+		}
+	}
+	else
+	{
+		actionPressed(InteractionMainActionType);
+	}
+}
+
+void APlayerCharacter::setInteractableObjectInRange_Implementation(AInteractableObject * inObject)
+{
+	currentInteractableObject = inObject;
+	bInteractableObjectInRange = true;
+}
+
+bool APlayerCharacter::getInteractableObjectInRange_Implementation()
+{
+	return bInteractableObjectInRange;
 }

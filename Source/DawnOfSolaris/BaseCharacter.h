@@ -94,7 +94,7 @@ public:
 	float currentHealthPoints{ 100 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	float maxWalkSpeed{ 600.f }; // Also max regular movement speed
+	float maxWalkSpeed{ 300.f }; // Also max regular movement speed
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxRotationRate{ 540.f }; //
@@ -111,7 +111,7 @@ public:
 	//void setMovementData(FMovementData inMovementData);
 
 	UPROPERTY(BlueprintReadOnly)
-	bool bIsDeafeated{ false };
+	bool bIsDefeated{ false };
 
 	// TODO: Make this into an enum state(?)
 	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
@@ -139,6 +139,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FDefaultAttackData currentDefaultAttackData;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsDefeated();
+	virtual bool getIsDefeated_Implementation() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsHitstunned();
@@ -257,4 +261,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugSpawnHitFX(FVector hitLocation);
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void eventIsDefeated();
 };

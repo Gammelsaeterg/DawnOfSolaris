@@ -94,6 +94,9 @@ public:
 	void takeDamage(FAttackData inAttackData);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void detachWeapon();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void attackStart();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
@@ -114,6 +117,27 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void startDefaultAttack(int index);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getCurrentMovesetFromPlayer();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getNextMovesetFromPlayer();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getPreviousMovesetFromPlayer();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsDefeated();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FVector interact(class AActor* interactorActor);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setInteractableObjectInRange(class AInteractableObject* inObject);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool getInteractableObjectInRange();
 };

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimMontage.h"
+#include "Engine/Texture2D.h"
+#include "Animation/AnimBlueprint.h"
 
 #include "DawnOfSolaris.generated.h"
 
@@ -195,6 +197,39 @@ struct FHitstunData
 	// TODO(?): Add more variables
 };
 
+USTRUCT(BlueprintType)
+struct FMovesetData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString movesetName { "Set moveset name here" };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* movesetIcon;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class ABaseWeapon* playerWeaponMorph{ nullptr };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class TSubclassOf<class ABaseWeapon> playerWeaponMorph;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> ChargeAttacksOne;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FChargeAttackData> ChargeAttacksTwo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSprintAttackData SprintAttackOne;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSprintAttackData SprintAttackTwo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimBlueprint* movesetAnimBlueprint;
+};
+
 //UENUM() // TODO(?): Complete or delete
 //enum class EHitstunGrade : uint8
 //{
@@ -203,8 +238,6 @@ struct FHitstunData
 //	hitstunGrade3			UMETA(DisplayName = "hitstunGrade3"),
 //	hitstunGrade4			UMETA(DisplayName = "hitstunGrade4")
 //};
-
-
 
 
 UENUM(BlueprintType)

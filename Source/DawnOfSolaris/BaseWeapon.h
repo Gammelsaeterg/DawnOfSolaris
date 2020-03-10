@@ -60,6 +60,10 @@ public:
 	void fireProjectile();
 	virtual void fireProjectile_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void detachWeapon();
+	virtual void detachWeapon_Implementation() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ABaseProjectile> WeaponProjectile;
 
