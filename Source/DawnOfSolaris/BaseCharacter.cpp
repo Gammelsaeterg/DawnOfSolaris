@@ -476,6 +476,9 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	GetMesh()->SetSimulatePhysics(true);
 	GetCharacterMovement()->DisableMovement();
 
+	//Weapon->DetachFromParent(true);
+	Execute_detachWeapon(Weapon->GetChildActor());
+
 	eventIsDefeated();
 }
 
