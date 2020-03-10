@@ -53,7 +53,7 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 			if (canDamageInteract(CurrentWeaponCombatAlignment, characterInterface->Execute_getAlignment(OtherActor)))
 			{
 				hitActors.Add(OtherActor);
-				//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
+				//UE_LOG(LogTemp, Warning, TEXT("Overlapped self comp: %s"), *OverlappedComp->GetName()); //// Debug texts, very nice and valuable 
 				FVector hitDirection;
 				hitDirection = FVector(OverlappedComp->GetPhysicsLinearVelocity().X, OverlappedComp->GetPhysicsLinearVelocity().Y, 0.f).GetSafeNormal(0.000001f);
 				if (hitDirection.Size() < 1.f) // If getting physics velocity fails
@@ -66,6 +66,7 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 													  this, CurrentMeleeWeaponAttackData.hitstunValue);
 
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
+				debugSpawnHitFX(WeaponMesh->GetComponentLocation());
 			}
 		}
 	}

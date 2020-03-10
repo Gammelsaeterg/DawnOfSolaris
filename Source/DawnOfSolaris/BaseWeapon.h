@@ -69,4 +69,7 @@ public:
 
 	bool isActorAlreadyHit(AActor* inActor);
 	void clearHitActors();
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugSpawnHitFX(FVector hitLocation);
 };

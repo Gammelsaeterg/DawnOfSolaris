@@ -218,7 +218,7 @@ public:
 	virtual void endHitstun_Implementation() override;
 
 	// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
-	void runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection);
+	virtual void runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection);
 
 	void startLaunch();
 	void endLaunch();

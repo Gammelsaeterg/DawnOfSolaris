@@ -895,8 +895,104 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 
 void APlayerCharacter::takeDamage_Implementation(FAttackData inAttackData)
 {
-	Super::takeDamage_Implementation(inAttackData);
+	//Super::takeDamage_Implementation(inAttackData);
+
+	if (!bIsDefeated) // TODO: Change if statement to disable overlap events instead
+	{
+		if (currentHealthPoints > inAttackData.damageAmount)
+		{
+			currentHealthPoints -= inAttackData.damageAmount;
+			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, took hitstunValue: %f, health left: %f"), inAttackData.damageAmount, inAttackData.hitstunStrength, currentHealthPoints);
+
+			currentReceivedAttackData = inAttackData; // Saves data so hitstun event can get correct values	
+			// Hitstun procedures
+			runHitstunProcedure(currentReceivedAttackData.hitstunStrength, currentReceivedAttackData.hitDirection);
+		}
+		else
+		{
+			bIsDefeated = true;
+			currentHealthPoints = 0;
+			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
+			startIsDefeatedProcedure();
+		}
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage player char: %s"), *this->GetName());
+
+}
+
+void APlayerCharacter::hitstunReset()
+{
+	resetAttackCombos();
+	clearHitActors(); // TODO(?): May not be necessary
+
+	bDodgingActive = false;
+	bChargeAttackStarted = false;
+	bCanSprintAttack = false;
+	bAttackHitboxActive = false;
+	bAttackActionActive = false;
+	bStandbyActive = true;
+	bDefaultAttackStarted = false;
+	bCanCancelAction = false;
+
+	//bChargeAttackInputHeld = false;
+	//bMinimumChargeReached = false;
+
+	debugDespawnFX();
+	Execute_deactivateAttackHitbox(this);
+}
+
+void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure"))
+	if (inHitstunStrengthReceived <= 0.1f)
+	{
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
+		{
+			//currentMontage = hitstunAnimations.hitstunLightAnimMontage;
+			//GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+		}
+	}
+	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived <= 0.3f)
+	{
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
+		{
+			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			hitstunReset();
+		}
+		// TODO: Make stun timer
+	}
+	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived <= 0.7f)
+	{
+		if (IsValid(hitstunAnimations.hitstunHeavyAnimMontage))
+		{
+			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			hitstunReset();
+		}
+		// TODO: Make stun timer
+
+		//Knockback handling
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0.f).GetSafeNormal()) * calculateKnockbackLength(inHitstunStrengthReceived);
+		LaunchCharacter(adjustedDirection, false, false);
+		//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure: %s"), *adjustedDirection.ToString())
+	}
+	else if (inHitstunStrengthReceived > 0.7f)
+	{
+		// TODO: Make stun timer and launch character in air
+		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
+
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);
+		LaunchCharacter(adjustedDirection, false, false);
+
+		startLaunch();
+		hitstunReset();
+	}
+	else
+	{
+		// Debug else, function should normally not reach this line
+		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
+	}
 }
 
 void APlayerCharacter::startHitstun_Implementation()

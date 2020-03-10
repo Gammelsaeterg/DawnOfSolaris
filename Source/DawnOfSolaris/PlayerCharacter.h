@@ -239,6 +239,9 @@ public:
 	void takeDamage(FAttackData inAttackData);
 	virtual void takeDamage_Implementation(FAttackData inAttackData) override;
 
+	void hitstunReset();
+	virtual void runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection) override;
+
 	void startHitstun();
 	virtual void startHitstun_Implementation() override;
 
