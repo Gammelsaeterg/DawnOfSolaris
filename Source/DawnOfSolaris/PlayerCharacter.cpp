@@ -938,6 +938,7 @@ void APlayerCharacter::hitstunReset()
 	//bMinimumChargeReached = false;
 
 	debugDespawnFX();
+	updateMovement();
 	Execute_deactivateAttackHitbox(this);
 }
 

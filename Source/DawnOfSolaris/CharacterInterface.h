@@ -115,7 +115,7 @@ public:
 	void endDodge();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-	void startDefaultAttack(int index);
+	bool startDefaultAttack(int index);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	FMovesetData getCurrentMovesetFromPlayer();

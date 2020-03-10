@@ -368,9 +368,17 @@ void ABaseCharacter::defaultAttackEnd()
 	bDefaultAttackStarted = false;
 }
 
-void ABaseCharacter::startDefaultAttack_Implementation(int index)
+bool ABaseCharacter::startDefaultAttack_Implementation(int index)
 {
-	defaultAttackStart(index);
+	if (!bSelfHitstunActive)
+	{
+		defaultAttackStart(index);
+		return true;
+	}
+	else
+	{
+		return false;
+	}	
 }
 
 void ABaseCharacter::startHitstun_Implementation()
@@ -403,16 +411,17 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 	{
 		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
 		{
-			currentMontage = hitstunAnimations.hitstunLightAnimMontage;
-			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			//currentMontage = hitstunAnimations.hitstunLightAnimMontage;
+			//GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 		}
 	}
 	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived <= 0.3f)
 	{
 		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
 		{
-			currentMontage = hitstunAnimations.hitstunLightAnimMontage;
+			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			hitstunReset();
 		}
 		// TODO: Make stun timer
 	}
@@ -422,6 +431,7 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		{
 			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			hitstunReset();
 		}
 		// TODO: Make stun timer
 
@@ -437,6 +447,7 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 
 		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);
 		LaunchCharacter(adjustedDirection, false, false);
+		hitstunReset();
 
 		startLaunch();
 	}
@@ -462,6 +473,21 @@ void ABaseCharacter::endLaunch()
 
 	bIsLaunched = false;
 	Execute_endHitstun(this);
+}
+
+void ABaseCharacter::hitstunReset()
+{
+	bAttackActionActive = false;
+	bStandbyActive = true;
+	bDefaultAttackStarted = false;
+	bCanCancelAction = false;
+
+	if (Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(this);
+	}
+	
+	updateMovement();
 }
 
 void ABaseCharacter::startIsDefeatedProcedure()
