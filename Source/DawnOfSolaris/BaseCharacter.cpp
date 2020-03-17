@@ -347,6 +347,9 @@ void ABaseCharacter::defaultAttackStartFromInputTwo()
 void ABaseCharacter::defaultAttackStart(int attackIndex)
 {
 	bDefaultAttackStarted = true;
+	
+	//Ensure hitboxes are disabled at start of attack
+	Execute_deactivateAttackHitbox(this);
 
 	if (defaultAttacks.IsValidIndex(attackIndex))  // To check if attacks exist
 	{
@@ -379,8 +382,6 @@ void ABaseCharacter::startHitstun_Implementation()
 	FVector tempDirection = currentReceivedAttackData.hitDirection * -1; // Sets rotation to follow direction
 	SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
 	// TODO: Set slide friction on
-
-	updateMovement();
 
 	debugFunctionForBlueprint(); //// TODO: Delete
 }
@@ -477,7 +478,11 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	GetCharacterMovement()->DisableMovement();
 
 	//Weapon->DetachFromParent(true);
-	Execute_detachWeapon(Weapon->GetChildActor());
+	if (Weapon->GetChildActor()->IsValidLowLevelFast())
+	{
+		Execute_detachWeapon(Weapon->GetChildActor());
+	}
+	
 
 	eventIsDefeated();
 }
