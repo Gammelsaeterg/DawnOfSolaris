@@ -54,11 +54,11 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 	RightKneeHitbox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RightKneeHitbox"));
 	RightKneeHitbox->SetupAttachment(GetMesh(), FName("calf_r"));
 	RightKneeHitbox->SetCapsuleSize(20.f, 20.f, true);
-	RightKneeHitbox->SetGenerateOverlapEvents(false); 
+	RightKneeHitbox->SetGenerateOverlapEvents(false);
 
 	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
-	Weapon->SetupAttachment(GetMesh(), "lowerarm_l");
+	Weapon->SetupAttachment(GetMesh(), "lowerarm_r");
 }
 
 void APlayerCharacter::PostInitializeComponents()
@@ -71,6 +71,10 @@ void APlayerCharacter::PostInitializeComponents()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
+	Weapon->SetupAttachment(GetMesh(), "lowerarm_r");
 
 	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
 	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
