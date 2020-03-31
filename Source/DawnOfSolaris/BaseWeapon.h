@@ -71,5 +71,5 @@ public:
 	void clearHitActors();
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
-	void debugSpawnHitFX(FVector hitLocation);
+	void debugSpawnFireFX(FTransform muzzleTransform);
 };

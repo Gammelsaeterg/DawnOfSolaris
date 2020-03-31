@@ -45,4 +45,7 @@ public:
 	void OnOverlapBeginProjectileHitbox(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, 
 										UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
 										bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugSpawnFireProjectileFX();
 };

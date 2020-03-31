@@ -66,7 +66,7 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 													  this, CurrentMeleeWeaponAttackData.hitstunValue);
 
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
-				debugSpawnHitFX(WeaponMesh->GetComponentLocation());
+				debugSpawnFireFX(WeaponMesh->GetComponentTransform());
 			}
 		}
 	}
@@ -109,6 +109,8 @@ void ABaseWeapon::fireProjectile_Implementation()
 		Cast<ABaseProjectile>(ProjectileToSpawn)->setOwnerInfo(CurrentCharacterOwner);
 
 		UGameplayStatics::FinishSpawningActor(ProjectileToSpawn, ProjectileToSpawn->GetTransform());
+
+		debugSpawnFireFX(WeaponMesh->GetSocketTransform("ProjectileSpawnLocation"));
 	}
 }
 
