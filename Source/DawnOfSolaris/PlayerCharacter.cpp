@@ -58,7 +58,7 @@ APlayerCharacter::APlayerCharacter(const FObjectInitializer& ObjectInitializer)
 
 	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
-	Weapon->SetupAttachment(GetMesh(), "hand_l");
+	Weapon->SetupAttachment(GetMesh(), "lowerarm_l");
 }
 
 void APlayerCharacter::PostInitializeComponents()
