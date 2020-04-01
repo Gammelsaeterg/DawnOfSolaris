@@ -897,6 +897,18 @@ void APlayerCharacter::OnOverlapBeginAttackHit(UPrimitiveComponent * OverlappedC
 	}
 }
 
+FAttackData APlayerCharacter::getCurrentAttackData()
+{
+	FAttackData currentAttackData;
+	currentAttackData = calculateChargeAttackValues(currentChargeAttackDataToSend);
+
+	currentAttackData = FAttackData(currentAttackData.damageAmount,
+	FVector::ZeroVector, FVector::ZeroVector,
+	this, currentAttackData.hitstunStrength);
+
+	return currentAttackData;
+}
+
 void APlayerCharacter::takeDamage_Implementation(FAttackData inAttackData)
 {
 	//Super::takeDamage_Implementation(inAttackData);

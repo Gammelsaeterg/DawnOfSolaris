@@ -236,6 +236,8 @@ public:
 								 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 								 bool bFromSweep, const FHitResult& SweepResult);
 
+	FAttackData getCurrentAttackData(); // For player character projectiles
+
 	void takeDamage(FAttackData inAttackData);
 	virtual void takeDamage_Implementation(FAttackData inAttackData) override;
 

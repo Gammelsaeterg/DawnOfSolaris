@@ -6,6 +6,7 @@
 #include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
 #include "BaseCharacter.h"
+#include "PlayerCharacter.h"
 #include "BaseProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -107,6 +108,17 @@ void ABaseWeapon::fireProjectile_Implementation()
 		auto ProjectileToSpawn = UGameplayStatics::BeginDeferredActorSpawnFromClass(this, WeaponProjectile, spawnTransform);
 
 		Cast<ABaseProjectile>(ProjectileToSpawn)->setOwnerInfo(CurrentCharacterOwner);
+
+		if (CurrentCharacterOwner->IsA(APlayerCharacter::StaticClass())) // Really ugly code ngl
+		{
+			float scaleMultiplier = Cast<APlayerCharacter>(CurrentCharacterOwner)->currentChargeAttackDataToSend.projectileScaleMultiplier;
+			Cast<ABaseProjectile>(ProjectileToSpawn)->SetActorScale3D(FVector(scaleMultiplier, scaleMultiplier, scaleMultiplier));
+
+			Cast<ABaseProjectile>(ProjectileToSpawn)->damageAmount = Cast<APlayerCharacter>(CurrentCharacterOwner)->getCurrentAttackData().damageAmount;
+			Cast<ABaseProjectile>(ProjectileToSpawn)->hitstunValue = Cast<APlayerCharacter>(CurrentCharacterOwner)->getCurrentAttackData().hitstunStrength;
+		}
+		
+
 
 		UGameplayStatics::FinishSpawningActor(ProjectileToSpawn, ProjectileToSpawn->GetTransform());
 

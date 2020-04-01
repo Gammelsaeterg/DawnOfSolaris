@@ -62,6 +62,9 @@ struct FChargeAttackData
 	float baseStaminaConsumptionRate{ 0.f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float projectileScaleMultiplier{ 1.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackHitboxType AttackHitbox;
 };
 
