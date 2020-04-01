@@ -30,7 +30,7 @@ public:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	class UProjectileMovementComponent* ProjectileMovementComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float damageAmount{ 7.f };
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -38,6 +38,9 @@ public:
 
 	ECombatAlignment CurrentProjectileCombatAlignment;
 	class AActor* CurrentOwner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UParticleSystem* hitParticleEffectToSpawn{ nullptr };
 
 	void setOwnerInfo(AActor* inOwner);
 

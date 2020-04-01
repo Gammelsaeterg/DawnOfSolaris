@@ -131,7 +131,8 @@ void ABaseWeapon::detachWeapon_Implementation()
 	Execute_deactivateAttackHitbox(this);
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	WeaponMesh->DetachFromParent(true);
+	WeaponMesh->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	//WeaponMesh->DetachFromParent(true);
 	//WeaponMesh->SetCollisionObjectType(ECollisionChannel::ECC_Destructible);
 	//WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	WeaponMesh->SetCollisionProfileName("Ragdoll");
