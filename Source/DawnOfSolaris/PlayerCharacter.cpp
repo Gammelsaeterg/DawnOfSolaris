@@ -638,7 +638,11 @@ inline bool APlayerCharacter::canRegenerateStamina()
 
 inline bool APlayerCharacter::canAttack()
 {
-	if (bCanCancelAction && !bDodgingActive) // TODO(?): Make it so you can cancel dodge into attack
+	if (GetCharacterMovement()->IsFalling() || bIsDefeated)
+	{
+		return false;
+	}
+	else if (bCanCancelAction && !bDodgingActive) // TODO(?): Make it so you can cancel dodge into attack
 	{
 		return true;
 	}
@@ -662,7 +666,11 @@ inline bool APlayerCharacter::canAttack()
 
 bool APlayerCharacter::canDodge()
 {
-	if (!bSelfHitstunActive && !bDodgingActive && !bAttackActionActive)
+	if (bIsDefeated)
+	{
+		return false;
+	}
+	else if (!bSelfHitstunActive && !bDodgingActive && !bAttackActionActive)
 	{
 		if (!bChargeAttackStarted)
 		{

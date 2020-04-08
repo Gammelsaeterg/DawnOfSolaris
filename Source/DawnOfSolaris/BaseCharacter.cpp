@@ -400,6 +400,7 @@ void ABaseCharacter::endHitstun_Implementation()
 	bSelfHitstunActive = false;
 	// TODO: Set slide friction off
 
+	hitstunReset();
 	updateMovement();
 }
 
