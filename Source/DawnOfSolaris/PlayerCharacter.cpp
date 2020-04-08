@@ -103,6 +103,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	sprintTick(DeltaTime);
 	regenStaminaTick(DeltaTime);
+	regenHealthTick(DeltaTime);
 	standbyCheckTick();
 	windUpChargeAmountTick(DeltaTime);
 	interactableTick(DeltaTime);
@@ -444,18 +445,18 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 	}
 	else if (currentStaminaPoints > maxStaminaPoints)
 	{
-		//currentStaminaPoints = 100.f;
+		currentStaminaPoints = 100.f;
 	}
 }
 
 
 void APlayerCharacter::regenHealthTick(float DeltaTime)
 {
-	// Stamina regen tick
-	if (((currentHealthPoints) < maxHealthPoints) && !bIsDefeated) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
+	// Health regen tick
+	if ((currentHealthPoints < maxHealthPoints) && !bIsDefeated) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
 	{
 
-		currentStaminaPoints += 5.f * DeltaTime;
+		currentHealthPoints += 1.f * DeltaTime;
 		
 	}
 	else if (currentHealthPoints > maxHealthPoints)
