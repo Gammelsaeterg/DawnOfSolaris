@@ -449,6 +449,22 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 }
 
 
+void APlayerCharacter::regenHealthTick(float DeltaTime)
+{
+	// Stamina regen tick
+	if (((currentHealthPoints) < maxHealthPoints) && !bIsDefeated) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
+	{
+
+		currentStaminaPoints += 5.f * DeltaTime;
+		
+	}
+	else if (currentHealthPoints > maxHealthPoints)
+	{
+		currentHealthPoints = maxHealthPoints;
+	}
+}
+
+
 TArray<FChargeAttackData> APlayerCharacter::getCurrentComboAttacks(EActionType inActionType, int inComboIndex)
 {
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo)
@@ -608,6 +624,7 @@ void APlayerCharacter::interactableTick(float deltaTime)
 		}
 	}
 }
+
 
 // Tick function to check if player is in standby
 

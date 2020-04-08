@@ -40,5 +40,6 @@ public:
 	// Variable to hold the widget After Creating it.
 	UUserWidget* PauseMenu;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: For debug purposes, delete when no longer needed
 	UUserWidget* PlayerUI;
 };

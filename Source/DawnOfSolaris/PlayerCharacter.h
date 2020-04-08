@@ -193,8 +193,10 @@ public:
 	void standbyCheckTick(); // Tick function to check if player is in standby
 	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
 	void regenStaminaTick(float DeltaTime);
+	void regenHealthTick(float DeltaTime);
 	void windUpChargeAmountTick(float deltaTime);
 	void interactableTick(float deltaTime);
+	
 
 	bool canSprint();
 	bool canRegenerateStamina();
