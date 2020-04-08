@@ -2,6 +2,7 @@
 
 #include "DawnOfSolaris.h"
 #include "Modules/ModuleManager.h"
+#include "GameFramework/Character.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, DawnOfSolaris, "DawnOfSolaris" );
 
@@ -26,5 +27,38 @@ bool canDamageInteract(ECombatAlignment selfAlignment, ECombatAlignment otherAli
 		break;
 	default:
 		return false; // Should not be possible to reach this line of code
+	}
+}
+
+float calculateKnockbackLength(float inMultiplier)
+{
+	if (inMultiplier > flinchAndKnockbackMinLimit && inMultiplier < launchMinLimit)
+	{
+		// Turn inMulitplier to value between 0.f to 1.f based on flinchAndKnockbackMinLimit and launchMinLimit
+		float inMultiplierInPercent = (inMultiplier - flinchAndKnockbackMinLimit) / (launchMinLimit - flinchAndKnockbackMinLimit);
+		
+		float minKnockbackValue = 100.f;
+		float maxKnockbackValue = 1500.f;
+		float knockbackDifferene = maxKnockbackValue - minKnockbackValue;
+
+		return minKnockbackValue + (inMultiplierInPercent * knockbackDifferene);
+	}
+	else
+	{
+		return 0.f;
+	}
+
+}
+
+float calculateLaunchLength(float inMultiplier)
+{
+	if (inMultiplier > launchMinLimit)
+	{
+		float BaseLaunchValue = 2000.f;
+		return (inMultiplier * BaseLaunchValue);
+	}
+	else
+	{
+		return 0.f;
 	}
 }

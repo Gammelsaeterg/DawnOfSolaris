@@ -20,7 +20,17 @@ class DAWNOFSOLARIS_API ABaseCharacter : public ACharacter, public ICharacterInt
 
 public:
 	// Sets default values for this character's properties
-	ABaseCharacter();
+	ABaseCharacter(const FObjectInitializer& ObjectInitializer);
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//Current input component
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -65,18 +75,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* OuterCapsuleComponent;
 
-public:	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UChildActorComponent* Weapon{ nullptr };
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:	
+
+	void movementSmoothingTick(float DeltaTime);
+	void launchedTick(float DeltaTime);
 
 	void updateMovement();
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	//Current input component
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	ECombatAlignment CombatAlignment = ECombatAlignment::Neutral;
@@ -87,10 +94,13 @@ public:
 	float currentHealthPoints{ 100 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
-	float maxWalkSpeed{ 600.f }; // Also max regular movement speed
+	float maxWalkSpeed{ 300.f }; // Also max regular movement speed
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxRotationRate{ 540.f }; //
+
+	float defaultCapsuleHalfHeight{ 96.f };
+	float launchedCapsuleHalfHeight{ 22.f };
 
 	//FMovementData currentMovementData{ FMovementData(600.f, 540.f) };
 	FMovementData currentMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
@@ -98,16 +108,28 @@ public:
 	FMovementData combatMovementData{ FMovementData(0.f, 50) };
 	FMovementData hitstunMovementData{ FMovementData(0.f, 0.f) };
 
-	void setMovementData(FMovementData inMovementData);
+	//void setMovementData(FMovementData inMovementData);
 
 	UPROPERTY(BlueprintReadOnly)
-	bool bIsDeafeated{ false };
+	bool bIsDefeated{ false };
 
 	// TODO: Make this into an enum state(?)
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
 	bool bAttackActionActive{ false }; // Active in attack frames
 	bool bSelfHitstunActive{ false }; // Active in hitstun frames
 	bool bStandbyActive{ true }; // Active when none of the above is active
 	bool bDefaultAttackStarted{ false };
+	bool bCanCancelAction{ false }; // Active after can cancel action notify is reached
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsLaunched{ false }; // Active after struck by an attack that launches (hitstun valiue larger than 0.7f)
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsGrounded{ false }; // Active after a launch and character lies flat on ground
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsAttacking();
+	virtual bool getIsAttacking_Implementation() override;
 	
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentAttackDataToSend;
@@ -115,6 +137,24 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	FAttackData currentReceivedAttackData;
 
+	UPROPERTY(BlueprintReadOnly)
+	FDefaultAttackData currentDefaultAttackData;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsDefeated();
+	virtual bool getIsDefeated_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsHitstunned();
+	virtual bool getIsHitstunned_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsLaunched();
+	virtual bool getIsLaunched_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsGrounded();
+	virtual bool getIsGrounded_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	float getHealthPoints();
@@ -140,13 +180,34 @@ public:
 	void attackEnd();
 	void attackEnd_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void activateAttackHitbox();
+	virtual void activateAttackHitbox_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void deactivateAttackHitbox();
+	virtual void deactivateAttackHitbox_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void fireProjectile();
+	virtual void fireProjectile_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void canCancelAction();
+	virtual void canCancelAction_Implementation();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();
 	virtual ECombatAlignment getAlignment_Implementation() override;
 
-	void defaultAttackStartFromInput();
+	void defaultAttackStartFromInputOne();
+	void defaultAttackStartFromInputTwo();
 	void defaultAttackStart(int attackIndex = 0);
 	void defaultAttackEnd();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool startDefaultAttack(int index);
+	virtual bool startDefaultAttack_Implementation(int index) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void startHitstun();
@@ -156,6 +217,13 @@ public:
 	void endHitstun();
 	virtual void endHitstun_Implementation() override;
 
+	// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
+	virtual void runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection);
+
+	void startLaunch();
+	void endLaunch();
+	virtual void hitstunReset();
+
 	void cancelAttackActions(); // TODO: Complete this function
 
 	void startIsDefeatedProcedure();
@@ -164,17 +232,37 @@ public:
 	TArray<FDefaultAttackData> defaultAttacks;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FHitstunData> hitstunAnimations;
+	FHitstunData hitstunAnimations;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int currentPlayerID{ -1 };
 
 	UAnimMontage* currentMontage;
 
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
 	EActionType currentActionType;
 
+	bool bQueueAttacks{ true };
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
+	bool bQueuedInputHeld{ false };
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
+	EActionType lastQueuedActionHeld;
 
+	UPROPERTY(BlueprintReadOnly) // UPROPERTY for debugging purposes // TODO: Delete later, remember to delete referenced blueprints
+	TArray<EActionType> queuedActionTypes;
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugFunctionForBlueprint();
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugSpawnFX();
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugDespawnFX();
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugSpawnHitFX(FVector hitLocation);
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void eventIsDefeated();
 };

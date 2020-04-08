@@ -10,11 +10,13 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#include "Math/UnrealMathUtility.h"
+#include "Components/ChildActorComponent.h"
+#include "BaseWeapon.h"
 
 
 // Sets default values
-ABaseCharacter::ABaseCharacter()
+ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -55,6 +57,18 @@ ABaseCharacter::ABaseCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	// Reserve space for button queue for opimalization
+	queuedActionTypes.Reserve(20); // TODO(?): 20 inputs at the same time may be overkill, reduce later
+
+	// Can rotate character during root motion
+	GetCharacterMovement()->bAllowPhysicsRotationDuringAnimRootMotion = true;
+
+	// Set weapon
+	Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
+	Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
+	Weapon->SetupAttachment(GetMesh(), "hand_r");
+
+	//Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "hand_r");
 }
 
 // Called when the game starts or when spawned
@@ -62,10 +76,39 @@ void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// TODO(?)
-	//defaultComboOneComboMaxIndex = defaultComboOneAttacks.Num();
-	//defaultComboTwoComboMaxIndex = defaultComboTwoAttacks.Num();
-	//UE_LOG(LogTemp, Warning, TEXT("Current defaultComboOneComboMaxIndex is %d"), defaultComboOneComboMaxIndex)
+	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+}
+
+// Called every frame
+void ABaseCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	movementSmoothingTick(DeltaTime);
+	launchedTick(DeltaTime);
+}
+
+// Called to bind functionality to input
+void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	// Set up gameplay key bindings
+	check(PlayerInputComponent);
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &ABaseCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ABaseCharacter::MoveRight);
+
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("TurnRate", this, &ABaseCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
+
+	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInputOne); //default attack one
+	PlayerInputComponent->BindAction("Action2", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInputTwo); //default attack two
+
 }
 
 void ABaseCharacter::MoveForward(float Value)
@@ -109,10 +152,26 @@ void ABaseCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-// Called every frame
-void ABaseCharacter::Tick(float DeltaTime)
+void ABaseCharacter::movementSmoothingTick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	//GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
+	//currentMovementData.maxWalkSpeed, DeltaTime, currentMovementData.walkSpeedInterpSpeed);
+	GetCharacterMovement()->RotationRate.Yaw = FMath::FInterpTo(GetCharacterMovement()->RotationRate.Yaw, 
+		currentMovementData.maxRotationRate, DeltaTime, currentMovementData.rotInterpSpeed);
+
+	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
+		currentMovementData.maxWalkSpeed, DeltaTime, 4.f);
+}
+
+void ABaseCharacter::launchedTick(float DeltaTime)
+{
+	if (bIsLaunched)
+	{
+		if (!GetCharacterMovement()->IsFalling())
+		{
+			endLaunch();
+		}
+	}
 }
 
 void ABaseCharacter::updateMovement()
@@ -120,50 +179,59 @@ void ABaseCharacter::updateMovement()
 	// TODO: Lerp this
 	if (bAttackActionActive)
 	{
-		setMovementData(combatMovementData);
+		//setMovementData(combatMovementData);
+		currentMovementData = combatMovementData;
+		GetCharacterMovement()->bUseSeparateBrakingFriction = false;
+	}
+	else if (bSelfHitstunActive)
+	{
+		currentMovementData = hitstunMovementData;
+		GetCharacterMovement()->bUseSeparateBrakingFriction = true;
 	}
 	else
 	{
-		setMovementData(currentMovementData);		
+		currentMovementData = defaultMovementData;
+		GetCharacterMovement()->bUseSeparateBrakingFriction = false;
 	}
+
+	//Experimental functions below // TODO(?): Delete if necessary
+	//GetCharacterMovement()->RootMotionParams;
+	//GetCharacterMovement()->AnimRootMotionVelocity = 2.f;
+
 }
 
-// Called to bind functionality to input
-void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+
+//void ABaseCharacter::setMovementData(FMovementData inMovementData)
+//{
+//	defaultMovementData = inMovementData;
+//
+//	//GetCharacterMovement()->MaxWalkSpeed = inMovementData.maxWalkSpeed;
+//	//GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
+//}
+
+bool ABaseCharacter::getIsAttacking_Implementation()
 {
-	// Set up gameplay key bindings
-	check(PlayerInputComponent);
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	PlayerInputComponent->BindAxis("MoveForward", this, &ABaseCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ABaseCharacter::MoveRight);
-
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &ABaseCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
-
-	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInput); //default attack
-
-	//PlayerInputComponent->BindAction("ActionSprint", IE_Pressed, this, &ABaseCharacter::sprintActivate);
-	//PlayerInputComponent->BindAction("ActionSprint", IE_Released, this, &ABaseCharacter::sprintDeactivate);
-
-	//PlayerInputComponent->BindAction("defaultComboOne", IE_Pressed, this, &ABaseCharacter::defaultComboOnePressed);
-	//PlayerInputComponent->BindAction("defaultComboOne", IE_Released, this, &ABaseCharacter::defaultComboOneReleased);
-
-	//PlayerInputComponent->BindAction("defaultComboTwo", IE_Pressed, this, &ABaseCharacter::defaultComboTwoPressed);
-	//PlayerInputComponent->BindAction("defaultComboTwo", IE_Released, this, &ABaseCharacter::defaultComboTwoReleased);
-
-	// Sprint attempt
+	return bAttackActionActive;
 }
 
-void ABaseCharacter::setMovementData(FMovementData inMovementData)
+bool ABaseCharacter::getIsDefeated_Implementation()
 {
-	GetCharacterMovement()->MaxWalkSpeed = inMovementData.maxWalkSpeed;
-	GetCharacterMovement()->RotationRate.Yaw = inMovementData.maxRotationRate;
-	//GetCharacterMovement()->RotationRate = FRotator(0.f, 0.f, inMovementData.maxRotationRate);
+	return bIsDefeated;
+}
+
+bool ABaseCharacter::getIsHitstunned_Implementation()
+{
+	return bSelfHitstunActive;
+}
+
+bool ABaseCharacter::getIsLaunched_Implementation()
+{
+	return bIsLaunched;
+}
+
+bool ABaseCharacter::getIsGrounded_Implementation()
+{
+	return bIsGrounded;
 }
 
 float ABaseCharacter::getHealthPoints_Implementation()
@@ -186,28 +254,20 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage base char: %s"), *this->GetName());
 
-	if (!bIsDeafeated) // TODO: Change if statement to disable overlap events instead
+	if (!bIsDefeated) // TODO: Change if statement to disable overlap events instead
 	{		
 		if (currentHealthPoints > inAttackData.damageAmount)
 		{
 			currentHealthPoints -= inAttackData.damageAmount;
-			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, health left: %f"), inAttackData.damageAmount, currentHealthPoints);
+			UE_LOG(LogTemp, Warning, TEXT("Took damage: %f, took hitstunValue: %f, health left: %f"), inAttackData.damageAmount, inAttackData.hitstunStrength, currentHealthPoints);
 
-			//Hitstun handling
-			if (hitstunAnimations.Num() > 0) 
-			{
-				//if (hitstunAnimations[0].HitstunAnimMontage != nullptr) // TODO: Edit an fix hard coded index  
-				//{
-				//	currentReceivedAttackData = inAttackData;
-
-				//	currentMontage = hitstunAnimations[0].HitstunAnimMontage;
-				//	GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
-				//}
-			}
+			currentReceivedAttackData = inAttackData; // Saves data so hitstun event can get correct values	
+			// Hitstun procedures
+			runHitstunProcedure(currentReceivedAttackData.hitstunStrength, currentReceivedAttackData.hitDirection);
 		}
 		else
 		{
-			bIsDeafeated = true;
+			bIsDefeated = true;
 			currentHealthPoints = 0;
 			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
 			startIsDefeatedProcedure();
@@ -217,7 +277,13 @@ void ABaseCharacter::takeDamage_Implementation(FAttackData inAttackData)
 
 void ABaseCharacter::attackStart_Implementation()
 {
-	bAttackActionActive = true;
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_sendAttackDataToWeapon(Weapon->GetChildActor(), currentDefaultAttackData, CombatAlignment, this);
+	}
+
+	bAttackActionActive = true; // TODO(?): Uncomment if commented out
+	bCanCancelAction = false;
 
 	updateMovement();
 	//UE_LOG(LogTemp, Warning, TEXT("Attack start"))
@@ -228,6 +294,39 @@ void ABaseCharacter::attackEnd_Implementation()
 	bAttackActionActive = false;
 
 	updateMovement();
+	//UE_LOG(LogTemp, Warning, TEXT("Attack end"))
+}
+
+void ABaseCharacter::activateAttackHitbox_Implementation()
+{
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_activateAttackHitbox(Weapon->GetChildActor());
+	}
+}
+
+void ABaseCharacter::deactivateAttackHitbox_Implementation()
+{
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(Weapon->GetChildActor());
+	}
+}
+
+void ABaseCharacter::fireProjectile_Implementation()
+{
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_fireProjectile(Weapon->GetChildActor());
+	}
+}
+
+void ABaseCharacter::canCancelAction_Implementation()
+{
+	bCanCancelAction = true;
+	defaultMovementData.maxRotationRate = 540.f; // TODO: Get a different variable to adjust this
+
+	debugDespawnFX();
 }
 
 ECombatAlignment ABaseCharacter::getAlignment_Implementation()
@@ -235,17 +334,26 @@ ECombatAlignment ABaseCharacter::getAlignment_Implementation()
 	return CombatAlignment;
 }
 
-void ABaseCharacter::defaultAttackStartFromInput()
+void ABaseCharacter::defaultAttackStartFromInputOne()
 {
 	defaultAttackStart();
+}
+
+void ABaseCharacter::defaultAttackStartFromInputTwo()
+{
+	defaultAttackStart(1);
 }
 
 void ABaseCharacter::defaultAttackStart(int attackIndex)
 {
 	bDefaultAttackStarted = true;
+	
+	//Ensure hitboxes are disabled at start of attack
+	Execute_deactivateAttackHitbox(this);
 
 	if (defaultAttacks.IsValidIndex(attackIndex))  // To check if attacks exist
 	{
+		currentDefaultAttackData = defaultAttacks[attackIndex];
 		currentMontage = defaultAttacks[attackIndex].AttackAnimMontage;
 		if (GetMesh()->GetAnimInstance() != nullptr)
 		{
@@ -260,6 +368,19 @@ void ABaseCharacter::defaultAttackEnd()
 	bDefaultAttackStarted = false;
 }
 
+bool ABaseCharacter::startDefaultAttack_Implementation(int index)
+{
+	if (!bSelfHitstunActive)
+	{
+		defaultAttackStart(index);
+		return true;
+	}
+	else
+	{
+		return false;
+	}	
+}
+
 void ABaseCharacter::startHitstun_Implementation()
 {
 	bSelfHitstunActive = true;
@@ -268,8 +389,7 @@ void ABaseCharacter::startHitstun_Implementation()
 	// TODO: Lerp this
 	FVector tempDirection = currentReceivedAttackData.hitDirection * -1; // Sets rotation to follow direction
 	SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
-
-	updateMovement();
+	// TODO: Set slide friction on
 
 	debugFunctionForBlueprint(); //// TODO: Delete
 }
@@ -278,7 +398,95 @@ void ABaseCharacter::endHitstun_Implementation()
 {
 	currentMovementData = defaultMovementData;
 	bSelfHitstunActive = false;
+	// TODO: Set slide friction off
 
+	updateMovement();
+}
+
+// Hitstun calculation: hitstun < 0.1f: hitstunAnimationOnly, 0.1f - 0.3f: hitstunFlinch, 0.3f - 0.7f: hitstunFlinchWithKnockback, > 0.7f: hitstunLaunched
+void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure"))
+	if (inHitstunStrengthReceived <= 0.1f)
+	{
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
+		{
+			//currentMontage = hitstunAnimations.hitstunLightAnimMontage;
+			//GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+		}
+	}
+	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived <= 0.3f)
+	{
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
+		{
+			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			hitstunReset();
+		}
+		// TODO: Make stun timer
+	}
+	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived <= 0.7f)
+	{		
+		if (IsValid(hitstunAnimations.hitstunHeavyAnimMontage))
+		{
+			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+			hitstunReset();
+		}
+		// TODO: Make stun timer
+
+		//Knockback handling
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0.f).GetSafeNormal()) * calculateKnockbackLength(inHitstunStrengthReceived);
+		LaunchCharacter(adjustedDirection, false, false);
+		//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure: %s"), *adjustedDirection.ToString())
+	}
+	else if (inHitstunStrengthReceived > 0.7f)
+	{
+		// TODO: Make stun timer and launch character in air
+		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
+
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);
+		LaunchCharacter(adjustedDirection, false, false);
+		hitstunReset();
+
+		startLaunch();
+	}
+	else
+	{
+		// Debug else, function should normally not reach this line
+		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
+	}
+}
+
+void ABaseCharacter::startLaunch()
+{
+	Execute_startHitstun(this);
+	//GetCapsuleComponent()->SetCapsuleHalfHeight(launchedCapsuleHalfHeight);
+	
+	bIsLaunched = true;
+}
+
+void ABaseCharacter::endLaunch()
+{
+	//GetCapsuleComponent()->SetCapsuleHalfHeight(defaultCapsuleHalfHeight);
+	Execute_endHitstun(this);
+
+	bIsLaunched = false;
+	Execute_endHitstun(this);
+}
+
+void ABaseCharacter::hitstunReset()
+{
+	bAttackActionActive = false;
+	bStandbyActive = true;
+	bDefaultAttackStarted = false;
+	bCanCancelAction = false;
+
+	if (Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(this);
+	}
+	
 	updateMovement();
 }
 
@@ -290,8 +498,19 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	OuterCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GetMesh()->SetSimulatePhysics(true);
 	GetCharacterMovement()->DisableMovement();
+
+	//Weapon->DetachFromParent(true);
+	if (Weapon->GetChildActor()->IsValidLowLevelFast())
+	{
+		Execute_detachWeapon(Weapon->GetChildActor());
+	}
+	
+
+	eventIsDefeated();
 }
 
 

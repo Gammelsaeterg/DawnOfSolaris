@@ -46,10 +46,40 @@ public:
 	void setChargeAmount(float newChargeAmount);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsHitstunned();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsLaunched();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsGrounded();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsAttacking();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void sendAttackDataToWeapon(FDefaultAttackData inAttackData, ECombatAlignment inCombatAlignment, ABaseCharacter* inOwner);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	float getWindUpChargeAmount();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void minimumChargeAmountReached();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	bool getIsWindingUpChargeAttack();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
-	void releaseAttack();
+	void windUpStart();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void releaseStart();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void releaseEnd();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void canCancelAction();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void activateAttackHitbox();
@@ -58,7 +88,13 @@ public:
 	void deactivateAttackHitbox();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void fireProjectile();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void takeDamage(FAttackData inAttackData);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void detachWeapon();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void attackStart();
@@ -72,6 +108,36 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void endHitstun();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void startDodge();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	void endDodge();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool startDefaultAttack(int index);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getCurrentMovesetFromPlayer();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getNextMovesetFromPlayer();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	FMovesetData getPreviousMovesetFromPlayer();
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsDefeated();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FVector interact(class AActor* interactorActor);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setInteractableObjectInRange(class AInteractableObject* inObject);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool getInteractableObjectInRange();
 };
