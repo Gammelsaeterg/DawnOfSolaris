@@ -99,6 +99,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxRotationRate{ 540.f }; //
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables") 
+	float maxWalkInterpRate{ 40.f }; // This piece of code is mainly for the main character
+
 	float defaultCapsuleHalfHeight{ 96.f };
 	float launchedCapsuleHalfHeight{ 22.f };
 
