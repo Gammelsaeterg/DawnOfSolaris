@@ -78,6 +78,12 @@ void ABaseCharacter::BeginPlay()
 
 	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+
+	maxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	maxRotationRate = GetCharacterMovement()->RotationRate.Yaw;
+
+	currentMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
+	defaultMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
 }
 
 // Called every frame
@@ -160,7 +166,7 @@ void ABaseCharacter::movementSmoothingTick(float DeltaTime)
 		currentMovementData.maxRotationRate, DeltaTime, currentMovementData.rotInterpSpeed);
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
-		currentMovementData.maxWalkSpeed, DeltaTime, 4.f);
+		currentMovementData.maxWalkSpeed, DeltaTime, maxWalkInterpRate);
 }
 
 void ABaseCharacter::launchedTick(float DeltaTime)
