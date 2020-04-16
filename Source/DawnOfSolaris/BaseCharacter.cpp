@@ -464,9 +464,12 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		GetMesh()->GetAnimInstance()->Montage_Stop(0.15f, currentMontage);
 		hitstunReset();
 
+		Execute_startHitstun(this);
 		nullifyMovement();
-		//LaunchCharacter(adjustedDirection, true, false);
-		GetCharacterMovement()->AddImpulse(adjustedDirection, true);
+		GetCharacterMovement()->DisableMovement;
+
+		LaunchCharacter(adjustedDirection, true, false);
+		//GetCharacterMovement()->AddImpulse(adjustedDirection, true);
 
 		//debugVector(FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal());
 
@@ -483,8 +486,6 @@ void ABaseCharacter::startLaunch()
 {
 	//GetCapsuleComponent()->SetCapsuleHalfHeight(launchedCapsuleHalfHeight);
 	bIsLaunched = true;
-
-	Execute_startHitstun(this);
 }
 
 void ABaseCharacter::endLaunch()
