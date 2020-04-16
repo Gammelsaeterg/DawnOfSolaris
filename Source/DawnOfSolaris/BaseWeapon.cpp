@@ -33,6 +33,9 @@ void ABaseWeapon::BeginPlay()
 	//CollisionMesh->SetRelativeLocation(FVector::ZeroVector); // TODO(?): This should not be necessary
 	WeaponMesh->SetMobility(EComponentMobility::Movable); // TODO(?): This should not be necessary
 	CollisionMesh->SetMobility(EComponentMobility::Movable); // TODO(?): This should not be necessary
+
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // TODO(?): Safety measure, may not be needed
+	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // TODO(?): Safety measure, may not be needed
 }
 
 // Called every frame

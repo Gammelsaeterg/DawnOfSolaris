@@ -207,6 +207,12 @@ void ABaseCharacter::updateMovement()
 
 }
 
+void ABaseCharacter::nullifyMovement()
+{
+	GetCharacterMovement()->RotationRate.Yaw = 0.f;
+	GetCharacterMovement()->MaxWalkSpeed = 0.f;
+}
+
 
 //void ABaseCharacter::setMovementData(FMovementData inMovementData)
 //{
@@ -454,9 +460,15 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
 
 		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);		
-		//UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *adjustedDirection.ToString())		
-		LaunchCharacter(adjustedDirection, false, false);
+		//UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *adjustedDirection.ToString())
+		GetMesh()->GetAnimInstance()->Montage_Stop(0.15f, currentMontage);
 		hitstunReset();
+
+		nullifyMovement();
+		//LaunchCharacter(adjustedDirection, true, false);
+		GetCharacterMovement()->AddImpulse(adjustedDirection, true);
+
+		//debugVector(FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal());
 
 		startLaunch();
 	}
@@ -469,10 +481,10 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 
 void ABaseCharacter::startLaunch()
 {
-	Execute_startHitstun(this);
 	//GetCapsuleComponent()->SetCapsuleHalfHeight(launchedCapsuleHalfHeight);
-	
 	bIsLaunched = true;
+
+	Execute_startHitstun(this);
 }
 
 void ABaseCharacter::endLaunch()

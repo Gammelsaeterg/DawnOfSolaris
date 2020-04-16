@@ -84,6 +84,7 @@ public:
 	void launchedTick(float DeltaTime);
 
 	void updateMovement();
+	void nullifyMovement();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	ECombatAlignment CombatAlignment = ECombatAlignment::Neutral;
@@ -270,6 +271,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugSpawnHitFX(FVector hitLocation);
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugVector(FVector vector);
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void eventIsDefeated();
