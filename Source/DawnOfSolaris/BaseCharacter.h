@@ -127,6 +127,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsLaunched{ false }; // Active after struck by an attack that launches (hitstun valiue larger than 0.7f)
 
+	// Launched/grounded timer
+	FTimerHandle launchedTimerHandle;
+
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsGrounded{ false }; // Active after a launch and character lies flat on ground
 
@@ -225,6 +228,8 @@ public:
 
 	void startLaunch();
 	void endLaunch();
+	void startGrounded();
+	void endGrounded();
 	virtual void hitstunReset();
 
 	void cancelAttackActions(); // TODO: Complete this function

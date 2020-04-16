@@ -13,6 +13,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Components/ChildActorComponent.h"
 #include "BaseWeapon.h"
+#include "TimerManager.h"
 
 
 // Sets default values
@@ -452,7 +453,8 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		// TODO: Make stun timer and launch character in air
 		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
 
-		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);		
+		//UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *adjustedDirection.ToString())		
 		LaunchCharacter(adjustedDirection, false, false);
 		hitstunReset();
 
@@ -476,9 +478,21 @@ void ABaseCharacter::startLaunch()
 void ABaseCharacter::endLaunch()
 {
 	//GetCapsuleComponent()->SetCapsuleHalfHeight(defaultCapsuleHalfHeight);
-	Execute_endHitstun(this);
 
 	bIsLaunched = false;
+	startGrounded();
+}
+
+void ABaseCharacter::startGrounded()
+{
+	bIsGrounded = true;
+	GetWorldTimerManager().SetTimer(launchedTimerHandle, this, &ABaseCharacter::endGrounded, 2.f); // TODO: Make timer amount random
+}
+
+void ABaseCharacter::endGrounded()
+{
+
+	bIsGrounded = false;
 	Execute_endHitstun(this);
 }
 
