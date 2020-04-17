@@ -140,4 +140,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool getInteractableObjectInRange();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void pauseAI();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void resumeAI();
 };

@@ -179,6 +179,8 @@ void ABaseCharacter::launchedTick(float DeltaTime)
 			endLaunch();
 		}
 	}
+
+
 }
 
 void ABaseCharacter::updateMovement()
@@ -212,7 +214,6 @@ void ABaseCharacter::nullifyMovement()
 	GetCharacterMovement()->RotationRate.Yaw = 0.f;
 	GetCharacterMovement()->MaxWalkSpeed = 0.f;
 }
-
 
 //void ABaseCharacter::setMovementData(FMovementData inMovementData)
 //{
@@ -466,8 +467,13 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 
 		Execute_startHitstun(this);
 		nullifyMovement();
-		GetCharacterMovement()->DisableMovement;
 
+		//GetCapsuleComponent()->SetSimulatePhysics(true);
+		//GetWorldTimerManager().SetTimer(physicsTimerHandle, this, &ABaseCharacter::endPhysics, 0.5f); 
+		//GetCapsuleComponent()->AddImpulse(adjustedDirection*300);
+		//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
+
+		Execute_pauseAI(GetController());
 		LaunchCharacter(adjustedDirection, true, false);
 		//GetCharacterMovement()->AddImpulse(adjustedDirection, true);
 
@@ -492,7 +498,9 @@ void ABaseCharacter::endLaunch()
 {
 	//GetCapsuleComponent()->SetCapsuleHalfHeight(defaultCapsuleHalfHeight);
 
+	//GetCapsuleComponent()->SetSimulatePhysics(false);
 	bIsLaunched = false;
+	Execute_resumeAI(GetController());
 	startGrounded();
 }
 
@@ -504,9 +512,13 @@ void ABaseCharacter::startGrounded()
 
 void ABaseCharacter::endGrounded()
 {
-
 	bIsGrounded = false;
 	Execute_endHitstun(this);
+}
+
+void ABaseCharacter::endPhysics()
+{
+	GetCapsuleComponent()->SetSimulatePhysics(false);
 }
 
 void ABaseCharacter::hitstunReset()

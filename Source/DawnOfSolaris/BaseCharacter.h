@@ -131,6 +131,10 @@ public:
 	// Launched/grounded timer
 	FTimerHandle launchedTimerHandle;
 
+	// Launched/grounded timer
+	FTimerHandle physicsTimerHandle;
+
+
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsGrounded{ false }; // Active after a launch and character lies flat on ground
 
@@ -231,6 +235,7 @@ public:
 	void endLaunch();
 	void startGrounded();
 	void endGrounded();
+	void endPhysics();
 	virtual void hitstunReset();
 
 	void cancelAttackActions(); // TODO: Complete this function
