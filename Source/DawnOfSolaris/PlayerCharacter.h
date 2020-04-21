@@ -321,4 +321,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool getInteractableObjectInRange();
 	virtual bool getInteractableObjectInRange_Implementation() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void eventMovesetChanged();
 };

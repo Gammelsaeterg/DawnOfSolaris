@@ -493,7 +493,7 @@ TArray<FChargeAttackData> APlayerCharacter::getCurrentComboAttacks(EActionType i
 void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
 {
 	// TODO: Add more nullptr/IsValid() checks before assigning movesets
-
+	//eventMovesetChanged();
 	currentMovesetData = inMovesetData;
 
 	if (currentMovesetData->playerWeaponMorph)
@@ -530,6 +530,7 @@ FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
 			if (setNewMoveset)
 			{
 				currentMovesetIndex += 1;
+				eventMovesetChanged();
 
 				setMoveset(&combatMovesets[currentMovesetIndex]);			
 				return &combatMovesets[currentMovesetIndex];
@@ -545,6 +546,8 @@ FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
 			{
 				setMoveset(&combatMovesets[0]);
 				currentMovesetIndex = 0;
+				eventMovesetChanged();
+
 				return &combatMovesets[0];
 			}
 			else
@@ -569,6 +572,7 @@ FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 			if (setNewMoveset)
 			{
 				currentMovesetIndex = combatMovesets.Num() - 1;
+				eventMovesetChanged();
 
 				setMoveset(&combatMovesets[currentMovesetIndex]);
 				return &combatMovesets[currentMovesetIndex];
@@ -584,6 +588,7 @@ FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 			if (setNewMoveset)
 			{
 				currentMovesetIndex -= 1;
+				eventMovesetChanged();
 
 				setMoveset(&combatMovesets[currentMovesetIndex]);
 				return &combatMovesets[currentMovesetIndex];
