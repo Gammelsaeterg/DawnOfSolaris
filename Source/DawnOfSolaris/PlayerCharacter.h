@@ -324,4 +324,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void eventMovesetChanged();
+
+	void startWeaponChange();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool endWeaponChange();
+	virtual bool endWeaponChange_Implementation();
 };

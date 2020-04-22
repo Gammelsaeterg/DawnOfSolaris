@@ -1224,3 +1224,13 @@ bool APlayerCharacter::getInteractableObjectInRange_Implementation()
 {
 	return bInteractableObjectInRange;
 }
+
+void APlayerCharacter::startWeaponChange()
+{
+
+}
+
+bool APlayerCharacter::endWeaponChange_Implementation()
+{
+	return false;
+}
