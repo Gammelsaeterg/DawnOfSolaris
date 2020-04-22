@@ -28,6 +28,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* WeaponMesh;
 
+	UStaticMeshComponent* getWeaponMesh() // TODO: Move function to .cpp file
+	{
+		return WeaponMesh;
+	}
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* CollisionMesh;
 

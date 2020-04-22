@@ -142,7 +142,7 @@ public:
 	bool getInteractableObjectInRange();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool endWeaponChange();
+	void endMovesetChange();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void pauseAI();

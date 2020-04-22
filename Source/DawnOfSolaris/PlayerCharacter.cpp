@@ -1225,12 +1225,28 @@ bool APlayerCharacter::getInteractableObjectInRange_Implementation()
 	return bInteractableObjectInRange;
 }
 
-void APlayerCharacter::startWeaponChange()
+void APlayerCharacter::startMovesetChange(bool nextMoveset)
 {
+	bChangeNextMoveset = nextMoveset;
 
+	if (movesetChangeMontage != nullptr)
+	{
+
+	}
+	else
+	{
+		Execute_endMovesetChange(this);
+	}
 }
 
-bool APlayerCharacter::endWeaponChange_Implementation()
+void APlayerCharacter::endMovesetChange_Implementation()
 {
-	return false;
+	if (bChangeNextMoveset)
+	{
+		findNextMoveset(true);
+	}
+	else
+	{
+		findPreviousMoveset(true);
+	}
 }

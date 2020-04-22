@@ -325,9 +325,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void eventMovesetChanged();
 
-	void startWeaponChange();
+	bool bChangeNextMoveset{ false };
+	void startMovesetChange(bool nextMoveset);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	bool endWeaponChange();
-	virtual bool endWeaponChange_Implementation();
+	void endMovesetChange();
+	virtual void endMovesetChange_Implementation();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAnimMontage* movesetChangeMontage{ nullptr };
 };
