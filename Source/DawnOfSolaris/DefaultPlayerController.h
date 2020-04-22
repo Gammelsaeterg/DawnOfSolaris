@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CharacterInterface.h"
 
 #include "DefaultPlayerController.generated.h"
 
@@ -14,7 +15,7 @@ class UUserWidget;
  * 
  */
 UCLASS()
-class DAWNOFSOLARIS_API ADefaultPlayerController : public APlayerController
+class DAWNOFSOLARIS_API ADefaultPlayerController : public APlayerController, public ICharacterInterface
 {
 	GENERATED_BODY()
 

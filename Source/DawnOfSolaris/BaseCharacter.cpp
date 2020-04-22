@@ -14,6 +14,7 @@
 #include "Components/ChildActorComponent.h"
 #include "BaseWeapon.h"
 #include "TimerManager.h"
+#include "AIController.h"
 
 
 // Sets default values
@@ -473,7 +474,11 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		//GetCapsuleComponent()->AddImpulse(adjustedDirection*300);
 		//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
 
-		Execute_pauseAI(GetController());
+		if (GetController()->GetClass()->ImplementsInterface(UCharacterInterface::StaticClass()))
+		{
+			Execute_pauseAI(GetController());
+		}		
+		
 		LaunchCharacter(adjustedDirection, true, false);
 		//GetCharacterMovement()->AddImpulse(adjustedDirection, true);
 
@@ -500,7 +505,13 @@ void ABaseCharacter::endLaunch()
 
 	//GetCapsuleComponent()->SetSimulatePhysics(false);
 	bIsLaunched = false;
-	Execute_resumeAI(GetController());
+
+	if (GetController()->GetClass()->ImplementsInterface(UCharacterInterface::StaticClass()))
+	{
+		Execute_resumeAI(GetController());
+	}
+	
+
 	startGrounded();
 }
 
