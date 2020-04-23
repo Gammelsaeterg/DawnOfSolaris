@@ -45,10 +45,10 @@ void ABaseWeapon::Tick(float DeltaTime)
 
 }
 
-inline UStaticMeshComponent * ABaseWeapon::getWeaponMesh() // TODO: Move function to .cpp file
-{
-	return WeaponMesh;
-}
+//const UStaticMeshComponent* ABaseWeapon::getWeaponMesh() // TODO: Move function to .cpp file
+//{
+//	return WeaponMesh;
+//}
 
 void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, 
 											 UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 

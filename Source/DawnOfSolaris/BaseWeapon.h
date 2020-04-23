@@ -28,8 +28,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* WeaponMesh;
 
-	UPROPERTY(BlueprintReadOnly)
-	UStaticMeshComponent* getWeaponMesh();
+	//UPROPERTY(BlueprintReadOnly)
+	//const UStaticMeshComponent* getWeaponMesh();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* CollisionMesh;
