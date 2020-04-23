@@ -1257,6 +1257,8 @@ void APlayerCharacter::startMovesetChange(bool nextMoveset)
 			currentMontage = movesetChangeMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
 
+			Execute_setWeaponVisibility(Weapon->GetChildActor(), false);
+
 			eventStartChangeMoveset(bChangeNextMoveset);
 		}
 		else
@@ -1277,4 +1279,6 @@ void APlayerCharacter::endMovesetChange_Implementation()
 	{
 		findPreviousMoveset(true);
 	}
+
+	Execute_setWeaponVisibility(Weapon->GetChildActor(), true);
 }

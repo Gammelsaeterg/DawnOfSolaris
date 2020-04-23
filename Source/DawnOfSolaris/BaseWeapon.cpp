@@ -45,11 +45,6 @@ void ABaseWeapon::Tick(float DeltaTime)
 
 }
 
-//const UStaticMeshComponent* ABaseWeapon::getWeaponMesh() // TODO: Move function to .cpp file
-//{
-//	return WeaponMesh;
-//}
-
 void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, 
 											 UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, 
 											 bool bFromSweep, const FHitResult & SweepResult)
@@ -145,6 +140,18 @@ void ABaseWeapon::detachWeapon_Implementation()
 	//WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	WeaponMesh->SetCollisionProfileName("Ragdoll");
 	WeaponMesh->SetSimulatePhysics(true);
+}
+
+void ABaseWeapon::setWeaponVisibility_Implementation(bool isVisible)
+{
+	if (isVisible)
+	{
+		WeaponMesh->SetVisibility(true, false);
+	}
+	else
+	{
+		WeaponMesh->SetVisibility(false, false);
+	}
 }
 
 bool ABaseWeapon::isActorAlreadyHit(AActor * inActor)

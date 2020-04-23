@@ -145,6 +145,9 @@ public:
 	void endMovesetChange();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setWeaponVisibility(bool isVisible);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void pauseAI();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
