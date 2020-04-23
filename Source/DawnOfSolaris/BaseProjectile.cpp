@@ -67,6 +67,7 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 															      hitDirection, SweepResult.Location,
 																  this, hitstunValue);
 
+				//SetLifeSpan(1.f); // TODO: For debug purposes, remove when no longer needed
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}
 		}

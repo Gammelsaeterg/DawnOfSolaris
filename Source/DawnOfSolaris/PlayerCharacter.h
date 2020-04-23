@@ -209,8 +209,15 @@ public:
 	TArray<FChargeAttackData> getCurrentComboAttacks(EActionType inActionType, int inComboIndex = 2);
 
 	void setMoveset(FMovesetData* inMovesetData);
+
 	FMovesetData* findNextMoveset(bool setNewMoveset);
 	FMovesetData* findPreviousMoveset(bool setNewMoveset);
+
+	UFUNCTION(BlueprintCallable)
+	FMovesetData getNextMoveset();
+
+	UFUNCTION(BlueprintCallable)
+	FMovesetData getPreviousMoveset();
 
 	void windUpChargeAttack(FChargeAttackData& inAttack);
 
@@ -324,6 +331,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void eventMovesetChanged();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void eventStartChangeMoveset(bool nextMoveset);
 
 	bool bChangeNextMoveset{ false };
 	void startMovesetChange(bool nextMoveset);

@@ -262,12 +262,14 @@ void APlayerCharacter::Action3Released()
 
 void APlayerCharacter::BrowseUpPressed()
 {
-	findNextMoveset(true);
+	startMovesetChange(true);
+	//findNextMoveset(true);
 }
 
 void APlayerCharacter::BrowseDownPressed()
 {
-	findPreviousMoveset(true);
+	startMovesetChange(false);
+	//findPreviousMoveset(true);
 }
 
 void APlayerCharacter::actionPressed(EActionType inActionType)
@@ -606,6 +608,23 @@ FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 	}
 }
 
+FMovesetData APlayerCharacter::getNextMoveset()
+{
+	FMovesetData* tempFMovementData;
+	tempFMovementData = findNextMoveset(false);
+
+	return *tempFMovementData;
+}
+
+
+FMovesetData APlayerCharacter::getPreviousMoveset()
+{
+	FMovesetData* tempFMovementData;
+	tempFMovementData = findPreviousMoveset(false);
+
+	return *tempFMovementData;
+}
+
 void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
 {	
 	if (bChargeAttackStarted)
@@ -716,6 +735,7 @@ bool APlayerCharacter::canDodge()
 		return false;
 	}
 }
+
 
 inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 {
@@ -987,6 +1007,7 @@ void APlayerCharacter::hitstunReset()
 	debugDespawnFX();
 	updateMovement();
 	Execute_deactivateAttackHitbox(this);
+	Execute_attackEnd(this);
 }
 
 void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
@@ -1227,16 +1248,23 @@ bool APlayerCharacter::getInteractableObjectInRange_Implementation()
 
 void APlayerCharacter::startMovesetChange(bool nextMoveset)
 {
-	bChangeNextMoveset = nextMoveset;
-
-	if (movesetChangeMontage != nullptr)
+	if (canAttack())
 	{
+		bChangeNextMoveset = nextMoveset;
 
+		if (movesetChangeMontage != nullptr)
+		{
+			currentMontage = movesetChangeMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+
+			eventStartChangeMoveset(bChangeNextMoveset);
+		}
+		else
+		{
+			Execute_endMovesetChange(this);
+		}
 	}
-	else
-	{
-		Execute_endMovesetChange(this);
-	}
+
 }
 
 void APlayerCharacter::endMovesetChange_Implementation()
