@@ -309,6 +309,11 @@ void ABaseCharacter::attackEnd_Implementation()
 	bAttackActionActive = false;
 
 	updateMovement();
+
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(Weapon->GetChildActor());
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("Attack end"))
 }
 
@@ -381,6 +386,11 @@ void ABaseCharacter::defaultAttackStart(int attackIndex)
 void ABaseCharacter::defaultAttackEnd()
 {
 	bDefaultAttackStarted = false;
+
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(Weapon->GetChildActor());
+	}
 }
 
 bool ABaseCharacter::startDefaultAttack_Implementation(int index)

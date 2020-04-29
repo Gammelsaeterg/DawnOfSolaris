@@ -85,6 +85,7 @@ void ABaseWeapon::sendAttackDataToWeapon_Implementation(FDefaultAttackData inAtt
 
 void ABaseWeapon::activateAttackHitbox_Implementation()
 {
+	clearHitActors();
 	UPrimitiveComponent* overlapCollisionToEnable = CollisionMesh; // TODO(?): Redundant?
 
 	overlapCollisionToEnable->SetGenerateOverlapEvents(true);
