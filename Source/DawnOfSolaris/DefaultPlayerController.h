@@ -43,4 +43,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: For debug purposes, delete when no longer needed
 	UUserWidget* PlayerUI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool spawnUI{ true };
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveUI();
 };
