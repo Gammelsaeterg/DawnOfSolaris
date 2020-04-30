@@ -14,7 +14,7 @@
 #include "Components/ChildActorComponent.h"
 #include "BaseWeapon.h"
 #include "TimerManager.h"
-#include "AIController.h"
+//#include "AIController.h"
 
 
 // Sets default values
