@@ -39,8 +39,8 @@ public:
 	ECombatAlignment CurrentProjectileCombatAlignment;
 	class AActor* CurrentOwner;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UParticleSystem* hitParticleEffectToSpawn{ nullptr };
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UParticleSystem* hitParticleEffectToSpawn{ nullptr };
 
 	void setOwnerInfo(AActor* inOwner);
 

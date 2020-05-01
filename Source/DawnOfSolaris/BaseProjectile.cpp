@@ -72,10 +72,10 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 			}
 		}
 
-		if (hitParticleEffectToSpawn)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitParticleEffectToSpawn, GetActorLocation(), FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, EPSCPoolMethod::None, true);
-		}
+		//if (hitParticleEffectToSpawn)
+		//{
+		//	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitParticleEffectToSpawn, GetActorLocation(), FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, EPSCPoolMethod::None, true);
+		//}
 		
 		// When projectile hits something
 		// TODO: Place FX hit effects here
