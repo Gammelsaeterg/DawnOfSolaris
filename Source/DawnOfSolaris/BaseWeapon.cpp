@@ -70,7 +70,8 @@ void ABaseWeapon::OnOverlapBeginWeaponHitbox(UPrimitiveComponent * OverlappedCom
 													  this, CurrentMeleeWeaponAttackData.hitstunValue);
 
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
-				debugSpawnFireFX(WeaponMesh->GetComponentTransform());
+
+				debugSpawnHitFX(WeaponMesh->GetComponentTransform().GetLocation());
 			}
 		}
 	}
