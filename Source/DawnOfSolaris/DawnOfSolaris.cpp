@@ -54,7 +54,7 @@ float calculateLaunchLength(float inMultiplier)
 {
 	if (inMultiplier > launchMinLimit)
 	{
-		float BaseLaunchValue = 2000.f;
+		float BaseLaunchValue = 1000.f;
 		return (inMultiplier * BaseLaunchValue);
 	}
 	else

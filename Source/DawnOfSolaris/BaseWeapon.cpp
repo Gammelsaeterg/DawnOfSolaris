@@ -33,6 +33,9 @@ void ABaseWeapon::BeginPlay()
 	//CollisionMesh->SetRelativeLocation(FVector::ZeroVector); // TODO(?): This should not be necessary
 	WeaponMesh->SetMobility(EComponentMobility::Movable); // TODO(?): This should not be necessary
 	CollisionMesh->SetMobility(EComponentMobility::Movable); // TODO(?): This should not be necessary
+
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // TODO(?): Safety measure, may not be needed
+	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // TODO(?): Safety measure, may not be needed
 }
 
 // Called every frame
@@ -82,6 +85,7 @@ void ABaseWeapon::sendAttackDataToWeapon_Implementation(FDefaultAttackData inAtt
 
 void ABaseWeapon::activateAttackHitbox_Implementation()
 {
+	clearHitActors();
 	UPrimitiveComponent* overlapCollisionToEnable = CollisionMesh; // TODO(?): Redundant?
 
 	overlapCollisionToEnable->SetGenerateOverlapEvents(true);
@@ -137,6 +141,18 @@ void ABaseWeapon::detachWeapon_Implementation()
 	//WeaponMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 	WeaponMesh->SetCollisionProfileName("Ragdoll");
 	WeaponMesh->SetSimulatePhysics(true);
+}
+
+void ABaseWeapon::setWeaponVisibility_Implementation(bool isVisible)
+{
+	if (isVisible)
+	{
+		WeaponMesh->SetVisibility(true, false);
+	}
+	else
+	{
+		WeaponMesh->SetVisibility(false, false);
+	}
 }
 
 bool ABaseWeapon::isActorAlreadyHit(AActor * inActor)

@@ -64,6 +64,10 @@ public:
 	void detachWeapon();
 	virtual void detachWeapon_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setWeaponVisibility(bool isVisible);
+	virtual void setWeaponVisibility_Implementation(bool isVisible);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ABaseProjectile> WeaponProjectile;
 

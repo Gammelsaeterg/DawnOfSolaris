@@ -103,6 +103,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	sprintTick(DeltaTime);
 	regenStaminaTick(DeltaTime);
+	regenHealthTick(DeltaTime);
 	standbyCheckTick();
 	windUpChargeAmountTick(DeltaTime);
 	interactableTick(DeltaTime);
@@ -261,12 +262,14 @@ void APlayerCharacter::Action3Released()
 
 void APlayerCharacter::BrowseUpPressed()
 {
-	findNextMoveset(true);
+	startMovesetChange(true);
+	//findNextMoveset(true);
 }
 
 void APlayerCharacter::BrowseDownPressed()
 {
-	findPreviousMoveset(true);
+	startMovesetChange(false);
+	//findPreviousMoveset(true);
 }
 
 void APlayerCharacter::actionPressed(EActionType inActionType)
@@ -444,7 +447,23 @@ void APlayerCharacter::regenStaminaTick(float DeltaTime)
 	}
 	else if (currentStaminaPoints > maxStaminaPoints)
 	{
-		//currentStaminaPoints = 100.f;
+		currentStaminaPoints = 100.f;
+	}
+}
+
+
+void APlayerCharacter::regenHealthTick(float DeltaTime)
+{
+	// Health regen tick
+	if ((currentHealthPoints < maxHealthPoints) && !bIsDefeated) // TODO: Should be a different condition, i. e. bRegenerate, (no actions in use) 
+	{
+
+		currentHealthPoints += 1.f * DeltaTime;
+		
+	}
+	else if (currentHealthPoints > maxHealthPoints)
+	{
+		currentHealthPoints = maxHealthPoints;
 	}
 }
 
@@ -476,7 +495,7 @@ TArray<FChargeAttackData> APlayerCharacter::getCurrentComboAttacks(EActionType i
 void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
 {
 	// TODO: Add more nullptr/IsValid() checks before assigning movesets
-
+	//eventMovesetChanged();
 	currentMovesetData = inMovesetData;
 
 	if (currentMovesetData->playerWeaponMorph)
@@ -513,6 +532,7 @@ FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
 			if (setNewMoveset)
 			{
 				currentMovesetIndex += 1;
+				eventMovesetChanged();
 
 				setMoveset(&combatMovesets[currentMovesetIndex]);			
 				return &combatMovesets[currentMovesetIndex];
@@ -528,6 +548,8 @@ FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
 			{
 				setMoveset(&combatMovesets[0]);
 				currentMovesetIndex = 0;
+				eventMovesetChanged();
+
 				return &combatMovesets[0];
 			}
 			else
@@ -552,6 +574,7 @@ FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 			if (setNewMoveset)
 			{
 				currentMovesetIndex = combatMovesets.Num() - 1;
+				eventMovesetChanged();
 
 				setMoveset(&combatMovesets[currentMovesetIndex]);
 				return &combatMovesets[currentMovesetIndex];
@@ -567,6 +590,7 @@ FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 			if (setNewMoveset)
 			{
 				currentMovesetIndex -= 1;
+				eventMovesetChanged();
 
 				setMoveset(&combatMovesets[currentMovesetIndex]);
 				return &combatMovesets[currentMovesetIndex];
@@ -582,6 +606,23 @@ FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 	{
 		return &combatMovesets[0];
 	}
+}
+
+FMovesetData APlayerCharacter::getNextMoveset()
+{
+	FMovesetData* tempFMovementData;
+	tempFMovementData = findNextMoveset(false);
+
+	return *tempFMovementData;
+}
+
+
+FMovesetData APlayerCharacter::getPreviousMoveset()
+{
+	FMovesetData* tempFMovementData;
+	tempFMovementData = findPreviousMoveset(false);
+
+	return *tempFMovementData;
 }
 
 void APlayerCharacter::windUpChargeAmountTick(float deltaTime)
@@ -608,6 +649,7 @@ void APlayerCharacter::interactableTick(float deltaTime)
 		}
 	}
 }
+
 
 // Tick function to check if player is in standby
 
@@ -638,7 +680,11 @@ inline bool APlayerCharacter::canRegenerateStamina()
 
 inline bool APlayerCharacter::canAttack()
 {
-	if (bCanCancelAction && !bDodgingActive) // TODO(?): Make it so you can cancel dodge into attack
+	if (GetCharacterMovement()->IsFalling() || bIsDefeated)
+	{
+		return false;
+	}
+	else if (bCanCancelAction && !bDodgingActive) // TODO(?): Make it so you can cancel dodge into attack
 	{
 		return true;
 	}
@@ -662,7 +708,11 @@ inline bool APlayerCharacter::canAttack()
 
 bool APlayerCharacter::canDodge()
 {
-	if (!bSelfHitstunActive && !bDodgingActive && !bAttackActionActive)
+	if (bIsDefeated)
+	{
+		return false;
+	}
+	else if (!bSelfHitstunActive && !bDodgingActive && !bAttackActionActive)
 	{
 		if (!bChargeAttackStarted)
 		{
@@ -685,6 +735,7 @@ bool APlayerCharacter::canDodge()
 		return false;
 	}
 }
+
 
 inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 {
@@ -956,6 +1007,7 @@ void APlayerCharacter::hitstunReset()
 	debugDespawnFX();
 	updateMovement();
 	Execute_deactivateAttackHitbox(this);
+	Execute_attackEnd(this);
 }
 
 void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
@@ -1192,4 +1244,41 @@ void APlayerCharacter::setInteractableObjectInRange_Implementation(AInteractable
 bool APlayerCharacter::getInteractableObjectInRange_Implementation()
 {
 	return bInteractableObjectInRange;
+}
+
+void APlayerCharacter::startMovesetChange(bool nextMoveset)
+{
+	if (canAttack())
+	{
+		bChangeNextMoveset = nextMoveset;
+
+		if (movesetChangeMontage != nullptr)
+		{
+			currentMontage = movesetChangeMontage;
+			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+
+			Execute_setWeaponVisibility(Weapon->GetChildActor(), false);
+
+			eventStartChangeMoveset(bChangeNextMoveset);
+		}
+		else
+		{
+			Execute_endMovesetChange(this);
+		}
+	}
+
+}
+
+void APlayerCharacter::endMovesetChange_Implementation()
+{
+	if (bChangeNextMoveset)
+	{
+		findNextMoveset(true);
+	}
+	else
+	{
+		findPreviousMoveset(true);
+	}
+
+	Execute_setWeaponVisibility(Weapon->GetChildActor(), true);
 }

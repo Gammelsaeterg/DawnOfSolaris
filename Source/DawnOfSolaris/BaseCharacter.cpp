@@ -13,6 +13,8 @@
 #include "Math/UnrealMathUtility.h"
 #include "Components/ChildActorComponent.h"
 #include "BaseWeapon.h"
+#include "TimerManager.h"
+//#include "AIController.h"
 
 
 // Sets default values
@@ -32,7 +34,7 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 	OuterCapsuleComponent->SetupAttachment(RootComponent);
 
 	// set our turn rates for input
-	BaseTurnRate = 45.f;
+	BaseTurnRate = 60.f;
 	BaseLookUpRate = 45.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
@@ -78,6 +80,12 @@ void ABaseCharacter::BeginPlay()
 
 	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+
+	maxWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	maxRotationRate = GetCharacterMovement()->RotationRate.Yaw;
+
+	currentMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
+	defaultMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
 }
 
 // Called every frame
@@ -160,7 +168,7 @@ void ABaseCharacter::movementSmoothingTick(float DeltaTime)
 		currentMovementData.maxRotationRate, DeltaTime, currentMovementData.rotInterpSpeed);
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
-		currentMovementData.maxWalkSpeed, DeltaTime, 4.f);
+		currentMovementData.maxWalkSpeed, DeltaTime, maxWalkInterpRate);
 }
 
 void ABaseCharacter::launchedTick(float DeltaTime)
@@ -172,6 +180,8 @@ void ABaseCharacter::launchedTick(float DeltaTime)
 			endLaunch();
 		}
 	}
+
+
 }
 
 void ABaseCharacter::updateMovement()
@@ -200,6 +210,11 @@ void ABaseCharacter::updateMovement()
 
 }
 
+void ABaseCharacter::nullifyMovement()
+{
+	GetCharacterMovement()->RotationRate.Yaw = 0.f;
+	GetCharacterMovement()->MaxWalkSpeed = 0.f;
+}
 
 //void ABaseCharacter::setMovementData(FMovementData inMovementData)
 //{
@@ -294,6 +309,11 @@ void ABaseCharacter::attackEnd_Implementation()
 	bAttackActionActive = false;
 
 	updateMovement();
+
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(Weapon->GetChildActor());
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("Attack end"))
 }
 
@@ -366,6 +386,11 @@ void ABaseCharacter::defaultAttackStart(int attackIndex)
 void ABaseCharacter::defaultAttackEnd()
 {
 	bDefaultAttackStarted = false;
+
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(Weapon->GetChildActor());
+	}
 }
 
 bool ABaseCharacter::startDefaultAttack_Implementation(int index)
@@ -400,6 +425,7 @@ void ABaseCharacter::endHitstun_Implementation()
 	bSelfHitstunActive = false;
 	// TODO: Set slide friction off
 
+	hitstunReset();
 	updateMovement();
 }
 
@@ -445,9 +471,28 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 		// TODO: Make stun timer and launch character in air
 		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
 
-		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);
-		LaunchCharacter(adjustedDirection, false, false);
+		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);		
+		//UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *adjustedDirection.ToString())
+		GetMesh()->GetAnimInstance()->Montage_Stop(0.15f, currentMontage);
 		hitstunReset();
+
+		Execute_startHitstun(this);
+		nullifyMovement();
+
+		//GetCapsuleComponent()->SetSimulatePhysics(true);
+		//GetWorldTimerManager().SetTimer(physicsTimerHandle, this, &ABaseCharacter::endPhysics, 0.5f); 
+		//GetCapsuleComponent()->AddImpulse(adjustedDirection*300);
+		//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
+
+		if (GetController()->GetClass()->ImplementsInterface(UCharacterInterface::StaticClass()))
+		{
+			Execute_pauseAI(GetController());
+		}		
+		
+		LaunchCharacter(adjustedDirection, true, false);
+		//GetCharacterMovement()->AddImpulse(adjustedDirection, true);
+
+		//debugVector(FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal());
 
 		startLaunch();
 	}
@@ -460,19 +505,41 @@ void ABaseCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVecto
 
 void ABaseCharacter::startLaunch()
 {
-	Execute_startHitstun(this);
 	//GetCapsuleComponent()->SetCapsuleHalfHeight(launchedCapsuleHalfHeight);
-	
 	bIsLaunched = true;
 }
 
 void ABaseCharacter::endLaunch()
 {
 	//GetCapsuleComponent()->SetCapsuleHalfHeight(defaultCapsuleHalfHeight);
-	Execute_endHitstun(this);
 
+	//GetCapsuleComponent()->SetSimulatePhysics(false);
 	bIsLaunched = false;
+
+	if (GetController()->GetClass()->ImplementsInterface(UCharacterInterface::StaticClass()))
+	{
+		Execute_resumeAI(GetController());
+	}
+	
+
+	startGrounded();
+}
+
+void ABaseCharacter::startGrounded()
+{
+	bIsGrounded = true;
+	GetWorldTimerManager().SetTimer(launchedTimerHandle, this, &ABaseCharacter::endGrounded, 2.f); // TODO: Make timer amount random
+}
+
+void ABaseCharacter::endGrounded()
+{
+	bIsGrounded = false;
 	Execute_endHitstun(this);
+}
+
+void ABaseCharacter::endPhysics()
+{
+	GetCapsuleComponent()->SetSimulatePhysics(false);
 }
 
 void ABaseCharacter::hitstunReset()
@@ -497,6 +564,7 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	OuterCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "CharacterInterface.h"
 
 #include "DefaultPlayerController.generated.h"
 
@@ -14,7 +15,7 @@ class UUserWidget;
  * 
  */
 UCLASS()
-class DAWNOFSOLARIS_API ADefaultPlayerController : public APlayerController
+class DAWNOFSOLARIS_API ADefaultPlayerController : public APlayerController, public ICharacterInterface
 {
 	GENERATED_BODY()
 
@@ -40,5 +41,12 @@ public:
 	// Variable to hold the widget After Creating it.
 	UUserWidget* PauseMenu;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) // TODO: For debug purposes, delete when no longer needed
 	UUserWidget* PlayerUI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool spawnUI{ true };
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveUI();
 };
