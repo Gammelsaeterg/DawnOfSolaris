@@ -571,6 +571,7 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	GetMesh()->SetSimulatePhysics(true);
 	GetCharacterMovement()->DisableMovement();
 
+	Execute_attackEnd(this);
 	//Weapon->DetachFromParent(true);
 	if (Weapon->GetChildActor()->IsValidLowLevelFast())
 	{
