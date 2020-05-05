@@ -72,9 +72,12 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UE_LOG(LogTemp, Warning, TEXT("Player character BeginPlay()"))
 	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
-	Weapon->SetupAttachment(GetMesh(), "lowerarm_r");
+
+	//Weapon->SetupAttachment(GetMesh(), "lowerarm_r");
+	//Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("lowerarm_r"));
 
 	LeftHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);
 	RightHandHitbox->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnOverlapBeginAttackHit);

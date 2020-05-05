@@ -30,7 +30,8 @@ ABaseProjectile::ABaseProjectile()
 void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetLifeSpan(100.f);
+
 	//ProjectileMovementComponent->Velocity = GetActorRotation().Vector() * ProjectileMovementComponent->InitialSpeed;
 }
 
@@ -80,6 +81,12 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 		
 		// When projectile hits something
 		// TODO: Place FX hit effects here
-		Destroy();
+
+		ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ProjectileMesh->SetVisibility(false, false);
+		ProjectileMovementComponent->DestroyComponent();
+
+		SetLifeSpan(10.f);
+		//Destroy();
 	}
 }
