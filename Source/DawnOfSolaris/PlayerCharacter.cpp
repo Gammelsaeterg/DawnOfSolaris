@@ -838,6 +838,8 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 {
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo) // TODO(?): May not be necessary
 	{
+		currentChargeAttackDataToSend.projectileScaleMultiplier = 1.f; // Reset scale for sprint projectile attacks
+
 		if (inActionType == EActionType::DefaultComboOne)
 		{
 			currentActionType = EActionType::SprintAttackOne;
