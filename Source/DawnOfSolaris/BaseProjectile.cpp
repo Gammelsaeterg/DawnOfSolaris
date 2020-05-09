@@ -30,7 +30,7 @@ ABaseProjectile::ABaseProjectile()
 void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	SetLifeSpan(100.f);
+	SetLifeSpan(10.f);
 
 	//ProjectileMovementComponent->Velocity = GetActorRotation().Vector() * ProjectileMovementComponent->InitialSpeed;
 }
@@ -73,12 +73,9 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 				//SetLifeSpan(1.f); // TODO: For debug purposes, remove when no longer needed
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}
+
 		}
 
-		//if (hitParticleEffectToSpawn)
-		//{
-		//	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitParticleEffectToSpawn, GetActorLocation(), FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, EPSCPoolMethod::None, true);
-		//}
 
 		debugSpawnHitFX(GetActorLocation());
 
