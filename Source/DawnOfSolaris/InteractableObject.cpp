@@ -91,6 +91,8 @@ FVector AInteractableObject::interact_Implementation(AActor* interactorActor)
 		{
 			bHasDoneOnce = true;
 			objectInteracted(interactorActor);
+			TriggerBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 			return TriggerLocation->GetComponentLocation();
 		}
 		else
