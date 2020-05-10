@@ -72,7 +72,12 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Player character BeginPlay()"))
+	if (combatMovesets.Num() > 0)
+	{
+		unlockedCombatMovesets.Add(combatMovesets[0]);
+	}	
+
+	//UE_LOG(LogTemp, Warning, TEXT("Player character BeginPlay()"))
 	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
 

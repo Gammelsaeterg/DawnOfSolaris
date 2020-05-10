@@ -148,6 +148,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FMovesetData> combatMovesets;
 
+	TArray<FMovesetData> unlockedCombatMovesets;
+
 	FMovesetData* currentMovesetData;
 
 	FChargeAttackData currentChargeAttackDataToSend;
