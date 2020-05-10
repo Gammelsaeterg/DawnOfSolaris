@@ -166,6 +166,10 @@ public:
 	FMovesetData getPreviousMovesetFromPlayer();
 	virtual FMovesetData getPreviousMovesetFromPlayer_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool movesetsUnlocked();
+	virtual bool movesetsUnlocked_Implementation();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDodgeRollData currentDodgeRollData;
 
@@ -220,6 +224,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FMovesetData getPreviousMoveset();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	void unlockMoveset(int movesetIndex);
+	virtual void unlockMoveset_Implementation(int movesetIndex);
 
 	void windUpChargeAttack(FChargeAttackData& inAttack);
 
@@ -333,6 +341,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void eventMovesetChanged();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void eventCrystalAdded();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void eventStartChangeMoveset(bool nextMoveset);

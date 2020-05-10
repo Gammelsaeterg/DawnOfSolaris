@@ -72,11 +72,6 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (combatMovesets.Num() > 0)
-	{
-		unlockedCombatMovesets.Add(combatMovesets[0]);
-	}	
-
 	//UE_LOG(LogTemp, Warning, TEXT("Player character BeginPlay()"))
 	//Weapon = CreateDefaultSubobject<UChildActorComponent>(TEXT("Weapon"));
 	//Weapon->SetChildActorClass(TSubclassOf<ABaseWeapon>());
@@ -94,12 +89,17 @@ void APlayerCharacter::BeginPlay()
 	defaultComboOneMaxIndex = defaultComboOneAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
 	defaultComboTwoMaxIndex = defaultComboTwoAttacks.Num(); // TODO(?): Investigate whether or not this is necessary
 
-	// Sets first moveset in moveset array as default moveset
 	if (combatMovesets.Num() > 0)
 	{
-		if (&combatMovesets[0])
+		unlockedCombatMovesets.Add(combatMovesets[0]);
+	}
+
+	// Sets first moveset in moveset array as default moveset // TODO(?): This comment chain may be redundant
+	if (unlockedCombatMovesets.Num() > 0)
+	{
+		if (unlockedCombatMovesets.IsValidIndex(0))
 		{
-			setMoveset(&combatMovesets[0]); 
+			setMoveset(&unlockedCombatMovesets[0]); 
 			currentMovesetIndex = 0; // TODO(?): May not be necessary as it is already initialized as 0;
 		}
 	}
@@ -398,6 +398,18 @@ FMovesetData APlayerCharacter::getPreviousMovesetFromPlayer_Implementation()
 	return *findPreviousMoveset(false);
 }
 
+bool APlayerCharacter::movesetsUnlocked_Implementation()
+{
+	if (unlockedCombatMovesets.Num() > 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 inline void APlayerCharacter::standbyCheckTick() // Tick function to check if player is in standby
 {
 	if (!bAttackActionActive && !bSelfHitstunActive && !bDodgingActive && !bSprintingActive)
@@ -533,63 +545,63 @@ void APlayerCharacter::setMoveset(FMovesetData* inMovesetData)
 
 FMovesetData* APlayerCharacter::findNextMoveset(bool setNewMoveset)
 {
-	if (combatMovesets.Num() > 2) // Checks if there are at least two movesets
+	if (unlockedCombatMovesets.Num() > 1) // Checks if there are at least two movesets
 	{
-		if ((currentMovesetIndex + 1) < combatMovesets.Num())
+		if ((currentMovesetIndex + 1) < unlockedCombatMovesets.Num())
 		{
 			if (setNewMoveset)
 			{
 				currentMovesetIndex += 1;
 				eventMovesetChanged();
 
-				setMoveset(&combatMovesets[currentMovesetIndex]);			
-				return &combatMovesets[currentMovesetIndex];
+				setMoveset(&unlockedCombatMovesets[currentMovesetIndex]);			
+				return &unlockedCombatMovesets[currentMovesetIndex];
 			}
 			else
 			{
-				return &combatMovesets[currentMovesetIndex + 1];
+				return &unlockedCombatMovesets[currentMovesetIndex + 1];
 			}
 		}
 		else
 		{
 			if (setNewMoveset)
 			{
-				setMoveset(&combatMovesets[0]);
+				setMoveset(&unlockedCombatMovesets[0]);
 				currentMovesetIndex = 0;
 				eventMovesetChanged();
 
-				return &combatMovesets[0];
+				return &unlockedCombatMovesets[0];
 			}
 			else
 			{
-				return &combatMovesets[0];
+				return &unlockedCombatMovesets[0];
 			}
 
 		}
 	}
 	else
 	{
-		return &combatMovesets[0];
+		return &unlockedCombatMovesets[0];
 	}
 }
 
 FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 {
-	if (combatMovesets.Num() > 2) // Checks if there are at least two movesets
+	if (unlockedCombatMovesets.Num() > 1) // Checks if there are at least two movesets
 	{
 		if (currentMovesetIndex < 1)
 		{
 			if (setNewMoveset)
 			{
-				currentMovesetIndex = combatMovesets.Num() - 1;
+				currentMovesetIndex = unlockedCombatMovesets.Num() - 1;
 				eventMovesetChanged();
 
-				setMoveset(&combatMovesets[currentMovesetIndex]);
-				return &combatMovesets[currentMovesetIndex];
+				setMoveset(&unlockedCombatMovesets[currentMovesetIndex]);
+				return &unlockedCombatMovesets[currentMovesetIndex];
 			}
 			else
 			{
-				return &combatMovesets[combatMovesets.Num() - 1];
+				return &unlockedCombatMovesets[unlockedCombatMovesets.Num() - 1];
 			}
 
 		}
@@ -600,19 +612,19 @@ FMovesetData* APlayerCharacter::findPreviousMoveset(bool setNewMoveset)
 				currentMovesetIndex -= 1;
 				eventMovesetChanged();
 
-				setMoveset(&combatMovesets[currentMovesetIndex]);
-				return &combatMovesets[currentMovesetIndex];
+				setMoveset(&unlockedCombatMovesets[currentMovesetIndex]);
+				return &unlockedCombatMovesets[currentMovesetIndex];
 			}
 			else
 			{
-				return &combatMovesets[currentMovesetIndex - 1];
+				return &unlockedCombatMovesets[currentMovesetIndex - 1];
 			}
 
 		}
 	}
 	else
 	{
-		return &combatMovesets[0];
+		return &unlockedCombatMovesets[0];
 	}
 }
 
@@ -744,6 +756,16 @@ bool APlayerCharacter::canDodge()
 	}
 }
 
+
+void APlayerCharacter::unlockMoveset_Implementation(int movesetIndex)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("%d"))
+	if (combatMovesets.IsValidIndex(movesetIndex))
+	{
+		unlockedCombatMovesets.Add(combatMovesets[movesetIndex]);
+		eventCrystalAdded();
+	}
+}
 
 inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 {
@@ -1258,7 +1280,7 @@ bool APlayerCharacter::getInteractableObjectInRange_Implementation()
 
 void APlayerCharacter::startMovesetChange(bool nextMoveset)
 {
-	if (canAttack())
+	if (canAttack() && (unlockedCombatMovesets.Num() > 1))
 	{
 		bChangeNextMoveset = nextMoveset;
 
