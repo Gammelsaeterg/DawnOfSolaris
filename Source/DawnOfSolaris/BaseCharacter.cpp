@@ -195,7 +195,11 @@ void ABaseCharacter::launchedTick(float DeltaTime)
 void ABaseCharacter::updateMovement()
 {
 	// TODO: Lerp this
-	if (bAttackActionActive)
+	if (bIsGrounded || bIsLaunched)
+	{
+		nullifyMovement();
+	}
+	else if (bAttackActionActive)
 	{
 		//setMovementData(combatMovementData);
 		currentMovementData = combatMovementData;
@@ -553,12 +557,16 @@ void ABaseCharacter::endLaunch()
 void ABaseCharacter::startGrounded()
 {
 	bIsGrounded = true;
+	updateMovement();
+
 	GetWorldTimerManager().SetTimer(launchedTimerHandle, this, &ABaseCharacter::endGrounded, 2.f); // TODO: Make timer amount random
 }
 
 void ABaseCharacter::endGrounded()
 {
 	bIsGrounded = false;
+
+	updateMovement();
 	Execute_endHitstun(this);
 }
 

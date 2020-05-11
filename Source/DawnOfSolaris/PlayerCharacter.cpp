@@ -704,6 +704,10 @@ inline bool APlayerCharacter::canAttack()
 	{
 		return false;
 	}
+	else if (bIsLaunched || bIsGrounded)
+	{
+		return false;
+	}
 	else if (bCanCancelAction && !bDodgingActive) // TODO(?): Make it so you can cancel dodge into attack
 	{
 		return true;
@@ -729,6 +733,10 @@ inline bool APlayerCharacter::canAttack()
 bool APlayerCharacter::canDodge()
 {
 	if (bIsDefeated)
+	{
+		return false;
+	}
+	else if (bIsLaunched || bIsGrounded)
 	{
 		return false;
 	}
