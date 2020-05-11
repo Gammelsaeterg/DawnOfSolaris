@@ -85,7 +85,6 @@ void ABaseCharacter::BeginPlay()
 		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName(customWeaponAttachSocketName));		
 	}
 
-
 	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
 
@@ -94,6 +93,14 @@ void ABaseCharacter::BeginPlay()
 
 	currentMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
 	defaultMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
+
+	if (bUseRandomDefaultMovementSpeed)
+	{
+		maxWalkSpeed = FMath::RandRange(50.f, GetCharacterMovement()->MaxWalkSpeed);
+
+		currentMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
+		defaultMovementData = FMovementData(maxWalkSpeed, maxRotationRate);
+	}
 }
 
 // Called every frame

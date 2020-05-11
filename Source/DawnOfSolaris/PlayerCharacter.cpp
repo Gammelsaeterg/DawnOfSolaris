@@ -1047,7 +1047,13 @@ void APlayerCharacter::hitstunReset()
 	debugDespawnFX();
 	updateMovement();
 	Execute_deactivateAttackHitbox(this);
-	Execute_attackEnd(this);
+	
+	updateMovement();
+
+	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
+	{
+		Execute_deactivateAttackHitbox(Weapon->GetChildActor());
+	}
 }
 
 void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
@@ -1090,6 +1096,9 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 	{
 		// TODO: Make stun timer and launch character in air
 		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
+
+		FVector tempDirection = currentReceivedAttackData.hitDirection * -1; // Sets rotation to follow direction
+		SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
 
 		FVector adjustedDirection = (FVector(hitDirection.X, hitDirection.Y, 0).GetSafeNormal()) * calculateLaunchLength(inHitstunStrengthReceived) + FVector(0.f, 0.f, tempLaunchZaxis);
 		LaunchCharacter(adjustedDirection, false, false);

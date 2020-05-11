@@ -84,6 +84,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	FName customWeaponAttachSocketName{ "hand_r"};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	bool bUseRandomDefaultMovementSpeed{ false };
+
 public:	
 
 	void movementSmoothingTick(float DeltaTime);
