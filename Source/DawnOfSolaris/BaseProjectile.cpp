@@ -74,8 +74,12 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}
 
-		}
+			//if (canDamageInteract(CurrentProjectileCombatAlignment,
+			//	characterInterface->Execute_getAlignment(OtherActor)))
+			//{
 
+			//}
+		}
 
 		debugSpawnHitFX(GetActorLocation());
 
@@ -86,5 +90,6 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 		ProjectileMesh->SetVisibility(false, false);
 		ProjectileMovementComponent->DestroyComponent();
 		//Destroy();
+
 	}
 }
