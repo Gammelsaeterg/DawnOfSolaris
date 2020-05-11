@@ -78,6 +78,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent* Weapon{ nullptr };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	bool bUseCustomWeaponAttachSocket{ false };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	FName customWeaponAttachSocketName{ "hand_r"};
+
 public:	
 
 	void movementSmoothingTick(float DeltaTime);
@@ -219,6 +225,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	bool startDefaultAttack(int index);
 	virtual bool startDefaultAttack_Implementation(int index) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool startRandomDefaultAttack();
+	virtual bool startRandomDefaultAttack_Implementation();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void startHitstun();

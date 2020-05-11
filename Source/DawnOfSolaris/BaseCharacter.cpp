@@ -14,6 +14,7 @@
 #include "Components/ChildActorComponent.h"
 #include "BaseWeapon.h"
 #include "TimerManager.h"
+#include "Math/UnrealMathUtility.h"
 //#include "AIController.h"
 
 
@@ -77,6 +78,13 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer)
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (bUseCustomWeaponAttachSocket)
+	{
+		Weapon->SetRelativeLocation(FVector::ZeroVector);
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName(customWeaponAttachSocketName));		
+	}
+
 
 	defaultCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	launchedCapsuleHalfHeight = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
@@ -308,6 +316,8 @@ void ABaseCharacter::attackEnd_Implementation()
 {
 	bAttackActionActive = false;
 
+	GetMesh()->GetAnimInstance()->Montage_Stop(0.15f, currentMontage);
+
 	updateMovement();
 
 	if (currentDefaultAttackData.AttackHitbox == EAttackHitboxType::Default && Weapon->GetChildActor())
@@ -404,6 +414,21 @@ bool ABaseCharacter::startDefaultAttack_Implementation(int index)
 	{
 		return false;
 	}	
+}
+
+bool ABaseCharacter::startRandomDefaultAttack_Implementation()
+{
+	if (!bSelfHitstunActive)
+	{
+		int randomAttackNum = FMath::RandRange(0, (defaultAttacks.Num() - 1));
+		defaultAttackStart(randomAttackNum);
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void ABaseCharacter::startHitstun_Implementation()
