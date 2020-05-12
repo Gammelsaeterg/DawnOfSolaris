@@ -1097,6 +1097,8 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 		// TODO: Make stun timer and launch character in air
 		float tempLaunchZaxis{ 500.f }; // TODO: Make this a variable in the header file or dynamic compared to hitstunstrength
 
+		GetMesh()->GetAnimInstance()->Montage_Stop(0.15f, currentMontage);
+
 		FVector tempDirection = currentReceivedAttackData.hitDirection * -1; // Sets rotation to follow direction
 		SetActorRotation(FRotator(0.f, tempDirection.ToOrientationRotator().Yaw, 0.f));
 
