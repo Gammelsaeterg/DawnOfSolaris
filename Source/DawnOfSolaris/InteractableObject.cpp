@@ -51,7 +51,7 @@ void AInteractableObject::OnOverlapBeginTriggerBox(UPrimitiveComponent * Overlap
 		{
 			if (alignmentThatCanTrigger == Execute_getAlignment(OtherActor) && !actorIsAlreadyOverlapping(OverlappedActorAndComponent(OtherActor, OtherComp)))
 			{
-				if (!bAutoTrigger)
+				if (!bAutoTrigger && !bHasDoneOnce)
 				{
 					Execute_setInteractableObjectInRange(OtherActor, this);
 					actorsOverlappingTriggerBox.Add(OverlappedActorAndComponent(OtherActor, OtherComp));
@@ -85,8 +85,26 @@ void AInteractableObject::OnOverlapBeginTriggerBox(UPrimitiveComponent * Overlap
 
 FVector AInteractableObject::interact_Implementation(AActor* interactorActor)
 {
-	objectInteracted(interactorActor);
-	return TriggerLocation->GetComponentLocation();
+	if (bDoOnce)
+	{
+		if (!bHasDoneOnce)
+		{
+			bHasDoneOnce = true;
+			objectInteracted(interactorActor);
+			TriggerBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+			return TriggerLocation->GetComponentLocation();
+		}
+		else
+		{
+			return TriggerLocation->GetComponentLocation();
+		}
+	}
+	else
+	{
+		objectInteracted(interactorActor);
+		return TriggerLocation->GetComponentLocation();
+	}
 }
 
 void AInteractableObject::OnOverlapEndTriggerBox(UPrimitiveComponent * OverlappedComp, AActor * OtherActor,  // TODO(?): May need this later

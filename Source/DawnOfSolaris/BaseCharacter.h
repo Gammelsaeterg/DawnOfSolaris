@@ -78,12 +78,22 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UChildActorComponent* Weapon{ nullptr };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	bool bUseCustomWeaponAttachSocket{ false };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	FName customWeaponAttachSocketName{ "hand_r"};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	bool bUseRandomDefaultMovementSpeed{ false };
+
 public:	
 
 	void movementSmoothingTick(float DeltaTime);
 	void launchedTick(float DeltaTime);
 
 	void updateMovement();
+	void nullifyMovement();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	ECombatAlignment CombatAlignment = ECombatAlignment::Neutral;
@@ -98,6 +108,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	float maxRotationRate{ 540.f }; //
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables") 
+	float maxWalkInterpRate{ 40.f }; // This piece of code is mainly for the main character
 
 	float defaultCapsuleHalfHeight{ 96.f };
 	float launchedCapsuleHalfHeight{ 22.f };
@@ -123,6 +136,13 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsLaunched{ false }; // Active after struck by an attack that launches (hitstun valiue larger than 0.7f)
+
+	// Launched/grounded timer
+	FTimerHandle launchedTimerHandle;
+
+	// Launched/grounded timer
+	FTimerHandle physicsTimerHandle;
+
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsGrounded{ false }; // Active after a launch and character lies flat on ground
@@ -210,6 +230,10 @@ public:
 	virtual bool startDefaultAttack_Implementation(int index) override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool startRandomDefaultAttack();
+	virtual bool startRandomDefaultAttack_Implementation();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	void startHitstun();
 	virtual void startHitstun_Implementation() override;
 
@@ -222,6 +246,9 @@ public:
 
 	void startLaunch();
 	void endLaunch();
+	void startGrounded();
+	void endGrounded();
+	void endPhysics();
 	virtual void hitstunReset();
 
 	void cancelAttackActions(); // TODO: Complete this function
@@ -262,6 +289,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugSpawnHitFX(FVector hitLocation);
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugVector(FVector vector);
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void eventIsDefeated();

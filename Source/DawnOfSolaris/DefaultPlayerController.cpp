@@ -9,9 +9,12 @@ void ADefaultPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Create the widget and store it.
-	PlayerUI = CreateWidget<UUserWidget>(this, wPlayerUI);
-	PlayerUI->AddToViewport();
+	if (spawnUI)
+	{
+		// Create the widget and store it.
+		PlayerUI = CreateWidget<UUserWidget>(this, wPlayerUI);
+		PlayerUI->AddToViewport();
+	}
 }
 
 void ADefaultPlayerController::PauseGame()
@@ -50,5 +53,13 @@ void ADefaultPlayerController::ContinueGame()
 
 		SetInputMode(FInputModeGameOnly());
 
+	}
+}
+
+void ADefaultPlayerController::RemoveUI()
+{
+	if (PlayerUI != nullptr)
+	{
+		PlayerUI->RemoveFromParent();
 	}
 }

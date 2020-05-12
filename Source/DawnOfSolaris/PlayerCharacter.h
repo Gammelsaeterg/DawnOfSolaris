@@ -148,6 +148,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FMovesetData> combatMovesets;
 
+	TArray<FMovesetData> unlockedCombatMovesets;
+
 	FMovesetData* currentMovesetData;
 
 	FChargeAttackData currentChargeAttackDataToSend;
@@ -163,6 +165,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	FMovesetData getPreviousMovesetFromPlayer();
 	virtual FMovesetData getPreviousMovesetFromPlayer_Implementation() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool movesetsUnlocked();
+	virtual bool movesetsUnlocked_Implementation();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FDodgeRollData currentDodgeRollData;
@@ -193,8 +199,10 @@ public:
 	void standbyCheckTick(); // Tick function to check if player is in standby
 	void sprintTick(float DeltaTime); // Tick function to check if player can sprint while sprinting is active
 	void regenStaminaTick(float DeltaTime);
+	void regenHealthTick(float DeltaTime);
 	void windUpChargeAmountTick(float deltaTime);
 	void interactableTick(float deltaTime);
+	
 
 	bool canSprint();
 	bool canRegenerateStamina();
@@ -207,8 +215,19 @@ public:
 	TArray<FChargeAttackData> getCurrentComboAttacks(EActionType inActionType, int inComboIndex = 2);
 
 	void setMoveset(FMovesetData* inMovesetData);
+
 	FMovesetData* findNextMoveset(bool setNewMoveset);
 	FMovesetData* findPreviousMoveset(bool setNewMoveset);
+
+	UFUNCTION(BlueprintCallable)
+	FMovesetData getNextMoveset();
+
+	UFUNCTION(BlueprintCallable)
+	FMovesetData getPreviousMoveset();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	void unlockMoveset(int movesetIndex);
+	virtual void unlockMoveset_Implementation(int movesetIndex);
 
 	void windUpChargeAttack(FChargeAttackData& inAttack);
 
@@ -319,4 +338,23 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool getInteractableObjectInRange();
 	virtual bool getInteractableObjectInRange_Implementation() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void eventMovesetChanged();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void eventCrystalAdded();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void eventStartChangeMoveset(bool nextMoveset);
+
+	bool bChangeNextMoveset{ false };
+	void startMovesetChange(bool nextMoveset);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void endMovesetChange();
+	virtual void endMovesetChange_Implementation();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAnimMontage* movesetChangeMontage{ nullptr };
 };

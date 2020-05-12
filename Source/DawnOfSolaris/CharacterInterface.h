@@ -118,6 +118,9 @@ public:
 	bool startDefaultAttack(int index);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool startRandomDefaultAttack();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	FMovesetData getCurrentMovesetFromPlayer();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
@@ -125,6 +128,12 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
 	FMovesetData getPreviousMovesetFromPlayer();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterCombat")
+	bool movesetsUnlocked();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	void unlockMoveset(int movesetIndex);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
 	ECombatAlignment getAlignment();
@@ -140,4 +149,16 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool getInteractableObjectInRange();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void endMovesetChange();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setWeaponVisibility(bool isVisible);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void pauseAI();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void resumeAI();
 };

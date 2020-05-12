@@ -30,7 +30,8 @@ ABaseProjectile::ABaseProjectile()
 void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetLifeSpan(10.f);
+
 	//ProjectileMovementComponent->Velocity = GetActorRotation().Vector() * ProjectileMovementComponent->InitialSpeed;
 }
 
@@ -54,11 +55,13 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 	//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && (CurrentOwner != OtherActor)) // Default nullptr and self check)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
+		UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
 		if (characterInterface)
 		{
-			if (canDamageInteract(CurrentProjectileCombatAlignment, characterInterface->Execute_getAlignment(OtherActor)))
+			if (canDamageInteract(CurrentProjectileCombatAlignment, 
+				characterInterface->Execute_getAlignment(OtherActor)) 
+				&& !(characterInterface->Execute_getIsDefeated(OtherActor)))
 			{
 				FVector hitDirection;
 				hitDirection = ProjectileMesh->GetForwardVector();
@@ -67,17 +70,26 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 															      hitDirection, SweepResult.Location,
 																  this, hitstunValue);
 
+				//SetLifeSpan(1.f); // TODO: For debug purposes, remove when no longer needed
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}
+
+			//if (canDamageInteract(CurrentProjectileCombatAlignment,
+			//	characterInterface->Execute_getAlignment(OtherActor)))
+			//{
+
+			//}
 		}
 
-		if (hitParticleEffectToSpawn)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), hitParticleEffectToSpawn, GetActorLocation(), FRotator::ZeroRotator, FVector(1.f, 1.f, 1.f), true, EPSCPoolMethod::None, true);
-		}
-		
+		debugSpawnHitFX(GetActorLocation());
+
 		// When projectile hits something
 		// TODO: Place FX hit effects here
-		Destroy();
+		SetLifeSpan(10.f);
+		ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		ProjectileMesh->SetVisibility(false, false);
+		ProjectileMovementComponent->DestroyComponent();
+		//Destroy();
+
 	}
 }

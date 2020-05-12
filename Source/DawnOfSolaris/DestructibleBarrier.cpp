@@ -46,10 +46,16 @@ void ADestructibleBarrier::takeDamage_Implementation(FAttackData inAttackData)
 			currentHealthPoints = 0;			
 		}
 	}
+
 }
 
 ECombatAlignment ADestructibleBarrier::getAlignment_Implementation()
 {
 	return CombatAlignment;
+}
+
+bool ADestructibleBarrier::getIsDefeated_Implementation()
+{
+	return bIsDestroyed;
 }
 

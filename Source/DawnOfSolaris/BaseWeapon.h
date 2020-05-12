@@ -64,6 +64,10 @@ public:
 	void detachWeapon();
 	virtual void detachWeapon_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void setWeaponVisibility(bool isVisible);
+	virtual void setWeaponVisibility_Implementation(bool isVisible);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class ABaseProjectile> WeaponProjectile;
 
@@ -72,4 +76,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
 	void debugSpawnFireFX(FTransform muzzleTransform);
+
+	UFUNCTION(BlueprintImplementableEvent) // TODO: Delete when this function no longer is needed
+	void debugSpawnHitFX(FVector location);
 };

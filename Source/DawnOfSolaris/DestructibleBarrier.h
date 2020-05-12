@@ -50,6 +50,10 @@ public:
 	ECombatAlignment getAlignment();
 	virtual ECombatAlignment getAlignment_Implementation() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "CharacterVariables")
+	bool getIsDefeated();
+	virtual bool getIsDefeated_Implementation() override;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void breakBarrierBlueprintEvent();
 
