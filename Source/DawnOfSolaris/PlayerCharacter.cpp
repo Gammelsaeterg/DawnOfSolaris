@@ -161,6 +161,12 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 		if (getCurrentComboAttacks(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
 			// Inititate attack
+			if (bIsTargeting)
+			{
+				updateMovement();
+				SetActorRotation(FRotator(0.f, targetRotationDirection.Yaw, 0.f));
+			}
+
 			bChargeAttackStarted = true;
 			currentActionType = inActionType;
 			windUpChargeAttack(getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]]);
@@ -800,6 +806,11 @@ inline void APlayerCharacter::releaseStart_Implementation()
 {
 	if (bChargeAttackStarted == true)
 	{
+		if (bIsTargeting)
+		{
+			SetActorRotation(FRotator(0.f, targetRotationDirection.Yaw, 0.f));
+		}
+
 		GetPlayerCharacterMovementComponent()->resetThresholdHit();
 		// Sets current montage pos as charge amount // TODO(?): May be a better way to get position
 		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));

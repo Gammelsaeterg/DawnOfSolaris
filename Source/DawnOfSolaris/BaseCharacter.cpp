@@ -124,9 +124,9 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis("MoveForward", this, &ABaseCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ABaseCharacter::MoveRight);
 
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &ABaseCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &ABaseCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &ABaseCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ABaseCharacter::LookUpAtRate);
 
 	PlayerInputComponent->BindAction("Action1", IE_Pressed, this, &ABaseCharacter::defaultAttackStartFromInputOne); //default attack one
@@ -166,7 +166,26 @@ void ABaseCharacter::MoveRight(float Value)
 void ABaseCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	if (!bIsTargeting)
+	{
+		AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	}	
+}
+
+void ABaseCharacter::AddControllerYawInput(float Rate)
+{
+	if (!bIsTargeting)
+	{
+		APawn::AddControllerYawInput(Rate);
+	}
+}
+
+void ABaseCharacter::AddControllerPitchInput(float Rate)
+{
+//if (!bIsTargeting)
+//{
+	    APawn::AddControllerPitchInput(Rate);
+//}
 }
 
 void ABaseCharacter::LookUpAtRate(float Rate)
@@ -179,11 +198,27 @@ void ABaseCharacter::movementSmoothingTick(float DeltaTime)
 {
 	//GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
 	//currentMovementData.maxWalkSpeed, DeltaTime, currentMovementData.walkSpeedInterpSpeed);
-	GetCharacterMovement()->RotationRate.Yaw = FMath::FInterpTo(GetCharacterMovement()->RotationRate.Yaw, 
+
+	if (bIsTargeting && bAttackActionActive)
+	{
+		GetCharacterMovement()->RotationRate.Yaw = currentMovementData.maxRotationRate;
+		GetCharacterMovement()->MaxWalkSpeed = currentMovementData.maxWalkSpeed;
+	}
+	else if (bIsTargeting)
+	{
+		GetCharacterMovement()->RotationRate.Yaw = currentMovementData.maxRotationRate;
+
+		GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed,
+		currentMovementData.maxWalkSpeed, DeltaTime, maxWalkInterpRate);
+	}
+	else
+	{
+		GetCharacterMovement()->RotationRate.Yaw = FMath::FInterpTo(GetCharacterMovement()->RotationRate.Yaw,
 		currentMovementData.maxRotationRate, DeltaTime, currentMovementData.rotInterpSpeed);
 
-	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
+		GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed,
 		currentMovementData.maxWalkSpeed, DeltaTime, maxWalkInterpRate);
+	}
 }
 
 void ABaseCharacter::launchedTick(float DeltaTime)
@@ -209,8 +244,16 @@ void ABaseCharacter::updateMovement()
 	else if (bAttackActionActive)
 	{
 		//setMovementData(combatMovementData);
-		currentMovementData = combatMovementData;
-		GetCharacterMovement()->bUseSeparateBrakingFriction = false;
+		if (bIsTargeting)
+		{
+			currentMovementData = targetCombatMovementData;
+			GetCharacterMovement()->bUseSeparateBrakingFriction = false;
+		}
+		else
+		{
+			currentMovementData = combatMovementData;
+			GetCharacterMovement()->bUseSeparateBrakingFriction = false;
+		}
 	}
 	else if (bSelfHitstunActive)
 	{
