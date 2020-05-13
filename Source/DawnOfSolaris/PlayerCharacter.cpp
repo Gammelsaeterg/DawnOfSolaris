@@ -1080,7 +1080,7 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 	}
 	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived <= 0.3f)
 	{
-		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage) && !bIsLaunched)
 		{
 			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
@@ -1088,7 +1088,7 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 		}
 		// TODO: Make stun timer
 	}
-	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived <= 0.7f)
+	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived <= 0.7f && !bIsLaunched)
 	{
 		if (IsValid(hitstunAnimations.hitstunHeavyAnimMontage))
 		{
@@ -1121,8 +1121,8 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 	}
 	else
 	{
-		// Debug else, function should normally not reach this line
-		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
+		// Debug else, function should normally not reach this line // Update: Can reach this part if player is hit when launched and in air
+		UE_LOG(LogTemp, Warning, TEXT("You dun goofed, or player was hit when launched"))
 	}
 }
 
