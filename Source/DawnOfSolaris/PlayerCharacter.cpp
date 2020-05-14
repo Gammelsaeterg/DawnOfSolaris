@@ -1284,7 +1284,7 @@ void APlayerCharacter::clearHitActors()
 
 void APlayerCharacter::interact()
 {
-	if (bInteractableObjectInRange)
+	if (bInteractableObjectInRange && canAttack())
 	{
 		if (currentInteractableObject != nullptr) // TODO(?): May not be necessary
 		{
