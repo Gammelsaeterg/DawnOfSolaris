@@ -370,7 +370,7 @@ void ABaseCharacter::attackEnd_Implementation()
 {
 	bAttackActionActive = false;
 
-	GetMesh()->GetAnimInstance()->Montage_Stop(0.15f, currentMontage);
+	//GetMesh()->GetAnimInstance()->Montage_Stop(0.15f, currentMontage);
 
 	updateMovement();
 
