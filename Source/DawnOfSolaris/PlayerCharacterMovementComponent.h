@@ -28,6 +28,8 @@ class DAWNOFSOLARIS_API UPlayerCharacterMovementComponent : public UCharacterMov
 	float rootMotionVelocityMultiplier{ 1.f };
 
 public:
+	bool bIgnoreVerticalHit{ false };
+
 	void resetThresholdHit();
 	void setRootMotionVelocityMultiplier(float inMultiplier);
 };

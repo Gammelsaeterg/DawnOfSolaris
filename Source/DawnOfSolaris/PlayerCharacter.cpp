@@ -795,6 +795,11 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 
 	bAttackHitboxActive = false; // Disable old hitbox for new attack
 	clearHitActors();
+
+	if (inAttack.bUnstoppable)
+	{
+		PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
+	}
 }
 
 void APlayerCharacter::windUpStart_Implementation()
@@ -832,6 +837,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 
 void APlayerCharacter::releaseEnd_Implementation()
 {	
+	PlayerCharacterMovementComponent->bIgnoreVerticalHit = false;
 	if (bChargeAttackInputHeld)
 	{
 		queuedActionTypes.Empty();
@@ -854,6 +860,12 @@ void APlayerCharacter::releaseEnd_Implementation()
 			resetAttackCombos(); 
 		}
 	}
+}
+
+void APlayerCharacter::attackEnd_Implementation()
+{
+	PlayerCharacterMovementComponent->bIgnoreVerticalHit = false;
+	Super::attackEnd_Implementation();
 }
 
 void APlayerCharacter::canCancelAction_Implementation()
@@ -882,6 +894,7 @@ void APlayerCharacter::canCancelAction_Implementation()
 
 void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refactor this function
 {
+
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo) // TODO(?): May not be necessary
 	{
 		currentChargeAttackDataToSend.projectileScaleMultiplier = 1.f; // Reset scale for sprint projectile attacks
@@ -891,7 +904,7 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			currentActionType = EActionType::SprintAttackOne;
 			// Do sprint attack one here 
 			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack one here"));
-
+			PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
 			if (sprintAttackOne.sprintAttackAnimMontage->IsValidLowLevelFast())
 			{
 				currentMontage = sprintAttackOne.sprintAttackAnimMontage;
@@ -909,7 +922,7 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			currentActionType = EActionType::SprintAttackTwo;
 			// Do sprint attack two here
 			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack two here"));
-
+			PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
 			if (sprintAttackTwo.sprintAttackAnimMontage->IsValidLowLevelFast())
 			{
 				currentMontage = sprintAttackTwo.sprintAttackAnimMontage;
@@ -1042,6 +1055,8 @@ void APlayerCharacter::hitstunReset()
 {
 	resetAttackCombos();
 	clearHitActors(); // TODO(?): May not be necessary
+
+	PlayerCharacterMovementComponent->bIgnoreVerticalHit = false;
 
 	bDodgingActive = false;
 	bChargeAttackStarted = false;
