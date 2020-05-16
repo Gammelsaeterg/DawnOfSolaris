@@ -723,7 +723,7 @@ void UPlayerCharacterMovementComponent::HandleImpact(const FHitResult & Hit, flo
 
 	float hitAngle = FMath::RadiansToDegrees(FastAcos(FMath::Abs(FVector::DotProduct(Velocity.GetSafeNormal(), Hit.ImpactNormal))));
 
-	if (!bHitVerticalObject && hitAngle < angleThreshold)
+	if ((!bHitVerticalObject && hitAngle < angleThreshold) && !bIgnoreVerticalHit)
 	{
 		bHitVerticalObject = true;
 		//AnimRootMotionVelocity = FVector(0.f, 0.f, 0.f);

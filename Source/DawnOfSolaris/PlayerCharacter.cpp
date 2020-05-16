@@ -161,6 +161,12 @@ void APlayerCharacter::comboAttackPressed(EActionType inActionType)
 		if (getCurrentComboAttacks(inActionType).IsValidIndex(currentComboIndexes[(uint8)inActionType]))
 		{
 			// Inititate attack
+			if (bIsTargeting)
+			{
+				updateMovement();
+				SetActorRotation(FRotator(0.f, targetRotationDirection.Yaw, 0.f));
+			}
+
 			bChargeAttackStarted = true;
 			currentActionType = inActionType;
 			windUpChargeAttack(getCurrentComboAttacks(inActionType)[currentComboIndexes[(uint8)inActionType]]);
@@ -789,6 +795,11 @@ inline void APlayerCharacter::windUpChargeAttack(FChargeAttackData & inAttack)
 
 	bAttackHitboxActive = false; // Disable old hitbox for new attack
 	clearHitActors();
+
+	if (inAttack.bUnstoppable)
+	{
+		PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
+	}
 }
 
 void APlayerCharacter::windUpStart_Implementation()
@@ -800,6 +811,11 @@ inline void APlayerCharacter::releaseStart_Implementation()
 {
 	if (bChargeAttackStarted == true)
 	{
+		if (bIsTargeting)
+		{
+			SetActorRotation(FRotator(0.f, targetRotationDirection.Yaw, 0.f));
+		}
+
 		GetPlayerCharacterMovementComponent()->resetThresholdHit();
 		// Sets current montage pos as charge amount // TODO(?): May be a better way to get position
 		Execute_setChargeAmount(this, GetMesh()->GetAnimInstance()->Montage_GetPosition(currentMontage));
@@ -821,6 +837,7 @@ inline void APlayerCharacter::releaseStart_Implementation()
 
 void APlayerCharacter::releaseEnd_Implementation()
 {	
+	PlayerCharacterMovementComponent->bIgnoreVerticalHit = false;
 	if (bChargeAttackInputHeld)
 	{
 		queuedActionTypes.Empty();
@@ -843,6 +860,12 @@ void APlayerCharacter::releaseEnd_Implementation()
 			resetAttackCombos(); 
 		}
 	}
+}
+
+void APlayerCharacter::attackEnd_Implementation()
+{
+	PlayerCharacterMovementComponent->bIgnoreVerticalHit = false;
+	Super::attackEnd_Implementation();
 }
 
 void APlayerCharacter::canCancelAction_Implementation()
@@ -871,6 +894,7 @@ void APlayerCharacter::canCancelAction_Implementation()
 
 void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refactor this function
 {
+
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo) // TODO(?): May not be necessary
 	{
 		currentChargeAttackDataToSend.projectileScaleMultiplier = 1.f; // Reset scale for sprint projectile attacks
@@ -880,7 +904,7 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			currentActionType = EActionType::SprintAttackOne;
 			// Do sprint attack one here 
 			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack one here"));
-
+			PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
 			if (sprintAttackOne.sprintAttackAnimMontage->IsValidLowLevelFast())
 			{
 				currentMontage = sprintAttackOne.sprintAttackAnimMontage;
@@ -898,7 +922,7 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			currentActionType = EActionType::SprintAttackTwo;
 			// Do sprint attack two here
 			UE_LOG(LogTemp, Warning, TEXT("Do sprint attack two here"));
-
+			PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
 			if (sprintAttackTwo.sprintAttackAnimMontage->IsValidLowLevelFast())
 			{
 				currentMontage = sprintAttackTwo.sprintAttackAnimMontage;
@@ -1032,6 +1056,8 @@ void APlayerCharacter::hitstunReset()
 	resetAttackCombos();
 	clearHitActors(); // TODO(?): May not be necessary
 
+	PlayerCharacterMovementComponent->bIgnoreVerticalHit = false;
+
 	bDodgingActive = false;
 	bChargeAttackStarted = false;
 	bCanSprintAttack = false;
@@ -1069,7 +1095,7 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 	}
 	else if (inHitstunStrengthReceived > 0.1f && inHitstunStrengthReceived <= 0.3f)
 	{
-		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
+		if (IsValid(hitstunAnimations.hitstunLightAnimMontage) && !bIsLaunched)
 		{
 			currentMontage = hitstunAnimations.hitstunHeavyAnimMontage;
 			GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
@@ -1077,7 +1103,7 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 		}
 		// TODO: Make stun timer
 	}
-	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived <= 0.7f)
+	else if (inHitstunStrengthReceived > 0.3f && inHitstunStrengthReceived <= 0.7f && !bIsLaunched)
 	{
 		if (IsValid(hitstunAnimations.hitstunHeavyAnimMontage))
 		{
@@ -1110,8 +1136,8 @@ void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVec
 	}
 	else
 	{
-		// Debug else, function should normally not reach this line
-		UE_LOG(LogTemp, Warning, TEXT("You dun goofed"))
+		// Debug else, function should normally not reach this line // Update: Can reach this part if player is hit when launched and in air
+		UE_LOG(LogTemp, Warning, TEXT("You dun goofed, or player was hit when launched"))
 	}
 }
 
@@ -1273,7 +1299,7 @@ void APlayerCharacter::clearHitActors()
 
 void APlayerCharacter::interact()
 {
-	if (bInteractableObjectInRange)
+	if (bInteractableObjectInRange && canAttack())
 	{
 		if (currentInteractableObject != nullptr) // TODO(?): May not be necessary
 		{

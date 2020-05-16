@@ -51,6 +51,8 @@ public:
  * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
  */
 	void TurnAtRate(float Rate);
+	void AddControllerYawInput(float Rate);
+	void AddControllerPitchInput(float Rate);
 
 	/**
 	 * Called via input to turn look up/down at a given rate.
@@ -119,6 +121,7 @@ public:
 	FMovementData currentMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData defaultMovementData{ FMovementData(maxWalkSpeed, maxRotationRate) };
 	FMovementData combatMovementData{ FMovementData(0.f, 50) };
+	FMovementData targetCombatMovementData{ FMovementData(0.f, 0.f) };
 	FMovementData hitstunMovementData{ FMovementData(0.f, 0.f) };
 
 	//void setMovementData(FMovementData inMovementData);
@@ -143,6 +146,11 @@ public:
 	// Launched/grounded timer
 	FTimerHandle physicsTimerHandle;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsTargeting{ false };
+
+	UPROPERTY(BlueprintReadWrite)
+	FRotator targetRotationDirection;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsGrounded{ false }; // Active after a launch and character lies flat on ground

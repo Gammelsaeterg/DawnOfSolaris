@@ -66,6 +66,9 @@ struct FChargeAttackData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackHitboxType AttackHitbox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUnstoppable{ false };
 };
 
 USTRUCT(BlueprintType)

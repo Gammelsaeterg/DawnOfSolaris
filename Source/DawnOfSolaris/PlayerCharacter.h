@@ -243,6 +243,9 @@ public:
 	void releaseEnd();
 	virtual void releaseEnd_Implementation() override;
 
+	void attackEnd();
+	virtual void attackEnd_Implementation() override;
+
 	void canCancelAction();
 	virtual void canCancelAction_Implementation();
 
