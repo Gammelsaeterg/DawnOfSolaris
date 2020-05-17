@@ -35,8 +35,11 @@ public:
 	//class UStaticMeshComponent* ProjectileMesh;
 
 	FDefaultAttackData CurrentMeleeWeaponAttackData;
-	ECombatAlignment CurrentWeaponCombatAlignment;	
+	ECombatAlignment CurrentWeaponCombatAlignment;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class ABaseCharacter* CurrentCharacterOwner;
+
 	TArray<AActor*> hitActors; //Storing current hit actors to avoid multiple hits in one attack
 
 	UFUNCTION()
