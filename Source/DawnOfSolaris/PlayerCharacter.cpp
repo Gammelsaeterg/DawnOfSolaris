@@ -104,7 +104,7 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	if (startWithAllUpgrades)
+	if (startWithAllMovesetMorphs)
 	{
 		Execute_unlockMoveset(this, 2);
 		Execute_unlockMoveset(this, 1);
@@ -1050,7 +1050,10 @@ void APlayerCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			bIsDefeated = true;
 			currentHealthPoints = 0;
 			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
-			startIsDefeatedProcedure();
+
+
+			//startIsDefeatedProcedure();
+			eventIsDefeated();
 		}
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage player char: %s"), *this->GetName());
