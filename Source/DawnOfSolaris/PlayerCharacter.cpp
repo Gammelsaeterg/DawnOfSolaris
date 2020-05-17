@@ -103,6 +103,12 @@ void APlayerCharacter::BeginPlay()
 			currentMovesetIndex = 0; // TODO(?): May not be necessary as it is already initialized as 0;
 		}
 	}
+
+	if (startWithAllUpgrades)
+	{
+		Execute_unlockMoveset(this, 2);
+		Execute_unlockMoveset(this, 1);
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

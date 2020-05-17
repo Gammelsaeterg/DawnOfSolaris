@@ -114,6 +114,9 @@ public:
 	float maxSprintRotationRate{ 540.f };
 	FMovementData sprintMovementData{ FMovementData(maxSprintSpeed, maxSprintRotationRate) };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	bool startWithAllMovesetMorphs{ false };
+
 	float currentChargeAttackStaminaConsumptionRate{ 0.f };
 
 	UPROPERTY(BlueprintReadOnly)
