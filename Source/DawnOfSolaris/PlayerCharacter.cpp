@@ -103,6 +103,12 @@ void APlayerCharacter::BeginPlay()
 			currentMovesetIndex = 0; // TODO(?): May not be necessary as it is already initialized as 0;
 		}
 	}
+
+	if (startWithAllMovesetMorphs)
+	{
+		Execute_unlockMoveset(this, 2);
+		Execute_unlockMoveset(this, 1);
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -1044,7 +1050,10 @@ void APlayerCharacter::takeDamage_Implementation(FAttackData inAttackData)
 			bIsDefeated = true;
 			currentHealthPoints = 0;
 			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
-			startIsDefeatedProcedure();
+
+
+			//startIsDefeatedProcedure();
+			eventIsDefeated();
 		}
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("Take damage player char: %s"), *this->GetName());
