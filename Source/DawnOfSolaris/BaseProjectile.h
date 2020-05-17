@@ -36,7 +36,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float hitstunValue{ 0.0f };
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECombatAlignment CurrentProjectileCombatAlignment;
 
 	class AActor* CurrentOwner;

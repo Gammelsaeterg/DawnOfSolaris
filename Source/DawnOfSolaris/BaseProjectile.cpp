@@ -55,6 +55,8 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 	//UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && (CurrentOwner != OtherActor)) // Default nullptr and self check)
 	{
+		bool bDespawnProcedure{ true };
+
 		UE_LOG(LogTemp, Warning, TEXT("Overlapped actor: %s"), *OtherActor->GetName()); //// Debug texts, very nice and valuable 
 		ICharacterInterface* characterInterface = Cast<ICharacterInterface>(OtherActor);
 		if (characterInterface)
@@ -74,22 +76,25 @@ void ABaseProjectile::OnOverlapBeginProjectileHitbox(UPrimitiveComponent * Overl
 				characterInterface->Execute_takeDamage(OtherActor, currentAttackDataToSend);
 			}
 
-			//if (canDamageInteract(CurrentProjectileCombatAlignment,
-			//	characterInterface->Execute_getAlignment(OtherActor)))
-			//{
-
-			//}
+			if (!canDamageInteract(CurrentProjectileCombatAlignment,
+				characterInterface->Execute_getAlignment(OtherActor)))
+			{
+				bDespawnProcedure = false;
+			}
 		}
 
-		debugSpawnHitFX(GetActorLocation());
+		if (bDespawnProcedure)
+		{
+			debugSpawnHitFX(GetActorLocation());
 
-		// When projectile hits something
-		// TODO: Place FX hit effects here
-		SetLifeSpan(10.f);
-		ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		ProjectileMesh->SetVisibility(false, false);
-		ProjectileMovementComponent->DestroyComponent();
-		//Destroy();
+			// When projectile hits something
+			// TODO: Place FX hit effects here
+			SetLifeSpan(10.f);
+			ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			ProjectileMesh->SetVisibility(false, false);
+			ProjectileMovementComponent->DestroyComponent();
+			//Destroy();
+		}
 
 	}
 }
