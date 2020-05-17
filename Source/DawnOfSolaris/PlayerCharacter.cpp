@@ -1085,7 +1085,7 @@ void APlayerCharacter::hitstunReset()
 void APlayerCharacter::runHitstunProcedure(float inHitstunStrengthReceived, FVector hitDirection)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Start hitstun procedure"))
-	if (inHitstunStrengthReceived <= 0.1f)
+	if (inHitstunStrengthReceived <= 0.1f || bIgnoreHitstun)
 	{
 		if (IsValid(hitstunAnimations.hitstunLightAnimMontage))
 		{

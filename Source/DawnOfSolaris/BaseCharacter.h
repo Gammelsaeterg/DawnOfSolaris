@@ -89,6 +89,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	bool bUseRandomDefaultMovementSpeed{ false };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	bool bIgnoreHitstun{ false };
+
 public:	
 
 	void movementSmoothingTick(float DeltaTime);
