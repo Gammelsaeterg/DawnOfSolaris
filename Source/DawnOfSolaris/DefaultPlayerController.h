@@ -49,4 +49,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveUI();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void EventCutsceneSkipCheck();
 };

@@ -19,7 +19,7 @@ void ADefaultPlayerController::BeginPlay()
 
 void ADefaultPlayerController::PauseGame()
 {
-	if (wPauseMenu) // Check if the Asset is assigned in the blueprint.
+	if (wPauseMenu && spawnUI) // Check if the Asset is assigned in the blueprint.
 	{
 		// Create the widget and store it.
 		PauseMenu = CreateWidget<UUserWidget>(this, wPauseMenu);
@@ -40,6 +40,7 @@ void ADefaultPlayerController::PauseGame()
 
 
 	}
+	EventCutsceneSkipCheck();
 }
 
 void ADefaultPlayerController::ContinueGame()
