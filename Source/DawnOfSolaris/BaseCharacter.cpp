@@ -260,6 +260,11 @@ void ABaseCharacter::updateMovement()
 		currentMovementData = hitstunMovementData;
 		GetCharacterMovement()->bUseSeparateBrakingFriction = true;
 	}
+	else if (bIsDefeated)
+	{
+		currentMovementData = hitstunMovementData;
+		//GetCharacterMovement()->bUseSeparateBrakingFriction = true;
+	}
 	else
 	{
 		currentMovementData = defaultMovementData;

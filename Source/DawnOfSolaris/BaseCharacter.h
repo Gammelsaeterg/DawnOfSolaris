@@ -97,7 +97,9 @@ public:
 	void movementSmoothingTick(float DeltaTime);
 	void launchedTick(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable)
 	void updateMovement();
+
 	void nullifyMovement();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
@@ -129,7 +131,7 @@ public:
 
 	//void setMovementData(FMovementData inMovementData);
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	bool bIsDefeated{ false };
 
 	// TODO: Make this into an enum state(?)

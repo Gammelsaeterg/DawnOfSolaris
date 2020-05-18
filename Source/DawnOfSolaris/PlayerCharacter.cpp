@@ -1048,6 +1048,8 @@ void APlayerCharacter::takeDamage_Implementation(FAttackData inAttackData)
 		else
 		{
 			bIsDefeated = true;
+			updateMovement();
+
 			currentHealthPoints = 0;
 			UE_LOG(LogTemp, Warning, TEXT("%s is defeated"), *this->GetName());
 
