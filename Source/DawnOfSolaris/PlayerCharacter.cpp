@@ -900,7 +900,6 @@ void APlayerCharacter::canCancelAction_Implementation()
 
 void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refactor this function
 {
-
 	if (inActionType == EActionType::DefaultComboOne || inActionType == EActionType::DefaultComboTwo) // TODO(?): May not be necessary
 	{
 		currentChargeAttackDataToSend.projectileScaleMultiplier = 1.f; // Reset scale for sprint projectile attacks
@@ -913,14 +912,20 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
 			if (sprintAttackOne.sprintAttackAnimMontage->IsValidLowLevelFast())
 			{
-				currentMontage = sprintAttackOne.sprintAttackAnimMontage;
-				currentAttackHitboxType = sprintAttackOne.AttackHitbox;
+				if (sprintAttackOne.staminaCost < currentStaminaPoints)
+				{
+					currentStaminaPoints -= sprintAttackOne.staminaCost;
 
-				currentAttackDataToSend.damageAmount = sprintAttackOne.damageValue;
-				currentAttackDataToSend.hitstunStrength = sprintAttackOne.hitstunValue;
+					currentMontage = sprintAttackOne.sprintAttackAnimMontage;
+					currentAttackHitboxType = sprintAttackOne.AttackHitbox;
 
-				GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * sprintAttackOne.rootMotionMultiplier);
-				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+					currentAttackDataToSend.damageAmount = sprintAttackOne.damageValue;
+					currentAttackDataToSend.hitstunStrength = sprintAttackOne.hitstunValue;
+
+					GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * sprintAttackOne.rootMotionMultiplier);
+					GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+				}
+
 			}
 		}
 		else if (inActionType == EActionType::DefaultComboTwo)
@@ -931,14 +936,20 @@ void APlayerCharacter::sprintAttack(EActionType inActionType) // TODO(?) Refacto
 			PlayerCharacterMovementComponent->bIgnoreVerticalHit = true;
 			if (sprintAttackTwo.sprintAttackAnimMontage->IsValidLowLevelFast())
 			{
-				currentMontage = sprintAttackTwo.sprintAttackAnimMontage;
-				currentAttackHitboxType = sprintAttackTwo.AttackHitbox;
+				if (sprintAttackTwo.staminaCost < currentStaminaPoints)
+				{
+					currentStaminaPoints -= sprintAttackTwo.staminaCost;
 
-				currentAttackDataToSend.damageAmount = sprintAttackTwo.damageValue;
-				currentAttackDataToSend.hitstunStrength = sprintAttackTwo.hitstunValue;
+					currentMontage = sprintAttackTwo.sprintAttackAnimMontage;
+					currentAttackHitboxType = sprintAttackTwo.AttackHitbox;
 
-				GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * sprintAttackTwo.rootMotionMultiplier);
-				GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);				
+					currentAttackDataToSend.damageAmount = sprintAttackTwo.damageValue;
+					currentAttackDataToSend.hitstunStrength = sprintAttackTwo.hitstunValue;
+
+					GetPlayerCharacterMovementComponent()->setRootMotionVelocityMultiplier(1.f * sprintAttackTwo.rootMotionMultiplier);
+					GetMesh()->GetAnimInstance()->Montage_Play(currentMontage, 1.f, EMontagePlayReturnType::MontageLength, 0.f, true);
+				}
+	
 			}
 		}
 		//debugSpawnFX();

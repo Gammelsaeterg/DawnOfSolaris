@@ -87,6 +87,9 @@ struct FSprintAttackData
 	float hitstunValue{ 0.5f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float staminaCost{ 15.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float rootMotionMultiplier{ 1.f };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
