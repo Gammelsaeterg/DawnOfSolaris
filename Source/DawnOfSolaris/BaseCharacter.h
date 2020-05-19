@@ -92,6 +92,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
 	bool bIgnoreHitstun{ false };
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CharacterVariables")
+	bool bCustomDefeatProcedure{ false };
+
 public:	
 
 	void movementSmoothingTick(float DeltaTime);
@@ -267,6 +270,9 @@ public:
 	void cancelAttackActions(); // TODO: Complete this function
 
 	void startIsDefeatedProcedure();
+
+	UFUNCTION(BlueprintCallable)
+	void startDelayedIsDefeatedProcedure();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FDefaultAttackData> defaultAttacks;

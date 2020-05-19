@@ -647,6 +647,37 @@ void ABaseCharacter::hitstunReset()
 
 void ABaseCharacter::startIsDefeatedProcedure()
 {
+	if (!bCustomDefeatProcedure)
+	{
+		// TODO: Add more to this
+		GetCapsuleComponent()->SetEnableGravity(false);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		OuterCapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+		GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
+		GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+		GetMesh()->SetSimulatePhysics(true);
+		GetCharacterMovement()->DisableMovement();
+
+		Execute_attackEnd(this);
+		//Weapon->DetachFromParent(true);
+		if (Weapon->GetChildActor()->IsValidLowLevelFast())
+		{
+			Execute_detachWeapon(Weapon->GetChildActor());
+		}
+
+		eventIsDefeated();
+	}
+	else
+	{
+		eventIsDefeated();
+	}
+}
+
+void ABaseCharacter::startDelayedIsDefeatedProcedure()
+{
 	// TODO: Add more to this
 	GetCapsuleComponent()->SetEnableGravity(false);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -665,9 +696,6 @@ void ABaseCharacter::startIsDefeatedProcedure()
 	{
 		Execute_detachWeapon(Weapon->GetChildActor());
 	}
-	
-
-	eventIsDefeated();
 }
 
 
